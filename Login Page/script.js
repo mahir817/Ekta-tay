@@ -1,25 +1,21 @@
-document.getElementById('loginForm').addEventListener('submit', function (event) {
-    event.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+    // Login form validation
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value.trim();
+        if (username.length < 3) {
+            alert('Username must be at least 3 characters.');
+            return;
+        }
 
-    // Email validation regex
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (password.length < 6) {
+            alert('Password must be at least 6 characters.');
+            return;
+        }
 
-    if (!emailPattern.test(email)) {
-        alert('Please enter a valid email address.');
-        return;
-    }
-
-    if (password.length < 6) {
-        alert('Password must be at least 6 characters.');
-        return;
-    }
-
-    // Simulating login success (Replace this with actual backend authentication later)
-    alert('Login successful!');
-
-    // Redirect to dashboard (Create dashboard.html first)
-    window.location.href = "dashboard.html";
+        alert('Login successful!');
+        window.location.href = "dashboard.html";
+    });
 });
