@@ -11,27 +11,35 @@
 </head>
 
 <body>
-    <div class="login-container">
-        <div class="logo">
-            <img src="images/logo.png" alt="Website Logo">
-        </div>
-        <form id="loginForm">
-            <div class="input-group">
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <i class="fa fa-user icon"></i> <!-- User icon -->
+    <div class="container">
+        <div class="left-section">
+            <div class="welcome-message">
+                <h1>Welcome!</h1>
+                <p>Sign in to continue your journey with us.</p>
             </div>
-
-        <div class="input-group">
-            <input type="password" id="password" name="password" placeholder="Password" required>
-            <i class="fa fa-lock icon"></i> <!-- Lock icon instead of eye toggle -->
+            <img src="images/welcome-image.png" alt="Welcome Image" class="welcome-image">
+            
         </div>
 
-
-            <a href="#" class="forgot-password">Forgot password?</a>
-            <button type="submit" class="login-button">LOGIN</button>
-        </form>
-        <div class="signup-link">
-            Don't have an account? <a href="#">Sign Up</a>
+        <div class="login-container">
+            <div class="logo">
+                <img src="images/logo.png" alt="Website Logo">
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="text" id="username" name="username" placeholder="Username" required>
+                    <i class="fa fa-user icon"></i> <!-- User icon -->
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <i class="fa fa-lock icon"></i> <!-- Lock icon -->
+                </div>
+                <a href="#" class="forgot-password">Forgot password?</a>
+                <button type="submit" class="login-button">LOGIN</button>
+            </form>
+            <div class="signup-link">
+                Don't have an account? <a href="#">Sign Up</a>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

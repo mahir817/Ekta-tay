@@ -1,11 +1,8 @@
 body {
     font-family: 'Poppins', sans-serif;
     background-image: url('images/background.jpg');
-    /* Path to your image */
     background-size: cover;
-    /* Ensures the image covers the entire background */
     background-position: center;
-    /* Centers the image */
     background-repeat: no-repeat;
     display: flex;
     justify-content: center;
@@ -13,62 +10,84 @@ body {
     height: 100vh;
     margin: 0;
 }
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.left-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+    text-align: left;
+    color: #fff;
+    margin-right: 50px;
+}
+
+.welcome-image {
+    width: 350px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.welcome-message h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.welcome-message p {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+}
+
 .login-container {
-    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white background */
-    backdrop-filter: blur(15px); /* Blur effect */
-    border-radius: 12px; /* Rounded corners */
-    border: 0px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Shadow for depth */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 12px;
+    border: 0px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
     padding: 20px;
     width: 300px;
     text-align: center;
-    position: absolute;
-    right: 100px;
-    /* Adjust as needed */
-    top: 50%;
-    transform: translateY(-50%);
-
 }
+
 .logo {
     margin-bottom: 20px;
     text-align: center;
-    /* Center the logo */
 }
 
 .logo img {
     max-width: 100%;
-    /* Ensure the image is responsive */
     height: auto;
-    /* Maintain aspect ratio */
-    width: 50px;
-    /* Adjust the size as needed */
+    width: 100px;
 }
+
 .input-group {
     margin-bottom: 20px;
     text-align: left;
     position: relative;
 }
 
-.input-group label {
-    display: block;
-    margin-bottom: 5px;
-}
 .input-group input::placeholder {
     color: #bdbaba;
-    /* Light gray placeholder text */
     font-family: 'Poppins';
     font-size: 16px;
-    
 }
+
 .input-group input {
     width: calc(100% - 16px);
-    /* Adjust width to account for padding */
     height: 22px;
     padding: 8px;
-    border: 0px solid #1d1d1e;
+    border: 0px solid #d7d7dd;
     border-radius: 4px;
     background-color: #f9f9f943;
-    
 }
 
 .input-group .icon {
@@ -79,10 +98,11 @@ body {
     cursor: pointer;
     color: #d1d1d171;
 }
+
 .forgot-password {
     display: block;
     margin-bottom: 15px;
-    color: #000000;
+    color: #e9e3e3;
     text-decoration: none;
     text-align: left;
 }
@@ -96,7 +116,6 @@ body {
     border-radius: 4px;
     cursor: pointer;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-    
 }
 
 .login-button:hover {
@@ -106,9 +125,10 @@ body {
 .signup-link {
     margin-top: 15px;
     text-align: center;
+    color: #ededed;
 }
 
 .signup-link a {
-    color: #ededed;
+    color:  #2c3641;
     text-decoration: none;
 }
