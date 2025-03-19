@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Login form validation
+
     document.getElementById('loginForm').addEventListener('submit', function (event) {
         event.preventDefault();
         const username = document.getElementById('username').value.trim();

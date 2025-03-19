@@ -47,7 +47,6 @@ body {
     color: #e0e0e0;
 }
 
-/* Vertical Shadow Line */
 .vertical-shadow {
     width: 1px;
     height: 500px;
@@ -95,7 +94,7 @@ body {
     padding: 8px;
     border: 0px solid #d7d7dd;
     border-radius: 4px;
-    background-color: #f9f9f943;
+    background-color: #f9f9f91d;
 }
 
 .input-group .icon {
