@@ -2,11 +2,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // Registration form validation
     document.getElementById('registrationForm').addEventListener('submit', function (event) {
         event.preventDefault();
+
+        // Get the selected role
+        const selectedRole = document.querySelector('input[name="role"]:checked').value;
+
+        // Get form values
         const username = document.getElementById('username').value.trim();
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
         const confirmPassword = document.getElementById('confirm-password').value.trim();
 
+        // Validation
         if (username.length < 3) {
             alert('Username must be at least 3 characters.');
             return;
@@ -27,7 +33,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        alert('Registration successful!');
+        // Display success message with the selected role
+        alert(`Registration successful as a ${selectedRole}!`);
         window.location.href = "dashboard.html"; // Redirect after registration
     });
 });

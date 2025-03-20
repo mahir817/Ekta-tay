@@ -1,6 +1,6 @@
 body {
     font-family: 'Poppins', sans-serif;
-    background-image: url('images/background.jpg');
+    background-image: url('../images/background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -20,10 +20,10 @@ body {
     margin: 0 auto;
 }
 
-/* Logo at the Top */
 .logo {
     margin-bottom: 20px;
     text-align: center;
+    padding: 0px;
 }
 
 .logo img {
@@ -42,6 +42,9 @@ body {
     padding: 20px;
     width: 300px;
     text-align: center;
+    font-family: 'Poppins', sans-serif;
+    color: #6aba9d;
+    
 }
 
 .input-group {
@@ -98,4 +101,61 @@ body {
 .login-link a {
     color: #2c3641;
     text-decoration: none;
+}
+/* Register as Section */
+.register-as {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.register-as h3 {
+    color: #e8e8e8;
+    margin-bottom: 10px;
+    text-align: left;
+    font-size: 15px;
+}
+
+.role-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 10px;
+    
+}
+
+.role-option {
+    display: inline-block;
+}
+
+.role-option input[type="radio"] {
+    display: none;
+    /* Hide the default radio button */
+}
+
+.role-button {
+    display: inline-block;
+    padding: 10px 20px;
+    height: 16px;
+    line-height: 20px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    color: #6aba9d;
+    cursor: pointer;
+    transition: background-color 0.5s ease, border-color 0.6s ease;
+    text-align: center;
+}
+
+.role-option input[type="radio"]:checked+.role-button {
+    background-color: rgba(88, 154, 125, 0.364);
+    /* Selected background */
+    border-color: #2c5043;
+    /* Selected border */
+    color: #fff;
+}
+.role-button:hover {
+    background-color: rgba(255, 255, 255, 0);
+    /* Hover background */
+    border-color: rgb(1, 70, 53);
+    color: #efefef;
 }
