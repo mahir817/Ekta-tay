@@ -184,7 +184,7 @@ body {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     width: 40px;
@@ -204,7 +204,7 @@ body {
 
 /* Dark Mode Styles */
 body.dark-mode {
-    background-color: #1a1a1a;
+    background-image: url('../images/background3.jpg');
     color: #ffffff;
 }
 
