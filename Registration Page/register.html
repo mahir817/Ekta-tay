@@ -11,6 +11,11 @@
 </head>
 
 <body>
+    <!-- Dark Mode Toggle Button -->
+    <button id="themeToggle" class="theme-toggle">
+        <i class="fa fa-moon"></i> 
+    </button>
+
     <div class="container">
         <div class="registration-container">
             <div class="logo">
@@ -18,26 +23,32 @@
                 <h2>REGISTRATION</h2>
             </div>
 
-            
-
             <form id="registrationForm">
                 <div class="input-group">
                     <input type="text" id="username" name="username" placeholder="Username" required>
-                    <i class="fa fa-user icon"></i> <!-- User icon -->
+                    <i class="fa fa-user icon"></i>
+                    <div id="username-error" class="error-message"></div> 
                 </div>
+
+                
                 <div class="input-group">
                     <input type="email" id="email" name="email" placeholder="Email" required>
-                    <i class="fa fa-envelope icon"></i> <!-- Email icon -->
+                    <i class="fa fa-envelope icon"></i>
+                    <div id="email-error" class="error-message"></div>
                 </div>
+
+                <!-- Password Field -->
                 <div class="input-group">
                     <input type="password" id="password" name="password" placeholder="Password" required>
-                    <i class="fa fa-lock icon"></i> <!-- Lock icon -->
+                    <i class="fa fa-eye-slash icon" id="togglePassword"></i> <!-- Show Password Toggle -->
+                    <div id="password-error" class="error-message"></div> <!-- Error message placeholder -->
                 </div>
                 <div class="input-group">
-                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password"
-                        required>
-                    <i class="fa fa-lock icon"></i> <!-- Lock icon -->
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required>
+                    <i class="fa fa-eye-slash icon" id="toggleConfirmPassword"></i> <!-- Show Confirm Password Toggle -->
+                    <div id="confirm-password-error" class="error-message"></div> <!-- Error message placeholder -->
                 </div>
+
                 <!-- Register as Section -->
                 <div class="register-as">
                     <h3>Register as:</h3>
@@ -52,7 +63,12 @@
                         </label>
                     </div>
                 </div>
-                <button type="submit" class="registration-button">REGISTER</button>
+
+                <!-- Submit Button with Loading Spinner -->
+                <button type="submit" class="registration-button" id="submitButton">
+                    <span id="buttonText">REGISTER</span>
+                    <div id="loadingSpinner" class="spinner"></div> 
+                </button>
             </form>
             <div class="login-link">
                 Already have an account? <a href="../Login Page/login.html">Login here</a>
