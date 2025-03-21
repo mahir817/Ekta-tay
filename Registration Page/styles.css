@@ -204,12 +204,12 @@ body {
 
 /* Dark Mode Styles */
 body.dark-mode {
-    background-image: url('../images/background3.jpg');
+    background-image: url('../images/darkbg2.jpg');
     color: #ffffff;
 }
 
 body.dark-mode .registration-container {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(65, 65, 65, 0.269);
     color: #ffffff;
 }
 
@@ -228,12 +228,12 @@ body.dark-mode .role-button {
 }
 
 body.dark-mode .role-option input[type="radio"]:checked+.role-button {
-    background-color: #51937b;
+    background-color: #888888;
     color: #ffffff;
 }
 
 body.dark-mode .login-link a {
-    color: #6aba9d;
+    color: #757575;
 }
 
 body.dark-mode .theme-toggle {
