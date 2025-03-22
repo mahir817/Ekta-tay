@@ -233,7 +233,7 @@ body.dark-mode .role-option input[type="radio"]:checked+.role-button {
 }
 
 body.dark-mode .login-link a {
-    color: #757575;
+    color: #77999d;
 }
 
 body.dark-mode .theme-toggle {
