@@ -11,6 +11,10 @@
 </head>
 
 <body>
+    <!-- Dark Mode Toggle Button -->
+    <button id="themeToggle" class="theme-toggle">
+        <i class="fa fa-moon"></i>
+    </button>
     <div class="container">
         <!-- Left Section: Welcome Message and Image -->
         <div class="left-section">
@@ -38,7 +42,7 @@
                 </div>
                 <div class="input-group">
                     <input type="password" id="password" name="password" placeholder="Password" required>
-                    <i class="fa fa-lock icon"></i> <!-- Lock icon -->
+                    <i class="fa fa-eye-slash icon" id="togglePassword"></i> 
                 </div>
                 <a href="#" class="forgot-password">Forgot password?</a>
                 <button type="submit" class="login-button">LOGIN</button>

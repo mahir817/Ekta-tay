@@ -140,4 +140,69 @@ body {
     text-decoration: none;
 }
 
+/* Dark Mode Toggle Button */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6aba9d;
+    transition: background 0.3s ease, color 0.3s ease;
+}
 
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #51937b;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-image: url('../images/darkbg2.jpg');
+    color: #ffffff;
+}
+
+body.dark-mode .registration-container {
+    background: rgba(65, 65, 65, 0.269);
+    color: #ffffff;
+}
+
+body.dark-mode .input-group input {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+body.dark-mode .input-group input::placeholder {
+    color: #bdbaba;
+}
+
+body.dark-mode .role-button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+body.dark-mode .role-option input[type="radio"]:checked+.role-button {
+    background-color: #888888;
+    color: #ffffff;
+}
+
+body.dark-mode .login-link a {
+    color: #757575;
+}
+
+body.dark-mode .theme-toggle {
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+}
+
+body.dark-mode .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.7);
+    color: #6aba9d;
+}
