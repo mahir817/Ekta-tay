@@ -142,11 +142,12 @@ body {
 }
 
 /* Dark Mode Toggle Button */
+/* Dark Mode Toggle Button */
 .theme-toggle {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
     width: 40px;
@@ -156,12 +157,58 @@ body {
     align-items: center;
     justify-content: center;
     color: #6aba9d;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 18px;
 }
 
 .theme-toggle:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.3);
     color: #51937b;
+    transform: scale(1.1);
+    /* Slightly enlarge on hover */
+}
+
+/* Tooltip text for hover */
+.theme-toggle::after {
+    content: "LIGHT";
+    /* Default text */
+    position: absolute;
+    top: 50px;
+    /* Position below the button */
+    right: 50%;
+    transform: translateX(50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    white-space: nowrap;
+}
+
+.theme-toggle:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Dark mode specific styles */
+body.dark-mode .theme-toggle {
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.7);
+    color: #6aba9d;
+}
+
+body.dark-mode .theme-toggle::after {
+    content: "DARK";
+    /* Change text for dark mode */
 }
 
 /* Dark Mode Styles */
