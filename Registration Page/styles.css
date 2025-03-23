@@ -223,6 +223,9 @@ body.dark-mode {
 body.dark-mode .registration-container {
     background: rgba(65, 65, 65, 0.269);
     color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08),
+            0 0 20px rgba(106, 153, 186, 0.6);
+        /* Glow effect */
 }
 
 body.dark-mode .input-group input {
