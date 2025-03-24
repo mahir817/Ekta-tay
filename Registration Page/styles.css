@@ -194,7 +194,7 @@ body {
 /* Dark Mode Toggle Button */
 .theme-toggle {
     position: fixed;
-    top: 20px;
+    top: 15px;
     right: 20px;
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);

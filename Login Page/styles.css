@@ -146,8 +146,9 @@ body {
 /* Dark Mode Toggle Button */
 .theme-toggle {
     position: fixed;
-    top: 20px;
+    top: 15px; 
     right: 20px;
+    z-index: 1001;
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
@@ -241,6 +242,7 @@ body.dark-mode .login-link a {
 body.dark-mode .theme-toggle {
     background: rgba(0, 0, 0, 0.5);
     color: #ffffff;
+    
 }
 
 body.dark-mode .theme-toggle:hover {
@@ -315,6 +317,9 @@ body.dark-mode .vertical-shadow {
 /* Dark Mode Styles for Navbar */
 body.dark-mode .navbar {
     background: rgba(65, 65, 65, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08),
+            0 0 20px rgba(75, 203, 150, 0.6);
+        /* Glow effect */
 }
 
 body.dark-mode .site-name {
