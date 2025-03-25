@@ -11,7 +11,27 @@ body {
     margin: 0;
     margin-bottom: 30px;
 }
+.registration-header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+}
 
+.registration-header h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.registration-header p {
+    font-size: 1rem;
+    color: #e0e0e0;
+}
+
+/* Dark mode adjustments */
+
+body.dark-mode .registration-header p {
+    color: rgb(106, 153, 186);;
+}
 .container {
     display: flex;
     flex-direction: column;
@@ -74,7 +94,7 @@ body {
 
 .mentor-button {
     padding: 8px 20px;
-    background-color: #51937b;
+    background-color: rgba(106, 153, 186, 0.6);
     color: white;
     border-radius: 20px;
     text-decoration: none;
@@ -85,7 +105,7 @@ body {
 
 .mentor-button:hover {
     background-color: transparent;
-    border-color: #51937b;
+    border-color: #70aecb;
     color: #ffffff;
 }
 /* Registration Box */
@@ -282,10 +302,9 @@ body {
     /* Default text */
     position: absolute;
     top: 50px;
-    /* Position below the button */
     right: 50%;
     transform: translateX(50%);
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.315);
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -302,6 +321,14 @@ body {
 }
 
 /* Dark mode specific styles */
+body.dark-mode .mentor-button{
+    background-color: rgba(106, 153, 186, 0.6);
+    color: #ffffff;
+}
+body.dark-mode .mentor-button:hover {
+    background-color: rgba(106, 153, 186, 0);
+    color: #ffffff;
+}
 body.dark-mode .theme-toggle {
     background: rgba(0, 0, 0, 0.5);
     color: #ffffff;
