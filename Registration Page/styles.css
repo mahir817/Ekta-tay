@@ -24,7 +24,7 @@ body {
 
 .registration-header p {
     font-size: 1rem;
-    color: #e0e0e0;
+    color: #92b3de;
 }
 
 /* Dark mode adjustments */
@@ -413,14 +413,21 @@ body.dark-mode .theme-toggle:hover {
     -webkit-appearance: none;
 }
 
-
-/* Style for dropdown icon */
+.input-group select option{
+    background-color: #c7c7c7;
+    color: #454545;
+    border-radius: 15px;
+}
 .fa-venus-mars {
     color: #d1d1d171;
 }
 
-/* Dark mode adjustments */
 body.dark-mode .input-group select {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
+    color: #bdbaba;
+}
+
+body.dark-mode .input-group select option {
+    background-color: #454545;
+    color: #c7c7c7;
 }
