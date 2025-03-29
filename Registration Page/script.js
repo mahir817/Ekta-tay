@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         body.classList.add('dark-mode');
-        themeToggle.innerHTML = '<i class="fa fa-sun"></i>'; 
+        themeToggle.innerHTML = '<i class="fa fa-sun"></i>';
     }
 
     // Toggle Dark Mode
@@ -16,17 +16,21 @@ document.addEventListener("DOMContentLoaded", function () {
             body.classList.toggle('dark-mode');
             if (body.classList.contains('dark-mode')) {
                 localStorage.setItem('theme', 'dark');
-                themeToggle.innerHTML = '<i class="fa fa-sun"></i>'; // Sun icon for light mode
+                themeToggle.innerHTML = '<i class="fa fa-sun"></i>';
             } else {
                 localStorage.setItem('theme', 'light');
-                themeToggle.innerHTML = '<i class="fa fa-moon"></i>'; // Moon icon for dark mode
+                themeToggle.innerHTML = '<i class="fa fa-moon"></i>';
             }
         });
     }
 
-    // Real-Time Validation
-    const usernameInput = document.getElementById('username');
+    // Form Elements
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
     const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const citySelect = document.getElementById('city');
+    const locationSelect = document.getElementById('location');
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('confirm-password');
     const submitButton = document.getElementById('submitButton');
@@ -35,16 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Password Toggle
     const togglePassword = document.getElementById('togglePassword');
-    const passwordField = document.getElementById('password');
-
-    if (togglePassword && passwordField) {
+    if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function () {
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
                 this.classList.remove('fa-eye-slash');
                 this.classList.add('fa-eye');
             } else {
-                passwordField.type = 'password';
+                passwordInput.type = 'password';
                 this.classList.remove('fa-eye');
                 this.classList.add('fa-eye-slash');
             }
@@ -53,38 +55,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Confirm Password Toggle
     const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-    const confirmPasswordField = document.getElementById('confirm-password');
-
-    if (toggleConfirmPassword && confirmPasswordField) {
+    if (toggleConfirmPassword && confirmPasswordInput) {
         toggleConfirmPassword.addEventListener('click', function () {
-            if (confirmPasswordField.type === 'password') {
-                confirmPasswordField.type = 'text';
+            if (confirmPasswordInput.type === 'password') {
+                confirmPasswordInput.type = 'text';
                 this.classList.remove('fa-eye-slash');
                 this.classList.add('fa-eye');
             } else {
-                confirmPasswordField.type = 'password';
+                confirmPasswordInput.type = 'password';
                 this.classList.remove('fa-eye');
                 this.classList.add('fa-eye-slash');
             }
         });
     }
 
-    // Real-Time Username Validation
-    if (usernameInput) {
-        usernameInput.addEventListener('input', function () {
-            const username = this.value.trim();
-            const usernameError = document.getElementById('username-error');
-            if (username.length < 3) {
-                if (!usernameError) {
+    // Real-Time First Name Validation
+    if (firstNameInput) {
+        firstNameInput.addEventListener('input', function () {
+            const firstName = this.value.trim();
+            const firstNameError = document.getElementById('firstName-error');
+            if (firstName.length < 2) {
+                if (!firstNameError) {
                     const errorMessage = document.createElement('div');
-                    errorMessage.id = 'username-error';
-                    errorMessage.style.color = 'red';
-                    errorMessage.textContent = 'Username must be at least 3 characters.';
+                    errorMessage.id = 'firstName-error';
+                    errorMessage.className = 'error-message';
+                    errorMessage.textContent = 'First name must be at least 2 characters.';
                     this.parentElement.appendChild(errorMessage);
                 }
             } else {
-                if (usernameError) {
-                    usernameError.remove();
+                if (firstNameError) {
+                    firstNameError.remove();
+                }
+            }
+        });
+    }
+
+    // Real-Time Last Name Validation
+    if (lastNameInput) {
+        lastNameInput.addEventListener('input', function () {
+            const lastName = this.value.trim();
+            const lastNameError = document.getElementById('lastName-error');
+            if (lastName.length < 2) {
+                if (!lastNameError) {
+                    const errorMessage = document.createElement('div');
+                    errorMessage.id = 'lastName-error';
+                    errorMessage.className = 'error-message';
+                    errorMessage.textContent = 'Last name must be at least 2 characters.';
+                    this.parentElement.appendChild(errorMessage);
+                }
+            } else {
+                if (lastNameError) {
+                    lastNameError.remove();
                 }
             }
         });
@@ -95,17 +116,38 @@ document.addEventListener("DOMContentLoaded", function () {
         emailInput.addEventListener('input', function () {
             const email = this.value.trim();
             const emailError = document.getElementById('email-error');
-            if (!email.includes('@')) {
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 if (!emailError) {
                     const errorMessage = document.createElement('div');
                     errorMessage.id = 'email-error';
-                    errorMessage.style.color = 'red';
+                    errorMessage.className = 'error-message';
                     errorMessage.textContent = 'Please enter a valid email address.';
                     this.parentElement.appendChild(errorMessage);
                 }
             } else {
                 if (emailError) {
                     emailError.remove();
+                }
+            }
+        });
+    }
+
+    // Real-Time Phone Validation
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function () {
+            const phone = this.value.trim();
+            const phoneError = document.getElementById('phone-error');
+            if (!/^[0-9]{11,15}$/.test(phone)) {
+                if (!phoneError) {
+                    const errorMessage = document.createElement('div');
+                    errorMessage.id = 'phone-error';
+                    errorMessage.className = 'error-message';
+                    errorMessage.textContent = 'Phone must be 11-15 digits.';
+                    this.parentElement.appendChild(errorMessage);
+                }
+            } else {
+                if (phoneError) {
+                    phoneError.remove();
                 }
             }
         });
@@ -120,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!passwordError) {
                     const errorMessage = document.createElement('div');
                     errorMessage.id = 'password-error';
-                    errorMessage.style.color = 'red';
+                    errorMessage.className = 'error-message';
                     errorMessage.textContent = 'Password must be at least 6 characters.';
                     this.parentElement.appendChild(errorMessage);
                 }
@@ -137,48 +179,85 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('registrationForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
-            // Get the selected role
-            const selectedRole = document.querySelector('input[name="role"]:checked').value;
-
             // Get form values
-            const username = usernameInput.value.trim();
+            const firstName = firstNameInput.value.trim();
+            const lastName = lastNameInput.value.trim();
             const email = emailInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const city = citySelect.value;
+            const location = locationSelect.value;
+            const gender = document.querySelector('input[name="gender"]:checked').value;
             const password = passwordInput.value.trim();
             const confirmPassword = confirmPasswordInput.value.trim();
+            const role = document.querySelector('input[name="role"]:checked').value;
 
             // Validation
-            if (username.length < 3) {
-                alert('Username must be at least 3 characters.');
-                return;
+            let isValid = true;
+            const errors = [];
+
+            if (firstName.length < 2) {
+                errors.push('First name must be at least 2 characters.');
+                isValid = false;
             }
 
-            if (!email.includes('@')) {
-                alert('Please enter a valid email address.');
-                return;
+            if (lastName.length < 2) {
+                errors.push('Last name must be at least 2 characters.');
+                isValid = false;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                errors.push('Please enter a valid email address.');
+                isValid = false;
+            }
+
+            if (!/^[0-9]{11,15}$/.test(phone)) {
+                errors.push('Phone must be 11-15 digits.');
+                isValid = false;
+            }
+
+            if (city === "") {
+                errors.push('Please select your city.');
+                isValid = false;
+            }
+
+            if (location === "") {
+                errors.push('Please select your location.');
+                isValid = false;
             }
 
             if (password.length < 6) {
-                alert('Password must be at least 6 characters.');
-                return;
+                errors.push('Password must be at least 6 characters.');
+                isValid = false;
             }
 
             if (password !== confirmPassword) {
-                alert('Passwords do not match.');
+                errors.push('Passwords do not match.');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                alert(errors.join('\n'));
                 return;
             }
+
+            // Show loading state
             buttonText.textContent = 'Registering...';
             loadingSpinner.style.display = 'inline-block';
             submitButton.disabled = true;
 
+            // Simulate form submission
             setTimeout(() => {
+                // Reset button state
                 buttonText.textContent = 'REGISTER';
                 loadingSpinner.style.display = 'none';
                 submitButton.disabled = false;
 
-                alert(`Registration successful as a ${selectedRole}!`);
+                // Show success message
+                alert(`Registration successful!\nYou've registered as a ${role} (${gender}).`);
 
+                // Redirect to dashboard
                 window.location.href = "dashboard.html";
-            }, 2000); 
+            }, 2000);
         });
     }
 });

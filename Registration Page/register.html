@@ -40,33 +40,83 @@
                 <img src="../images/usericon.png" alt="User icon">
             </div>
 
+            <!-- Replace your existing form with this one -->
             <form id="registrationForm">
                 <div class="input-group">
-                    <input type="text" id="username" name="username" placeholder="Username" required>
+                    <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
                     <i class="fa fa-user icon"></i>
-                    <div id="username-error" class="error-message"></div>
+                    <div id="firstName-error" class="error-message"></div>
                 </div>
-
+            
+                <div class="input-group">
+                    <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+                    <i class="fa fa-user icon"></i>
+                    <div id="lastName-error" class="error-message"></div>
+                </div>
+            
                 <div class="input-group">
                     <input type="email" id="email" name="email" placeholder="Email" required>
                     <i class="fa fa-envelope icon"></i>
                     <div id="email-error" class="error-message"></div>
                 </div>
-
+            
+                <div class="input-group">
+                    <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+                    <i class="fa fa-phone icon"></i>
+                    <div id="phone-error" class="error-message"></div>
+                </div>
+            
+                <div class="input-group">
+                    <select id="city" name="city" required>
+                        <option value="">Select your city</option>
+                        <option value="dhaka">Dhaka</option>
+                        <option value="chittagong">Chittagong</option>
+                        <option value="sylhet">Sylhet</option>
+                        <option value="khulna">Khulna</option>
+                        <option value="barisal">Barisal</option>
+                    </select>
+                    <i class="fa fa-city icon"></i>
+                </div>
+            
+                <div class="input-group">
+                    <select id="location" name="location" required>
+                        <option value="">Select your location</option>
+                        <option value="mirpur">Mirpur</option>
+                        <option value="dhanmondi">Dhanmondi</option>
+                        <option value="uttara">Uttara</option>
+                        <option value="gulshan">Gulshan</option>
+                    </select>
+                    <i class="fa fa-map-marker icon"></i>
+                </div>
+            
                 <!-- Password Field -->
                 <div class="input-group">
                     <input type="password" id="password" name="password" placeholder="Password" required>
                     <i class="fa fa-eye-slash icon" id="togglePassword"></i>
                     <div id="password-error" class="error-message"></div>
                 </div>
+            
                 <div class="input-group">
-                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password"
-                        required>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required>
                     <i class="fa fa-eye-slash icon" id="toggleConfirmPassword"></i>
                     <div id="confirm-password-error" class="error-message"></div>
                 </div>
-
-                <!-- Register as Section -->
+            
+                <!-- Gender Selection -->
+                <div class="input-group gender-group">
+                    <div class="gender-options">
+                        <label class="gender-option">
+                            <input type="radio" name="gender" value="male" checked>
+                            <span class="gender-button">Male</span>
+                        </label>
+                        <label class="gender-option">
+                            <input type="radio" name="gender" value="female">
+                            <span class="gender-button">Female</span>
+                        </label>
+                    </div>
+                </div>
+            
+                <!-- Register as Section (keep existing) -->
                 <div class="register-as">
                     <h3>Register as:</h3>
                     <div class="role-options">
@@ -86,7 +136,7 @@
                         </label>
                     </div>
                 </div>
-
+            
                 <!-- Submit Button with Loading Spinner -->
                 <button type="submit" class="registration-button" id="submitButton">
                     <span id="buttonText">REGISTER</span>
