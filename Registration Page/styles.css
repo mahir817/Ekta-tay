@@ -399,69 +399,28 @@ body.dark-mode .theme-toggle:hover {
 }
 
 
-
-/* Add these new styles to your existing CSS */
 .input-group select {
-    width: calc(100% - 16px);
+    width: calc(100%);
     height: 40px;
     padding: 8px;
+    font-family: 'Poppins';
     border: 0px solid #d7d7dd;
     border-radius: 4px;
     background-color: #f9f9f91d;
-    color: #ffffff;
-    font-family: 'Poppins';
-    font-size: 14px;
+    color: #bdbaba;
+    font-size: 16px;
     appearance: none;
     -webkit-appearance: none;
 }
 
-.gender-group {
-    margin-bottom: 20px;
-}
 
-.gender-options {
-    display: flex;
-    gap: 15px;
-}
-
-.gender-option {
-    display: flex;
-    align-items: center;
-}
-
-.gender-option input[type="radio"] {
-    display: none;
-}
-
-.gender-button {
-    display: inline-block;
-    padding: 8px 15px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    color: #b0b0b0;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.gender-option input[type="radio"]:checked+.gender-button {
-    background-color: rgba(62, 165, 234, 0.364);
-    border-color: #283e5b;
-    color: #fff;
+/* Style for dropdown icon */
+.fa-venus-mars {
+    color: #d1d1d171;
 }
 
 /* Dark mode adjustments */
 body.dark-mode .input-group select {
     background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-}
-
-body.dark-mode .gender-button {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-}
-
-body.dark-mode .gender-option input[type="radio"]:checked+.gender-button {
-    background-color: #888888;
     color: #ffffff;
 }
