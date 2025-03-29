@@ -16,13 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
             body.classList.toggle('dark-mode');
             if (body.classList.contains('dark-mode')) {
                 localStorage.setItem('theme', 'dark');
-                themeToggle.innerHTML = '<i class="fa fa-sun"></i>'; // Sun icon for light mode
+                themeToggle.innerHTML = '<i class="fa fa-sun"></i>';
             } else {
                 localStorage.setItem('theme', 'light');
-                themeToggle.innerHTML = '<i class="fa fa-moon"></i>'; // Moon icon for dark mode
+                themeToggle.innerHTML = '<i class="fa fa-moon"></i>';
             }
         });
     }
+
     // Password Toggle
     const togglePassword = document.getElementById('togglePassword');
     const passwordField = document.getElementById('password');
@@ -44,11 +45,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Login Form Submission
     document.getElementById('loginForm').addEventListener('submit', function (event) {
         event.preventDefault();
-        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
 
-        if (username.length < 3) {
-            alert('Username must be at least 3 characters.');
+        // Basic email validation
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            alert('Please enter a valid email address.');
             return;
         }
 
