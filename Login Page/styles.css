@@ -197,7 +197,7 @@ body {
         top: 20px;
         right: 120px;
         /* Move it slightly in from the edge */
-        background: rgb(0, 0, 0);
+        background: rgb(48,62,72);
         
         padding: 10px 20px;
         border-radius: 40px;
@@ -327,13 +327,7 @@ body.dark-mode .vertical-shadow {
     background-color: rgba(255, 255, 255, 0.194);
     box-shadow: 2px 0 6px rgba(38,208, 151, 30);
 }
-/* Dark Mode Styles for Navbar */
-body.dark-mode .navbar {
-    background: rgba(65, 65, 65, 0.2);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08),
-        0 0 20px rgba(75, 203, 150, 0.6);
-    /* Glow effect */
-}
+
 
 body.dark-mode .site-name {
     color: #ffffff;
