@@ -1,65 +1,67 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Dark Mode Toggle
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
-
-    // Check for saved theme in localStorage
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        body.classList.add('dark-mode');
-        themeToggle.innerHTML = '<i class="fa fa-sun"></i>';
-    }
-
-    // Toggle Dark Mode
-    if (themeToggle) {
-        themeToggle.addEventListener('click', function () {
-            body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                themeToggle.innerHTML = '<i class="fa fa-sun"></i>';
-            } else {
-                localStorage.setItem('theme', 'light');
-                themeToggle.innerHTML = '<i class="fa fa-moon"></i>';
-            }
-        });
-    }
-
-    // Password Toggle
+    const form = document.getElementById('loginForm');
+    const passwordInput = document.getElementById('password');
     const togglePassword = document.getElementById('togglePassword');
-    const passwordField = document.getElementById('password');
 
-    if (togglePassword && passwordField) {
+    // Password toggle (eye icon)
+    if (togglePassword && passwordInput) {
         togglePassword.addEventListener('click', function () {
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
                 this.classList.remove('fa-eye-slash');
                 this.classList.add('fa-eye');
             } else {
-                passwordField.type = 'password';
+                passwordInput.type = 'password';
                 this.classList.remove('fa-eye');
                 this.classList.add('fa-eye-slash');
             }
         });
     }
 
-    // Login Form Submission
-    document.getElementById('loginForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
+    // Login form submission
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-        // Basic email validation
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            alert('Please enter a valid email address.');
-            return;
-        }
+            const email = document.getElementById('email').value.trim();
+            const password = passwordInput.value.trim();
 
-        if (password.length < 6) {
-            alert('Password must be at least 6 characters.');
-            return;
-        }
+            // Basic validation
+            if (!email || !password) {
+                alert("Please enter email and password.");
+                return;
+            }
 
-        alert('Login successful!');
-        window.location.href = "dashboard.html";
-    });
+            // Disable form during request
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = "Logging in...";
+
+            // Send login request to PHP backend (port 8080)
+            fetch('http://localhost:8080/Ekta-Tay/backend/login.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = "LOGIN";
+
+                    if (data.success) {
+                        alert("Login successful!");
+                        // Redirect to dashboard
+                        window.location.href = data.redirect_url || "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php";
+                    } else {
+                        alert("Login failed: " + data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("An error occurred. Please try again.");
+                    submitButton.disabled = false;
+                    submitButton.textContent = "LOGIN";
+                });
+        });
+    }
 });
