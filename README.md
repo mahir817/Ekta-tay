@@ -1,2 +1,2 @@
 # MentorMate
-A tuition finding website
+A digital Ecosystem
