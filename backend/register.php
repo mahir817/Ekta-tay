@@ -56,19 +56,9 @@ try {
     $stmt->execute([$full_name,$email,$hashed,$phone,$location,$gender]);
     $user_id = $pdo->lastInsertId();
 
-    // Assign capabilities
-    $role_caps = $role === 'student'
-        ? ['find_job','find_tutor','find_room']
-        : ['post_job','offer_tuition','offer_room'];
+    
 
-    $cap_stmt = $pdo->prepare("SELECT id FROM capabilities WHERE capability_name=?");
-    $user_cap_stmt = $pdo->prepare("INSERT INTO user_capabilities (user_id, capability_id) VALUES (?,?)");
-
-    foreach($role_caps as $cap){
-        $cap_stmt->execute([$cap]);
-        $cap_id = $cap_stmt->fetchColumn();
-        if($cap_id) $user_cap_stmt->execute([$user_id,$cap_id]);
-    }
+    
 
     // Check capability count
     $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM user_capabilities WHERE user_id=?");
