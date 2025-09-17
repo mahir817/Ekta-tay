@@ -18,7 +18,7 @@ try {
     exit;
 }
 
-// Get JSON
+// Get JSON from frontend (login.js)
 $data = json_decode(file_get_contents('php://input'), true);
 if (!$data) {
     echo json_encode(["success"=>false,"message"=>"No data received"]);
@@ -50,24 +50,28 @@ try {
         exit;
     }
 
-    // Fetch capabilities
-    $stmt = $pdo->prepare("SELECT c.capability_name FROM capabilities c 
-                           JOIN user_capabilities uc ON c.id = uc.capability_id 
-                           WHERE uc.user_id=?");
+    // Check if user has capabilities
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM user_capabilities WHERE user_id=?");
     $stmt->execute([$user['id']]);
-    $capabilities = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $capabilityCount = $stmt->fetchColumn();
 
-    // Store in session
+    // Store session
     $_SESSION['user_id'] = $user['id'];
     $_SESSION['user_name'] = $user['name'];
-    $_SESSION['capabilities'] = $capabilities;
+    $_SESSION['user_email'] = $user['email'];
+
+    // Decide redirect
+    if ($capabilityCount == 0) {
+        $redirect = "http://localhost:8080/Ekta-Tay/Capability%20Setup/setup.html";
+    } else {
+        $redirect = "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php";
+    }
 
     echo json_encode([
         "success" => true,
-        "redirect_url" => "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php"
+        "redirect_url" => $redirect
     ]);
 
 } catch(PDOException $e) {
     echo json_encode(["success"=>false,"message"=>"Login failed: ".$e->getMessage()]);
 }
-?>

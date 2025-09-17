@@ -70,7 +70,20 @@ try {
         if($cap_id) $user_cap_stmt->execute([$user_id,$cap_id]);
     }
 
-    echo json_encode(["success"=>true,"redirect_url"=>"http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php"]);
+    // Check capability count
+    $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM user_capabilities WHERE user_id=?");
+    $count_stmt->execute([$user_id]);
+    $capabilityCount = $count_stmt->fetchColumn();
+
+    // Redirect based on capabilities
+    if ($capabilityCount == 0) {
+        $redirect = "http://localhost:8080/Ekta-Tay/Capability%20Setup/setup.html";
+    } else {
+        $redirect = "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php";
+    }
+
+    echo json_encode(["success"=>true,"redirect_url"=>$redirect]);
+
 } catch(PDOException $e){
     echo json_encode(["success"=>false,"message"=>"Registration failed: ".$e->getMessage()]);
 }
