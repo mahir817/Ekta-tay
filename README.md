@@ -1,2 +1,2 @@
-# MentorMate
+# Ekta-tay
 A digital Ecosystem
