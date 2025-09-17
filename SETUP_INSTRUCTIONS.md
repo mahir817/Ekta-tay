@@ -14,12 +14,12 @@
    - Click "Go" to import
 
 3. **Verify Setup**
-   - Visit: `http://localhost:8080/Ekta-tay2/backend/test_connection.php`
+   - Visit: `http://localhost:8080/Ekta-tay/backend/test_connection.php`
    - You should see: "✅ Database connection successful!"
 
 ### 2. Test Registration
 1. **Open Registration Page**
-   - Visit: `http://localhost:8080/Ekta-tay2/Registration Page/register.html`
+   - Visit: `http://localhost:8080/Ekta-tay/Registration Page/register.html`
 
 2. **Fill Registration Form**
    - Enter your details
