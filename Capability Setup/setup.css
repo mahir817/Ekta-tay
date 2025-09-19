@@ -1,34 +1,48 @@
 /* General Page */
 body {
-    font-family: "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #f8f9fb, #e9eff5);
+    font-family: 'Poppins', sans-serif;
+    background-image: url('../images/background2.png');
+    background-size: cover;
+    background-position: center;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     margin: 0;
+    backdrop-filter: blur(4px);
 }
 
-/* Container */
+/* Container with Glassmorphism */
 .setup-container {
-    background: #fff;
+    
+    background: rgba(255, 255, 255, 0.15);
+    /* transparent frosted */
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.08);
+    box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.2);
     text-align: center;
     width: 90%;
     max-width: 600px;
+
+    /* Glass effect */
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 40px;
 }
 
 h1 {
     margin-bottom: 5px;
     font-size: 28px;
-    color: #333;
+    color: #ffffff;
+    /* brighter for contrast */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 p {
     margin-bottom: 20px;
-    color: #666;
+    color: #8aec8a;
+    font-style: italic;
     font-size: 15px;
 }
 
@@ -43,7 +57,7 @@ p {
 /* Card Style */
 .capability-card {
     position: relative;
-    background: #f9fafc;
+    background: rgba(255, 255, 255, 0.12);
     border: 2px solid transparent;
     border-radius: 15px;
     padding: 25px 15px;
@@ -51,19 +65,20 @@ p {
     cursor: pointer;
     transition: all 0.25s ease-in-out;
     user-select: none;
+    backdrop-filter: blur(8px);
 }
 
 .capability-card i {
     font-size: 24px;
     margin-bottom: 10px;
-    color: #666;
+    color: #f5f5f5;
     display: block;
 }
 
 .capability-card span {
     font-size: 14px;
     font-weight: 500;
-    color: #444;
+    color: #f1f1f1;
 }
 
 /* Hide checkbox */
@@ -74,25 +89,25 @@ p {
 /* Hover effect */
 .capability-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
-/* Selected State → BLUE BORDER + GLOW */
+/* Selected State → BLUE-GREEN BORDER + GLOW */
 .capability-card.active {
-    border: 2px solid #2563eb;
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
-    background: #f0f5ff;
+    border: 2px solid #63b496;
+    box-shadow: 0 6px 20px rgba(99, 180, 150, 0.6);
+    background: rgba(99, 180, 150, 0.2);
 }
 
 .capability-card.active i,
 .capability-card.active span {
-    color: #2563eb;
+    color: #94db7d;
     font-weight: 600;
 }
 
 /* Continue Button */
 .continue-btn {
-    background: linear-gradient(135deg, #2563eb, #1e40af);
+    background: linear-gradient(135deg, #63b496, #5196d7);
     color: #fff;
     border: none;
     padding: 14px 25px;
@@ -105,7 +120,14 @@ p {
 }
 
 .continue-btn:hover {
-    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    background: linear-gradient(135deg, #94db7d, #63b496);
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+
+/* Message text */
+#message {
+    margin-top: 15px;
+    color: #fff;
+    font-weight: 500;
 }
