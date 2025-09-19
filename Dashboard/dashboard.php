@@ -204,11 +204,30 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
             <!-- Header -->
             <header class="dashboard-header">
                 <h1 class="dashboard-title">Dashboard</h1>
-                <div class="user-profile">
+                <div class="user-profile" onclick="toggleDropdown()">
                     <div class="user-avatar">
                         <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                     </div>
-                    <span class="user-name"><?php echo htmlspecialchars($user['name']); ?></span>
+                    <div class="user-info">
+                        <span class="user-name"><?php echo htmlspecialchars($user['name']); ?></span>
+                        <div class="user-dropdown">
+                            <div class="dropdown-menu" id="userDropdown">
+                                <div class="dropdown-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>Profile</span>
+                                </div>
+                                <div class="dropdown-item">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Settings</span>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-item logout-item" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Logout</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </header>
 

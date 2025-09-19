@@ -18,6 +18,9 @@ function initializeDashboard() {
 
     // Setup mobile menu
     setupMobileMenu();
+
+    // Setup user dropdown
+    setupUserDropdown();
 }
 
 function addInteractiveEffects() {
@@ -333,3 +336,83 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// User Dropdown Functions
+function setupUserDropdown() {
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('userDropdown');
+        const userProfile = document.querySelector('.user-profile');
+
+        if (dropdown && userProfile && !userProfile.contains(event.target) && !dropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    // Add click handlers for dropdown items
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function (e) {
+            // Don't close dropdown for logout item (it has its own handler)
+            if (!this.classList.contains('logout-item')) {
+                e.preventDefault();
+                handleDropdownAction(this);
+            }
+        });
+    });
+}
+
+function handleDropdownAction(item) {
+    const itemText = item.querySelector('span').textContent;
+
+    switch (itemText) {
+        case 'Profile':
+            showNotification('Profile page coming soon!', 'info');
+            break;
+        case 'Settings':
+            showNotification('Settings page coming soon!', 'info');
+            break;
+    }
+
+    closeDropdown();
+}
+
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+
+    if (dropdown.classList.contains('show')) {
+        closeDropdown();
+    } else {
+        openDropdown();
+    }
+}
+
+function openDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+
+    dropdown.classList.add('show');
+}
+
+function closeDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+
+    dropdown.classList.remove('show');
+}
+
+// Logout function
+function logout() {
+    // Show confirmation dialog
+    if (confirm('Are you sure you want to logout?')) {
+        // Show loading state
+        showNotification('Logging out...', 'info');
+
+        // Create logout form and submit
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '../backend/logout.php';
+        form.style.display = 'none';
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}

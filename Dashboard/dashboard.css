@@ -10,8 +10,8 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-image: url('../images/darkbg2.jpg');
-    
+    background-image: url('../images/dashboard3.jpg');
+
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -160,6 +160,14 @@ body::before {
     padding: 0.75rem 1.5rem;
     border-radius: 50px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
 }
 
 .user-avatar {
@@ -174,9 +182,87 @@ body::before {
     font-weight: 600;
 }
 
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .user-name {
     font-weight: 500;
     color: white;
+}
+
+/* User Dropdown */
+.user-dropdown {
+    position: relative;
+    z-index: 10000;
+
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    min-width: 180px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 10001;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+}
+
+.dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.dropdown-item i {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0.5rem 0;
+}
+
+.logout-item {
+    color: #ff6b6b;
+}
+
+.logout-item:hover {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
 }
 
 /* Stats Grid */
@@ -197,6 +283,7 @@ body::before {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    z-index: 1;
 }
 
 .stat-card:hover {
