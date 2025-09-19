@@ -6,26 +6,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Setup Your Capabilities</title>
     <link rel="stylesheet" href="setup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
     <div class="setup-container">
         <h1>Welcome! 🎉</h1>
-        <p>What would you like to do on Ekta-Tay?</p>
+        <p>Select what you’d like to do on <b>Ekta-Tay</b></p>
 
-        <form id="capabilityForm">
-            <label><input type="checkbox" name="capabilities[]" value="find_tutor"> Find Tuition</label><br>
-            <label><input type="checkbox" name="capabilities[]" value="offer_tuition"> Offer Tuition</label><br>
-            <label><input type="checkbox" name="capabilities[]" value="find_job"> Find Job</label><br>
-            <label><input type="checkbox" name="capabilities[]" value="post_job"> Post Job</label><br>
-            <label><input type="checkbox" name="capabilities[]" value="food_service"> Food & Services</label><br>
-            <label><input type="checkbox" name="capabilities[]" value="find_room"> Find Housing</label><br>
-            <label><input type="checkbox" name="capabilities[]" value="offer_room"> Offer Housing</label><br>
-            <label><input type="checkbox" name="capabilities[]" value="expense_tracking"> Expense Tracking</label><br>
-            <br>
-            <button type="submit">Save & Continue</button>
+        <form id="capabilityForm" class="capability-grid">
+            <!-- Tuition -->
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="find_tutor">
+                <i class="fa-solid fa-book-open"></i>
+                <span>Find Tuition</span>
+            </label>
+
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="offer_tuition">
+                <i class="fa-solid fa-chalkboard-teacher"></i>
+                <span>Offer Tuition</span>
+            </label>
+
+            <!-- Jobs -->
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="find_job">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Find Job</span>
+            </label>
+
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="post_job">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>Post Job</span>
+            </label>
+
+            <!-- Food & Housing -->
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="food_service">
+                <i class="fa-solid fa-utensils"></i>
+                <span>Food & Services</span>
+            </label>
+
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="find_room">
+                <i class="fa-solid fa-house"></i>
+                <span>Find Housing</span>
+            </label>
+
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="offer_room">
+                <i class="fa-solid fa-door-open"></i>
+                <span>Offer Housing</span>
+            </label>
+
+            <!-- Expenses -->
+            <label class="capability-card">
+                <input type="checkbox" name="capabilities[]" value="expense_tracking">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Expense Tracking</span>
+            </label>
         </form>
 
+        <button type="submit" form="capabilityForm" class="continue-btn">Save & Continue</button>
         <div id="message"></div>
     </div>
 
