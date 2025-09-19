@@ -1,13 +1,122 @@
 <?php
 session_start();
-require_once("../backend/session.php");
-require_once("../backend/db.php");
+require_once "../backend/db.php";
 
-// Fetch capabilities for logged-in user
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Login Page/login.html");
+    exit();
+}
+
 $user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT capability FROM user_capabilities WHERE user_id = ?");
-$stmt->execute([$user_id]);
-$capabilities = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Get user information
+$userStmt = $pdo->prepare("SELECT name, email FROM users WHERE id = ?");
+$userStmt->execute([$user_id]);
+$user = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+// Get user capabilities
+$capStmt = $pdo->prepare("
+    SELECT c.capability_name 
+    FROM capabilities c 
+    JOIN user_capabilities uc ON c.id = uc.capability_id 
+    WHERE uc.user_id = ?
+");
+$capStmt->execute([$user_id]);
+$capabilities = $capStmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Get statistics based on capabilities
+$stats = [];
+
+// Housing stats
+if (in_array('find_room', $capabilities) || in_array('offer_room', $capabilities)) {
+    $housingStmt = $pdo->prepare("SELECT COUNT(*) FROM services WHERE type = 'housing'");
+    $housingStmt->execute();
+    $stats['housing'] = $housingStmt->fetchColumn();
+} else {
+    $stats['housing'] = 0;
+}
+
+// Job stats
+if (in_array('find_job', $capabilities) || in_array('post_job', $capabilities)) {
+    $jobStmt = $pdo->prepare("SELECT COUNT(*) FROM services WHERE type = 'job'");
+    $jobStmt->execute();
+    $stats['jobs'] = $jobStmt->fetchColumn();
+} else {
+    $stats['jobs'] = 0;
+}
+
+// Tutor stats
+if (in_array('find_tutor', $capabilities) || in_array('offer_tuition', $capabilities)) {
+    $tutorStmt = $pdo->prepare("SELECT COUNT(*) FROM services WHERE type = 'tuition'");
+    $tutorStmt->execute();
+    $stats['tutors'] = $tutorStmt->fetchColumn();
+} else {
+    $stats['tutors'] = 0;
+}
+
+// Services stats
+if (in_array('food_service', $capabilities)) {
+    $serviceStmt = $pdo->prepare("SELECT COUNT(*) FROM services WHERE type = 'food'");
+    $serviceStmt->execute();
+    $stats['services'] = $serviceStmt->fetchColumn();
+} else {
+    $stats['services'] = 0;
+}
+
+// Get recent activities
+$activities = [];
+if (in_array('find_room', $capabilities)) {
+    $activities[] = [
+        'icon' => '🏠',
+        'title' => 'New roommate requests',
+        'time' => '2 hours ago'
+    ];
+}
+if (in_array('expense_tracking', $capabilities)) {
+    $activities[] = [
+        'icon' => '💳',
+        'title' => 'Payment processing',
+        'time' => '1 hour ago'
+    ];
+}
+if (in_array('find_job', $capabilities)) {
+    $activities[] = [
+        'icon' => '💼',
+        'title' => 'Job application updates',
+        'time' => '3 hours ago'
+    ];
+}
+
+// Get expense data if user has expense tracking capability
+$expenseData = null;
+if (in_array('expense_tracking', $capabilities)) {
+    $expenseStmt = $pdo->prepare("
+        SELECT category, SUM(amount) as total 
+        FROM expenses 
+        WHERE user_id = ? 
+        GROUP BY category
+    ");
+    $expenseStmt->execute([$user_id]);
+    $expenseData = $expenseStmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Capability mapping for display
+$capabilityMap = [
+    'find_room' => 'Housing',
+    'offer_room' => 'Housing',
+    'find_job' => 'Jobs',
+    'post_job' => 'Jobs',
+    'find_tutor' => 'Tutors',
+    'offer_tuition' => 'Tutors',
+    'food_service' => 'Services',
+    'expense_tracking' => 'Expenses'
+];
+
+// Get available capabilities for navigation
+$availableCapabilities = array_unique(array_map(function($cap) use ($capabilityMap) {
+    return $capabilityMap[$cap] ?? ucfirst(str_replace('_', ' ', $cap));
+}, $capabilities));
 ?>
 
 <!DOCTYPE html>
@@ -15,79 +124,284 @@ $capabilities = $stmt->fetchAll(PDO::FETCH_COLUMN);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ekta-Tay Dashboard</title>
+    <title>Dashboard - Ekta Tay</title>
     <link rel="stylesheet" href="dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h2 class="logo">Ektate</h2>
-        <ul>
-            <li><a href="dashboard.php" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a></li>
-            <?php if (in_array("find_room", $capabilities) || in_array("offer_room", $capabilities)) { ?>
-                <li><a href="../Modules/Housing/housing.php"><i class="fa-solid fa-house"></i> Housing</a></li>
-            <?php } ?>
-            <?php if (in_array("find_job", $capabilities) || in_array("post_job", $capabilities)) { ?>
-                <li><a href="../Modules/Jobs/jobs.php"><i class="fa-solid fa-briefcase"></i> Jobs</a></li>
-            <?php } ?>
-            <?php if (in_array("find_tutor", $capabilities) || in_array("offer_tuition", $capabilities)) { ?>
-                <li><a href="../Modules/Jobs/jobs.php?type=tuition"><i class="fa-solid fa-graduation-cap"></i> Tuition</a></li>
-            <?php } ?>
-            <?php if (in_array("food_service", $capabilities)) { ?>
-                <li><a href="../Modules/Food & services/services.php"><i class="fa-solid fa-utensils"></i> Services</a></li>
-            <?php } ?>
-            <?php if (in_array("expense_tracking", $capabilities)) { ?>
-                <li><a href="../Modules/Housing/expenses.php"><i class="fa-solid fa-wallet"></i> Expenses</a></li>
-            <?php } ?>
-        </ul>
-    </div>
-
-    <div class="main-content">
-        <header>
-            <h1>Dashboard</h1>
-            <div class="profile">
-                <img src="../images/user.png" alt="Profile">
-                <span><?php echo $_SESSION['user_name']; ?></span>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">E</div>
+                    <div class="logo-text">EktaTay</div>
+                </div>
             </div>
-        </header>
+            
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                
+                <?php if (in_array('Housing', $availableCapabilities)): ?>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-home"></i>
+                        Housing
+                    </a>
+                </li>
+                <?php endif; ?>
+                
+                <?php if (in_array('Jobs', $availableCapabilities)): ?>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-briefcase"></i>
+                        Jobs
+                    </a>
+                </li>
+                <?php endif; ?>
+                
+                <?php if (in_array('Tutors', $availableCapabilities)): ?>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-graduation-cap"></i>
+                        Tuition
+                    </a>
+                </li>
+                <?php endif; ?>
+                
+                <?php if (in_array('Services', $availableCapabilities)): ?>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-wrench"></i>
+                        Services
+                    </a>
+                </li>
+                <?php endif; ?>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-cog"></i>
+                        Manage
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-question-circle"></i>
+                        Help
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
-        <section class="cards">
-            <?php if (in_array("find_room", $capabilities) || in_array("offer_room", $capabilities)) { ?>
-                <div class="glass-card">
-                    <i class="fa-solid fa-house"></i>
-                    <h3>Housing</h3>
-                    <p>Find or offer rooms easily</p>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <h1 class="dashboard-title">Dashboard</h1>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
+                    </div>
+                    <span class="user-name"><?php echo htmlspecialchars($user['name']); ?></span>
                 </div>
-            <?php } ?>
-            <?php if (in_array("find_job", $capabilities) || in_array("post_job", $capabilities)) { ?>
-                <div class="glass-card">
-                    <i class="fa-solid fa-briefcase"></i>
-                    <h3>Jobs</h3>
-                    <p>Search or post part-time jobs</p>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <?php if (in_array('Housing', $availableCapabilities)): ?>
+                <div class="stat-card fade-in-up">
+                    <div class="stat-header">
+                        <span class="stat-title">Housing</span>
+                        <div class="stat-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                    </div>
+                    <h3 class="stat-value"><?php echo $stats['housing']; ?></h3>
                 </div>
-            <?php } ?>
-            <?php if (in_array("find_tutor", $capabilities) || in_array("offer_tuition", $capabilities)) { ?>
-                <div class="glass-card">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                    <h3>Tuition</h3>
-                    <p>Hire or offer tutoring</p>
+                <?php endif; ?>
+
+                <?php if (in_array('Jobs', $availableCapabilities)): ?>
+                <div class="stat-card fade-in-up">
+                    <div class="stat-header">
+                        <span class="stat-title">Jobs</span>
+                        <div class="stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <h3 class="stat-value"><?php echo $stats['jobs']; ?></h3>
                 </div>
-            <?php } ?>
-            <?php if (in_array("food_service", $capabilities)) { ?>
-                <div class="glass-card">
-                    <i class="fa-solid fa-utensils"></i>
-                    <h3>Food & Services</h3>
-                    <p>Order meals, laundry & more</p>
+                <?php endif; ?>
+
+                <?php if (in_array('Tutors', $availableCapabilities)): ?>
+                <div class="stat-card fade-in-up">
+                    <div class="stat-header">
+                        <span class="stat-title">Tutors</span>
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                    </div>
+                    <h3 class="stat-value"><?php echo $stats['tutors']; ?></h3>
                 </div>
-            <?php } ?>
-            <?php if (in_array("expense_tracking", $capabilities)) { ?>
-                <div class="glass-card">
-                    <i class="fa-solid fa-wallet"></i>
-                    <h3>Expense Tracking</h3>
-                    <p>Track your spending</p>
+                <?php endif; ?>
+
+                <?php if (in_array('Services', $availableCapabilities)): ?>
+                <div class="stat-card fade-in-up">
+                    <div class="stat-header">
+                        <span class="stat-title">Services</span>
+                        <div class="stat-icon">
+                            <i class="fas fa-wrench"></i>
+                        </div>
+                    </div>
+                    <h3 class="stat-value"><?php echo $stats['services']; ?></h3>
                 </div>
-            <?php } ?>
-        </section>
+                <?php endif; ?>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Recent Activities -->
+                <div class="glass-card fade-in-up">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Activities</h2>
+                        <a href="#" class="card-action">View All</a>
+                    </div>
+                    <ul class="activity-list">
+                        <?php if (empty($activities)): ?>
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">No recent activities</div>
+                                <div class="activity-time">Start using your capabilities to see activities here</div>
+                            </div>
+                        </li>
+                        <?php else: ?>
+                        <?php foreach ($activities as $activity): ?>
+                        <li class="activity-item">
+                            <div class="activity-icon"><?php echo $activity['icon']; ?></div>
+                            <div class="activity-content">
+                                <div class="activity-title"><?php echo $activity['title']; ?></div>
+                                <div class="activity-time"><?php echo $activity['time']; ?></div>
+                            </div>
+                        </li>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+
+                <!-- Community Chart -->
+                <div class="glass-card fade-in-up">
+                    <div class="card-header">
+                        <h2 class="card-title">Community</h2>
+                        <select class="card-action" style="background: transparent; border: none; color: white;">
+                            <option>All</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: rgba(255,255,255,0.6);">
+                            <i class="fas fa-chart-line" style="font-size: 3rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Grid -->
+            <div class="content-grid">
+                <!-- Expense Tracking -->
+                <?php if (in_array('expense_tracking', $capabilities)): ?>
+                <div class="glass-card fade-in-up">
+                    <div class="card-header">
+                        <h2 class="card-title">Expense Tracking</h2>
+                    </div>
+                    <div class="expense-chart">
+                        <div class="chart-circle">
+                            <div class="chart-center">
+                                <div class="chart-total">$5,000</div>
+                                <div class="chart-label">Expenses</div>
+                            </div>
+                        </div>
+                        <div class="expense-legend">
+                            <?php if ($expenseData): ?>
+                                <?php foreach ($expenseData as $expense): ?>
+                                <div class="legend-item">
+                                    <div class="legend-dot" style="background: #667eea;"></div>
+                                    <span class="legend-text"><?php echo $expense['category']; ?></span>
+                                    <span class="legend-amount">$<?php echo number_format($expense['total'], 2); ?></span>
+                                </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="legend-item">
+                                    <div class="legend-dot" style="background: #667eea;"></div>
+                                    <span class="legend-text">Housing</span>
+                                    <span class="legend-amount">$1,500</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot" style="background: #764ba2;"></div>
+                                    <span class="legend-text">Food</span>
+                                    <span class="legend-amount">$1,200</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot" style="background: #f093fb;"></div>
+                                    <span class="legend-text">Tuition</span>
+                                    <span class="legend-amount">$800</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot" style="background: #f5576c;"></div>
+                                    <span class="legend-text">Transportation</span>
+                                    <span class="legend-amount">$800</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- Quick Payment -->
+                <?php if (in_array('expense_tracking', $capabilities)): ?>
+                <div class="glass-card fade-in-up">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Payment</h2>
+                    </div>
+                    <form class="payment-form">
+                        <div class="form-group">
+                            <label class="form-label">Amount</label>
+                            <input type="text" class="form-input" placeholder="Enter amount">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Option</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <div class="radio-input checked"></div>
+                                    <span class="radio-label">Wallet</span>
+                                </div>
+                                <div class="radio-item">
+                                    <div class="radio-input"></div>
+                                    <span class="radio-label">Bank</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Payment and notes</label>
+                            <input type="text" class="form-input" placeholder="Payment and notes">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Proceed</button>
+                    </form>
+                </div>
+                <?php endif; ?>
+            </div>
+        </main>
     </div>
+
+    <script src="dashboard.js"></script>
 </body>
 </html>
