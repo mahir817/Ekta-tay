@@ -9,12 +9,13 @@ document.getElementById("capabilityForm").addEventListener("submit", function (e
     })
         .then(res => res.json())
         .then(data => {
+            console.log("Response from backend:", data); // 👈 debug log
             document.getElementById("message").innerText = data.message;
-            if (data.success) {
+            if (data.success && data.redirect_url) {
                 setTimeout(() => {
-                    window.location.href = "../Dashboard/dashboard.php";
+                    window.location.href = data.redirect_url;
                 }, 1000);
             }
         })
-        .catch(err => console.error(err));
+        .catch(err => console.error("Fetch error:", err));
 });

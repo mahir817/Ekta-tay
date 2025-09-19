@@ -2,20 +2,9 @@
 header('Content-Type: application/json');
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+session_start();
 
-// Database config
-$host = "localhost";
-$dbname = "ekta_tay";
-$user = "root";
-$pass = ""; // your MySQL password
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo json_encode(["success" => false, "message" => "DB Connection failed: ".$e->getMessage()]);
-    exit;
-}
+require_once __DIR__ . '/db.php';
 
 // Get JSON
 $data = json_decode(file_get_contents('php://input'), true);
@@ -56,9 +45,9 @@ try {
     $stmt->execute([$full_name,$email,$hashed,$phone,$location,$gender]);
     $user_id = $pdo->lastInsertId();
 
-    
-
-    
+    // Auto-login new user so capability setup can save with session
+    $_SESSION['user_id'] = (int)$user_id;
+    $_SESSION['user_name'] = $full_name;
 
     // Check capability count
     $count_stmt = $pdo->prepare("SELECT COUNT(*) FROM user_capabilities WHERE user_id=?");
