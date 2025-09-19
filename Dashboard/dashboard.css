@@ -64,26 +64,21 @@ body::before {
 .logo {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 8px;
+    padding: 16px;
 }
 
-.logo-icon {
-    width: 40px;
+.logo-img {
     height: 40px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
+    /* adjust size as needed */
+    width: auto;
+    border-radius: 0px;
+    /* optional: round corners */
 }
-
 .logo-text {
     font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
+    font-weight: 600;
+    color: rgb(136, 206, 129);
 }
 
 /* Navigation */
@@ -157,8 +152,8 @@ body::before {
     gap: 1rem;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     position: relative;
     cursor: pointer;
@@ -174,7 +169,7 @@ body::before {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #61c57d, #4ba28e);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -191,6 +186,7 @@ body::before {
 .user-name {
     font-weight: 500;
     color: white;
+    
 }
 
 /* User Dropdown */

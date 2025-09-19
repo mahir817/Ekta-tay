@@ -134,8 +134,10 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
         <nav class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <div class="logo-icon">E</div>
-                    <div class="logo-text">EktaTay</div>
+                  <img src="../images/logo.png" alt="Ektate Logo" class="logo-img" />
+
+
+                <div class="logo-text">Ekta-tay</div>
                 </div>
             </div>
             
@@ -209,7 +211,11 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
                         <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                     </div>
                     <div class="user-info">
-                        <span class="user-name"><?php echo htmlspecialchars($user['name']); ?></span>
+                        <span class="user-name">
+                        <?php 
+                            echo htmlspecialchars(explode(' ', $user['name'])[0]); 
+                        ?>
+                        </span>
                         <div class="user-dropdown">
                             <div class="dropdown-menu" id="userDropdown">
                                 <div class="dropdown-item">
