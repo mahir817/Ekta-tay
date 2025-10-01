@@ -240,16 +240,17 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <?php if (in_array('Housing', $availableCapabilities)): ?>
-                <div class="stat-card fade-in-up">
-                    <div class="stat-header">
-                        <span class="stat-title">Housing</span>
-                        <div class="stat-icon">
-                            <i class="fas fa-home"></i>
-                        </div>
-                    </div>
-                    <h3 class="stat-value"><?php echo $stats['housing']; ?></h3>
-                </div>
-                <?php endif; ?>
+<div class="stat-card fade-in-up" id="housingCard" style="cursor: pointer;">
+    <div class="stat-header">
+        <span class="stat-title">Housing</span>
+        <div class="stat-icon">
+            <i class="fas fa-home"></i>
+        </div>
+    </div>
+    <h3 class="stat-value"><?php echo $stats['housing']; ?></h3>
+</div>
+<?php endif; ?>
+
 
                 <?php if (in_array('Jobs', $availableCapabilities)): ?>
                 <div class="stat-card fade-in-up">

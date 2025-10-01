@@ -1,6 +1,13 @@
 // Dashboard functionality
 document.addEventListener('DOMContentLoaded', function () {
     initializeDashboard();
+    // Redirect Housing card click to housing.php
+    const housingCard = document.getElementById('housingCard');
+    if (housingCard) {
+        housingCard.addEventListener('click', function () {
+            window.location.href = 'http://localhost:8080/Ekta-Tay/Modules/housing/housing.php';
+        });
+    }
 });
 
 function initializeDashboard() {
@@ -170,7 +177,8 @@ function handleNavigation(linkText) {
             // Already on dashboard
             break;
         case 'Housing':
-            showNotification('Housing module coming soon!', 'info');
+            // Redirect to housing page
+            window.location.href = 'http://localhost:8080/Ekta-Tay/Modules/housing/housing.php';
             break;
         case 'Jobs':
             showNotification('Jobs module coming soon!', 'info');
@@ -189,6 +197,7 @@ function handleNavigation(linkText) {
             break;
     }
 }
+
 
 function setupMobileMenu() {
     // Create mobile menu toggle button
