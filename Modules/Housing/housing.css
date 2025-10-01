@@ -1,73 +1,129 @@
-body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
+/* Basic Reset */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
-.housing-container {
+body {
+    font-family: 'Poppins', sans-serif;
+    background: url('../../images/dashboard2.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
     padding: 20px;
 }
 
+/* Glass Card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Tabs */
 .tabs {
     display: flex;
-    background: #fff;
-    border-bottom: 2px solid #ddd;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .tab-btn {
     flex: 1;
     padding: 12px;
     border: none;
-    background: #f4f6f9;
+    border-radius: 12px;
     cursor: pointer;
-    transition: background 0.2s;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: 0.3s;
 }
 
 .tab-btn.active {
-    background: #fff;
-    border-bottom: 3px solid #4CAF50;
+    background: rgba(255, 255, 255, 0.5);
+    color: #000;
     font-weight: bold;
 }
 
+/* Tab Sections */
 .tab-section {
-    padding: 20px;
-    background: #fff;
-    margin-top: 10px;
-    border-radius: 8px;
-}
-
-.hidden {
     display: none;
 }
 
-.filters {
-    margin-bottom: 15px;
+.tab-section.active {
+    display: block;
 }
 
+/* Card Grid */
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
 }
 
+/* Individual Card */
 .card {
-    background: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 8px;
     padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.filters input,
+.filters select {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    flex: 1;
 }
 
 .add-btn {
-    background: #4CAF50;
+    background: #6aba9d;
     color: white;
-    padding: 8px 14px;
+    padding: 8px 15px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
+.add-btn:hover {
+    background: #57a88b;
+}
+
+.cancel-btn {
+    background: #f5576c;
+}
+
+.cancel-btn:hover {
+    background: #e0485b;
+}
+
+/* Modal */
 .modal {
     position: fixed;
     top: 0;
@@ -85,17 +141,22 @@ body {
 }
 
 .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
     width: 400px;
+    max-width: 90%;
 }
 
-.modal-content form input,
-.modal-content form textarea,
-.modal-content form button {
-    display: block;
+/* Inputs inside modal */
+.modal-content input,
+.modal-content textarea {
     width: 100%;
-    margin: 10px 0;
+    margin: 8px 0;
     padding: 8px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #000;
+}
+
+.modal-content textarea {
+    resize: vertical;
 }

@@ -1,9 +1,27 @@
 function showSection(id) {
-    document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
+    // Hide all tab sections
+    document.querySelectorAll('.tab-section').forEach(sec => {
+        sec.classList.add("hidden");
+        sec.classList.remove("active");
+    });
+
+    // Show selected section
+    const activeSection = document.getElementById(id);
+    activeSection.classList.remove("hidden");
+    activeSection.classList.add("active");
+
+    // Remove active class from all buttons
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove("active"));
-    document.querySelector(`[onclick="showSection('${id}')"]`).classList.add("active");
+
+    // Add active class to clicked button
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => {
+        if (btn.textContent.trim() === activeSection.querySelector('h2').textContent.trim() || btn.getAttribute('onclick').includes(id)) {
+            btn.classList.add("active");
+        }
+    });
 }
+
 
 // ====== Fetch Housing ======
 function fetchHousing() {
