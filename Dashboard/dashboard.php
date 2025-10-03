@@ -92,18 +92,15 @@ if (in_array('find_job', $capabilities)) {
 $expenseData = null;
 if (in_array('expense_tracking', $capabilities)) {
     try {
-        // Preferred: group by category if the column exists
         $expenseStmt = $pdo->prepare("SELECT category, SUM(amount) as total FROM expenses WHERE user_id = ? GROUP BY category");
         $expenseStmt->execute([$user_id]);
         $expenseData = $expenseStmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        // Fallback: group by name if 'category' column doesn't exist
         try {
             $expenseStmt = $pdo->prepare("SELECT name AS category, SUM(amount) as total FROM expenses WHERE user_id = ? GROUP BY name");
             $expenseStmt->execute([$user_id]);
             $expenseData = $expenseStmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e2) {
-            // As a last resort, leave $expenseData as null to render defaults
             $expenseData = null;
         }
     }
@@ -125,6 +122,16 @@ $capabilityMap = [
 $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityMap) {
     return $capabilityMap[$cap] ?? ucfirst(str_replace('_', ' ', $cap));
 }, $capabilities));
+
+// Check if user can post a service
+$canPostService = false;
+$postingCaps = ['post_job', 'offer_room', 'offer_tuition', 'food_service'];
+foreach ($postingCaps as $cap) {
+    if (in_array($cap, $capabilities)) {
+        $canPostService = true;
+        break;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -142,10 +149,8 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
         <nav class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                  <img src="../images/logo.png" alt="Ektate Logo" class="logo-img" />
-
-
-                <div class="logo-text">Ekta-tay</div>
+                    <img src="../images/logo.png" alt="Ektate Logo" class="logo-img" />
+                    <div class="logo-text">Ekta-tay</div>
                 </div>
             </div>
             
@@ -220,9 +225,7 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
                     </div>
                     <div class="user-info">
                         <span class="user-name">
-                        <?php 
-                            echo htmlspecialchars(explode(' ', $user['name'])[0]); 
-                        ?>
+                        <?php echo htmlspecialchars(explode(' ', $user['name'])[0]); ?>
                         </span>
                         <div class="user-dropdown">
                             <div class="dropdown-menu" id="userDropdown">
@@ -248,17 +251,16 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
             <!-- Stats Grid -->
             <div class="stats-grid">
                 <?php if (in_array('Housing', $availableCapabilities)): ?>
-<div class="stat-card fade-in-up" id="housingCard" style="cursor: pointer;">
-    <div class="stat-header">
-        <span class="stat-title">Housing</span>
-        <div class="stat-icon">
-            <i class="fas fa-home"></i>
-        </div>
-    </div>
-    <h3 class="stat-value"><?php echo $stats['housing']; ?></h3>
-</div>
-<?php endif; ?>
-
+                <div class="stat-card fade-in-up" id="housingCard" style="cursor: pointer;">
+                    <div class="stat-header">
+                        <span class="stat-title">Housing</span>
+                        <div class="stat-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                    </div>
+                    <h3 class="stat-value"><?php echo $stats['housing']; ?></h3>
+                </div>
+                <?php endif; ?>
 
                 <?php if (in_array('Jobs', $availableCapabilities)): ?>
                 <div class="stat-card fade-in-up">
@@ -293,6 +295,20 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
                         </div>
                     </div>
                     <h3 class="stat-value"><?php echo $stats['services']; ?></h3>
+                </div>
+                <?php endif; ?>
+
+                <!-- Post Service Card -->
+                <?php if ($canPostService): ?>
+                <div class="stat-card fade-in-up" id="postServiceCard" style="cursor: pointer;" 
+                     onclick="window.location.href='../Post Service Page/post_service.html'">
+                    <div class="stat-header">
+                        <span class="stat-title">Post Service</span>
+                        <div class="stat-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                    </div>
+                    <h3 class="stat-value">Create</h3>
                 </div>
                 <?php endif; ?>
             </div>
