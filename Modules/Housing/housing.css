@@ -150,6 +150,23 @@ body {
     margin: 10px 0;
 }
 
+.split-card {
+    position: relative;
+    padding-bottom: 48px;
+}
+
+.split-calc-btn {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+}
+
+@media (max-width: 520px) {
+    .split-form {
+        grid-template-columns: 1fr;
+    }
+}
+
 .split-result {
     margin-top: 8px;
     font-weight: 600;

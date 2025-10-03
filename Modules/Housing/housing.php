@@ -1,5 +1,6 @@
 <?php
-include("../../backend/session.php"); // check user session
+// Gracefully include session guard if available
+@include __DIR__ . "/../../backend/session.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -86,33 +87,42 @@ include("../../backend/session.php"); // check user session
     <div class="section-header">
       <h2>My House</h2>
       <div class="mini-actions">
-        <button class="add-btn" onclick="openPostForm()">+ Post Housing</button>
       </div>
     </div>
 
     <div class="info-grid">
       <!-- My House Info -->
       <div class="card">
-        <h3>House Details</h3>
+        <div class="section-header" style="margin:0 0 8px 0;">
+          <h3>House Details</h3>
+          <button class="add-btn" onclick="openEditHouse()">Edit</button>
+        </div>
         <div id="myHouseInfo">
           <p>No house linked yet.</p>
         </div>
       </div>
 
       <!-- Split Rent -->
-      <div class="card">
+      <div class="card split-card">
         <h3>Split Rent</h3>
         <div class="split-form">
           <input type="number" id="totalRent" placeholder="Total monthly rent (BDT)">
           <input type="number" id="numRoommates" placeholder="Number of roommates">
-          <button class="add-btn" onclick="calculateSplit()">Calculate</button>
+          <button class="add-btn split-calc-btn" onclick="calculateSplit()">Calculate</button>
+        </div>
+        <div id="roommatesContainer"></div>
+        <div style="margin-top:10px;">
+          <button class="add-btn" id="addToExpensesBtn" onclick="addRoommatesToExpenses()">Add to Expenses</button>
         </div>
         <div id="splitResult" class="split-result"></div>
       </div>
 
       <!-- Expenses Analysis -->
       <div class="card">
-        <h3>Expenses Analysis</h3>
+        <div class="section-header" style="margin:0 0 8px 0;">
+          <h3>Expenses</h3>
+          <button class="add-btn" onclick="openExpenseForm()">Add Expense</button>
+        </div>
         <div class="expense-chart">
           <div class="chart-circle" id="expenseDonut">
             <div class="chart-center">
@@ -122,6 +132,7 @@ include("../../backend/session.php"); // check user session
           </div>
           <div class="expense-legend" id="expenseLegend"></div>
         </div>
+        <div id="expensesTable" style="margin-top:12px;"></div>
       </div>
     </div>
 
@@ -140,6 +151,7 @@ include("../../backend/session.php"); // check user session
           }
         } else {
           echo "<div class='glass-card no-content'>No posts yet.</div>";
+          echo "<div style='margin-top:10px;'><button class='add-btn' onclick='openPostForm()'>+ Post Housing</button></div>";
         }
         ?>
       </div>
@@ -168,6 +180,22 @@ include("../../backend/session.php"); // check user session
     </form>
   </div>
 </div>
+
+<!-- Modal: Edit My House -->
+<div id="editHouseModal" class="modal hidden">
+  <div class="modal-content glass-card">
+    <h3>Edit My House</h3>
+    <form id="editHouseForm">
+      <input type="text" name="address" placeholder="Address">
+      <input type="number" name="rent" placeholder="Monthly Rent (BDT)">
+      <input type="number" name="bedrooms" placeholder="Bedrooms">
+      <input type="number" name="bathrooms" placeholder="Bathrooms">
+      <input type="text" name="notes" placeholder="Notes (optional)">
+      <button type="submit" class="add-btn">Save</button>
+      <button type="button" onclick="closeEditHouse()" class="add-btn cancel-btn">Cancel</button>
+    </form>
+  </div>
+  </div>
 
 <!-- Modal for Adding Expense -->
 <div id="expenseModal" class="modal hidden">

@@ -75,6 +75,7 @@ body::before {
     border-radius: 0px;
     /* optional: round corners */
 }
+
 .logo-text {
     font-size: 1.5rem;
     font-weight: 600;
@@ -137,6 +138,8 @@ body::before {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    position: relative;
+    z-index: 2000;
 }
 
 .dashboard-title {
@@ -186,13 +189,13 @@ body::before {
 .user-name {
     font-weight: 500;
     color: white;
-    
+
 }
 
 /* User Dropdown */
 .user-dropdown {
     position: relative;
-    z-index: 10000;
+    z-index: 3000;
 
 }
 
@@ -212,7 +215,7 @@ body::before {
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    z-index: 10001;
+    z-index: 3001;
 }
 
 .dropdown-menu.show {

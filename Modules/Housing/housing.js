@@ -49,8 +49,12 @@ function fetchHousing() {
 }
 
 // ====== Post Housing ======
-function openPostForm() { document.getElementById("postModal").classList.remove("hidden"); }
-function closePostForm() { document.getElementById("postModal").classList.add("hidden"); }
+function redirectToPostService() {
+    // Redirect to unified posting page (frontend form), adjust path if needed
+    window.location.href = '../../Modules/Jobs/post_job.php';
+}
+function openPostForm() { document.getElementById("postModal")?.classList.remove("hidden"); }
+function closePostForm() { document.getElementById("postModal")?.classList.add("hidden"); }
 
 document.getElementById("postHousingForm")?.addEventListener("submit", e => {
     e.preventDefault();
@@ -127,13 +131,66 @@ function calculateSplit() {
     const total = parseFloat(document.getElementById('totalRent')?.value || '0');
     const mates = parseInt(document.getElementById('numRoommates')?.value || '0');
     const out = document.getElementById('splitResult');
+    const container = document.getElementById('roommatesContainer');
     if (!out) return;
     if (!total || !mates || mates <= 0) {
         out.textContent = 'Enter total and roommates to calculate.';
+        if (container) container.innerHTML = '';
         return;
     }
     const share = Math.ceil((total / mates));
     out.textContent = `Each pays: ৳${share}`;
+
+    // Generate detailed roommate inputs
+    if (container) {
+        container.innerHTML = '';
+        const list = document.createElement('div');
+        for (let i = 1; i <= mates; i++) {
+            const row = document.createElement('div');
+            row.style.display = 'grid';
+            row.style.gridTemplateColumns = '1fr 1fr';
+            row.style.gap = '8px';
+            row.style.margin = '6px 0';
+
+            const name = document.createElement('input');
+            name.type = 'text';
+            name.placeholder = `Roommate ${i} name`;
+            name.dataset.role = 'roommate-name';
+
+            const amount = document.createElement('input');
+            amount.type = 'number';
+            amount.placeholder = `Amount (default ${share})`;
+            amount.value = String(share);
+            amount.min = '0';
+            amount.step = '1';
+            amount.dataset.role = 'roommate-amount';
+
+            row.appendChild(name);
+            row.appendChild(amount);
+            list.appendChild(row);
+        }
+
+        // Summary row
+        const summary = document.createElement('div');
+        summary.style.marginTop = '8px';
+        summary.style.fontWeight = '600';
+        summary.id = 'roommatesSummary';
+        container.appendChild(list);
+        container.appendChild(summary);
+
+        const updateSummary = () => {
+            const amounts = Array.from(container.querySelectorAll("input[data-role='roommate-amount']"))
+                .map(i => Number(i.value) || 0);
+            const sum = amounts.reduce((a, b) => a + b, 0);
+            const diff = total - sum;
+            summary.textContent = `Allocated: ৳${sum} / ৳${total} (${diff === 0 ? 'balanced' : (diff > 0 ? 'remaining ৳' + diff : 'over by ৳' + (-diff))})`;
+        };
+        container.addEventListener('input', (e) => {
+            const t = e.target;
+            if (t && t.matches("input[data-role='roommate-amount']")) updateSummary();
+        });
+        updateSummary();
+    }
 }
 
 function renderExpenseDonut(expenses) {
@@ -182,3 +239,78 @@ function renderExpenseDonut(expenses) {
         donut.style.background = `conic-gradient(${gradientParts.join(', ')})`;
     }
 }
+
+// === Add roommates to expenses ===
+function addRoommatesToExpenses() {
+    const container = document.getElementById('roommatesContainer');
+    if (!container) return;
+    const nameInputs = Array.from(container.querySelectorAll("input[data-role='roommate-name']"));
+    const amountInputs = Array.from(container.querySelectorAll("input[data-role='roommate-amount']"));
+    if (!nameInputs.length || !amountInputs.length) {
+        alert('Please calculate and fill roommate details first.');
+        return;
+    }
+
+    const entries = nameInputs.map((n, idx) => {
+        const name = (n.value || `Roommate ${idx + 1}`).trim();
+        const amount = Number(amountInputs[idx]?.value || 0);
+        return { name, amount };
+    }).filter(e => e.amount > 0);
+
+    if (!entries.length) {
+        alert('No valid amounts to add.');
+        return;
+    }
+
+    // Post each as an expense with category 'Rent'
+    const requests = entries.map(e => {
+        const form = new FormData();
+        form.append('name', `Rent - ${e.name}`);
+        form.append('amount', String(e.amount));
+        form.append('due_date', new Date().toISOString().slice(0, 10));
+        form.append('category', 'Rent');
+        return fetch('../../backend/add_expense.php', { method: 'POST', body: form })
+            .then(r => r.text());
+    });
+
+    Promise.all(requests)
+        .then(() => {
+            alert('Roommate rents added to expenses.');
+            loadExpenses();
+        })
+        .catch(() => alert('Failed to add some expenses.'));
+}
+
+// ====== Edit My House ======
+function openEditHouse() { document.getElementById('editHouseModal')?.classList.remove('hidden'); }
+function closeEditHouse() { document.getElementById('editHouseModal')?.classList.add('hidden'); }
+
+document.getElementById('editHouseForm')?.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const form = new FormData(e.target);
+    fetch('../../backend/update_my_house.php', { method: 'POST', body: form })
+        .then(r => r.json())
+        .then(resp => {
+            alert(resp.message || 'Saved');
+            // Simple UI reflection
+            const info = document.getElementById('myHouseInfo');
+            if (info) {
+                info.innerHTML = `<p><strong>Address:</strong> ${form.get('address') || '-'}<br>
+                    <strong>Rent:</strong> ৳${form.get('rent') || '-'}<br>
+                    <strong>Bedrooms:</strong> ${form.get('bedrooms') || '-'} | <strong>Bathrooms:</strong> ${form.get('bathrooms') || '-'}<br>
+                    <strong>Notes:</strong> ${form.get('notes') || '-'}</p>`;
+            }
+            closeEditHouse();
+        })
+        .catch(() => {
+            // Fallback local update
+            const info = document.getElementById('myHouseInfo');
+            if (info) {
+                info.innerHTML = `<p><strong>Address:</strong> ${form.get('address') || '-'}<br>
+                    <strong>Rent:</strong> ৳${form.get('rent') || '-'}<br>
+                    <strong>Bedrooms:</strong> ${form.get('bedrooms') || '-'} | <strong>Bathrooms:</strong> ${form.get('bathrooms') || '-'}<br>
+                    <strong>Notes:</strong> ${form.get('notes') || '-'}</p>`;
+            }
+            closeEditHouse();
+        });
+});

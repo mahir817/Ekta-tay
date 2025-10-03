@@ -91,14 +91,22 @@ if (in_array('find_job', $capabilities)) {
 // Get expense data if user has expense tracking capability
 $expenseData = null;
 if (in_array('expense_tracking', $capabilities)) {
-    $expenseStmt = $pdo->prepare("
-        SELECT category, SUM(amount) as total 
-        FROM expenses 
-        WHERE user_id = ? 
-        GROUP BY category
-    ");
-    $expenseStmt->execute([$user_id]);
-    $expenseData = $expenseStmt->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        // Preferred: group by category if the column exists
+        $expenseStmt = $pdo->prepare("SELECT category, SUM(amount) as total FROM expenses WHERE user_id = ? GROUP BY category");
+        $expenseStmt->execute([$user_id]);
+        $expenseData = $expenseStmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Fallback: group by name if 'category' column doesn't exist
+        try {
+            $expenseStmt = $pdo->prepare("SELECT name AS category, SUM(amount) as total FROM expenses WHERE user_id = ? GROUP BY name");
+            $expenseStmt->execute([$user_id]);
+            $expenseData = $expenseStmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e2) {
+            // As a last resort, leave $expenseData as null to render defaults
+            $expenseData = null;
+        }
+    }
 }
 
 // Capability mapping for display
@@ -279,7 +287,7 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
                 <?php if (in_array('Services', $availableCapabilities)): ?>
                 <div class="stat-card fade-in-up">
                     <div class="stat-header">
-                        <span class="stat-title">Services</span>
+                        <span class="stat-title">Food services</span>
                         <div class="stat-icon">
                             <i class="fas fa-wrench"></i>
                         </div>
