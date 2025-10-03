@@ -15,16 +15,58 @@ include("../../backend/session.php"); // check user session
 
   <!-- Top Navigation Tabs -->
   <div class="tabs glass-card">
-    <button class="tab-btn active" onclick="showSection('find')">Find Housing</button>
-    <button class="tab-btn" onclick="showSection('my')">My Housing</button>
-    <button class="tab-btn" onclick="showSection('expenses')">Expenses</button>
-    <button class="tab-btn" onclick="showSection('rent')">Rent Splitting</button>
-    <button class="tab-btn" onclick="showSection('apps')">Applications</button>
+    <button class="tab-btn active" onclick="showSection('find')">Find House</button>
+    <button class="tab-btn" onclick="showSection('my')">My House</button>
   </div>
 
   <!-- Sections -->
   <div id="find" class="tab-section active glass-card">
-    <h2>Find Housing</h2>
+    <div class="section-header">
+      <h2>Find House</h2>
+      <div class="mini-actions">
+        <button class="add-btn" onclick="fetchHousing()">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Pending</span>
+        </div>
+        <p class="stat-value" id="statPending">0</p>
+        <p class="stat-sub">Applications pending</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Applied Requests</span>
+        </div>
+        <p class="stat-value" id="statApplied">0</p>
+        <p class="stat-sub">Total submitted</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Confirmed</span>
+        </div>
+        <p class="stat-value" id="statConfirmed">0</p>
+        <p class="stat-sub">Approved requests</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Cancelled</span>
+        </div>
+        <p class="stat-value" id="statCancelled">0</p>
+        <p class="stat-sub">Closed requests</p>
+      </div>
+      <div class="stat-card wide">
+        <div class="stat-header">
+          <span class="stat-title">Nearby Houses</span>
+        </div>
+        <p class="stat-value" id="statNearby">24</p>
+        <p class="stat-sub">Houses available near you</p>
+      </div>
+    </div>
+
     <div class="filters">
       <input type="text" id="searchLocation" placeholder="Search by location...">
       <select id="rentRange">
@@ -41,42 +83,72 @@ include("../../backend/session.php"); // check user session
   </div>
 
   <div id="my" class="tab-section hidden glass-card">
-    <h2>My Housing Posts</h2>
-    <button class="add-btn" onclick="openPostForm()">+ Post New Housing</button>
-    <div id="myHousingList" class="card-grid">
-      <?php
-      // Example placeholder for user housing posts
-      if(isset($userHousing) && count($userHousing) > 0){
-        foreach($userHousing as $post){
-          echo "<div class='card glass-card'>
-                  <h3>".htmlspecialchars($post['title'])."</h3>
-                  <p>Location: ".htmlspecialchars($post['location'])."</p>
-                  <p>Rent: ৳".htmlspecialchars($post['rent'])."</p>
-                  <p>".htmlspecialchars($post['description'])."</p>
-                </div>";
+    <div class="section-header">
+      <h2>My House</h2>
+      <div class="mini-actions">
+        <button class="add-btn" onclick="openPostForm()">+ Post Housing</button>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <!-- My House Info -->
+      <div class="card">
+        <h3>House Details</h3>
+        <div id="myHouseInfo">
+          <p>No house linked yet.</p>
+        </div>
+      </div>
+
+      <!-- Split Rent -->
+      <div class="card">
+        <h3>Split Rent</h3>
+        <div class="split-form">
+          <input type="number" id="totalRent" placeholder="Total monthly rent (BDT)">
+          <input type="number" id="numRoommates" placeholder="Number of roommates">
+          <button class="add-btn" onclick="calculateSplit()">Calculate</button>
+        </div>
+        <div id="splitResult" class="split-result"></div>
+      </div>
+
+      <!-- Expenses Analysis -->
+      <div class="card">
+        <h3>Expenses Analysis</h3>
+        <div class="expense-chart">
+          <div class="chart-circle" id="expenseDonut">
+            <div class="chart-center">
+              <p class="chart-total" id="expenseTotal">৳0</p>
+              <span class="chart-label">This month</span>
+            </div>
+          </div>
+          <div class="expense-legend" id="expenseLegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <h3 style="margin-bottom:10px;">My Housing Posts</h3>
+      <div id="myHousingList" class="card-grid">
+        <?php
+        if(isset($userHousing) && count($userHousing) > 0){
+          foreach($userHousing as $post){
+            echo "<div class='card glass-card'>
+                    <h3>".htmlspecialchars($post['title'])."</h3>
+                    <p>Location: ".htmlspecialchars($post['location'])."</p>
+                    <p>Rent: ৳".htmlspecialchars($post['rent'])."</p>
+                    <p>".htmlspecialchars($post['description'])."</p>
+                  </div>";
+          }
+        } else {
+          echo "<div class='glass-card no-content'>No posts yet.</div>";
         }
-      } else {
-        echo "<div class='glass-card no-content'>No posts yet.</div>";
-      }
-      ?>
+        ?>
+      </div>
     </div>
   </div>
 
-  <div id="expenses" class="tab-section hidden glass-card">
-    <h2>Expense Management</h2>
-    <button class="add-btn" onclick="openExpenseForm()">+ Add Expense</button>
-    <div id="expensesTable"></div>
-    <canvas id="expenseChart" style="margin-top:20px;"></canvas>
-  </div>
-
-  <div id="rent" class="tab-section hidden glass-card">
-    <h2>Rent Splitting</h2>
-    <div id="rentSplitTable"></div>
-  </div>
-
-  <div id="apps" class="tab-section hidden glass-card">
-    <h2>Applications</h2>
-    <div id="applicationsList" class="card-grid"></div>
+  <!-- Hidden modal trigger in My House for expenses -->
+  <div style="display:none">
+    <button class="add-btn" onclick="openExpenseForm()" id="hiddenExpenseBtn">+ Add Expense</button>
   </div>
 
 </div>
