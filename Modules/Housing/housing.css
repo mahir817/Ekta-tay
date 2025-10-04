@@ -611,6 +611,10 @@ body {
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
 .modal.hidden {
@@ -620,6 +624,9 @@ body {
 .modal-content {
     width: 400px;
     max-width: 90%;
+    z-index: 10001;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
 }
 
 /* Inputs inside modal */
@@ -1082,6 +1089,8 @@ body {
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
+    z-index: 10002;
+    position: relative;
 }
 
 .modal-header {

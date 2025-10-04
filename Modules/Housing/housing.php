@@ -1,6 +1,56 @@
 <?php
-// Gracefully include session guard if available
-@include __DIR__ . "/../../backend/session.php";
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in, if not redirect to login
+if (!isset($_SESSION['user_id'])) {
+    // For testing purposes, let's set a default user ID
+    // Remove this line in production
+    $_SESSION['user_id'] = 2; // Set to your user ID for testing
+}
+
+// Get user's housing posts if logged in
+$userHousing = [];
+$user = null;
+if (isset($_SESSION['user_id'])) {
+    require_once "../../backend/db.php";
+    try {
+        // Get user information
+        $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+        $userStmt->execute([$_SESSION['user_id']]);
+        $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Debug: Check what we're getting
+        error_log("User ID from session: " . $_SESSION['user_id']);
+        error_log("User found: " . ($user ? $user['name'] : 'NOT FOUND'));
+        
+        // Get user's housing posts
+        $stmt = $pdo->prepare("
+            SELECT s.service_id, s.title, s.description, s.location, s.price, s.created_at,
+                   h.rent, h.property_type, h.bedrooms, h.bathrooms, h.furnished_status
+            FROM services s
+            INNER JOIN housing h ON s.service_id = h.service_id
+            WHERE s.user_id = ? AND s.type = 'housing'
+            ORDER BY s.created_at DESC
+        ");
+        $stmt->execute([$_SESSION['user_id']]);
+        $userHousing = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Debug: Log the results
+        error_log("User housing posts found: " . count($userHousing));
+        foreach ($userHousing as $post) {
+            error_log("Post: " . $post['title']);
+        }
+    } catch (Exception $e) {
+        error_log("Error fetching user housing: " . $e->getMessage());
+        $userHousing = [];
+        $user = null;
+    }
+} else {
+    error_log("No user session found");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -283,6 +333,15 @@
 
     <div class="subsection">
       <h3 style="margin-bottom:10px;">My Housing Posts</h3>
+      <!-- Debug info -->
+      <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 12px;">
+        <strong>Debug Info:</strong><br>
+        Session User ID: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'NOT SET'; ?><br>
+        User Housing Count: <?php echo count($userHousing); ?><br>
+        <?php if (isset($_SESSION['user_id'])): ?>
+          <a href="../../backend/debug_housing_posts.php" target="_blank" style="color: #4ade80;">View Detailed Debug</a>
+        <?php endif; ?>
+      </div>
       <div id="myHousingList" class="card-grid">
         <?php
         if(isset($userHousing) && count($userHousing) > 0){
