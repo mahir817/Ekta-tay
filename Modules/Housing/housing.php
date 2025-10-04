@@ -8,11 +8,75 @@
   <meta charset="UTF-8">
   <title>Housing | Ekta-tay</title>
   <link rel="stylesheet" href="housing.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="housing.js" defer></script>
 </head>
 <body>
 
 <div class="housing-container">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <img src="../../images/logo.png" alt="Ektate Logo" class="logo-img" />
+        <div class="logo-text">Ekta-tay</div>
+      </div>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a href="../../Dashboard/dashboard.php" class="nav-link">
+          <i class="nav-icon fas fa-home"></i>
+          Dashboard
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#" class="nav-link active">
+          <i class="nav-icon fas fa-home"></i>
+          Housing
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon fas fa-briefcase"></i>
+          Jobs
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon fas fa-graduation-cap"></i>
+          Tuition
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon fas fa-wrench"></i>
+          Services
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon fas fa-cog"></i>
+          Manage
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="nav-icon fas fa-question-circle"></i>
+          Help
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
 
   <!-- Logo Header -->
   <div class="logo-header">
@@ -124,14 +188,37 @@
     </div>
 
     <div class="filters">
-      <input type="text" id="searchLocation" placeholder="Search by location...">
-      <select id="rentRange">
+      <input type="text" id="searchLocation" placeholder="Search by location..." onkeyup="handleSearch()">
+      <select id="rentRange" onchange="handleSearch()">
         <option value="">Rent Range</option>
         <option value="0-10000">0-10k</option>
         <option value="10000-30000">10k-30k</option>
         <option value="30000-50000">30k-50k</option>
+        <option value="50000-100000">50k-100k</option>
+        <option value="100000+">100k+</option>
       </select>
-      <button onclick="fetchHousing()" class="add-btn">Search</button>
+      <select id="propertyType" onchange="handleSearch()">
+        <option value="">Property Type</option>
+        <option value="apartment">Apartment</option>
+        <option value="room">Room</option>
+        <option value="commercial">Commercial</option>
+        <option value="mixed">Mixed</option>
+      </select>
+      <select id="furnishedStatus" onchange="handleSearch()">
+        <option value="">Furnished</option>
+        <option value="furnished">Furnished</option>
+        <option value="semi-furnished">Semi-furnished</option>
+        <option value="unfurnished">Unfurnished</option>
+      </select>
+      <select id="bedrooms" onchange="handleSearch()">
+        <option value="">Bedrooms</option>
+        <option value="1">1 Bedroom</option>
+        <option value="2">2 Bedrooms</option>
+        <option value="3">3 Bedrooms</option>
+        <option value="4+">4+ Bedrooms</option>
+      </select>
+      <button onclick="clearFilters()" class="add-btn cancel-btn">Clear</button>
+      <button onclick="fetchHousing()" class="add-btn">Refresh</button>
     </div>
     <div id="housingList" class="card-grid">
       <!-- Housing posts loaded via AJAX -->
@@ -164,9 +251,12 @@
           <input type="number" id="totalRent" placeholder="Total monthly rent (BDT)">
           <input type="number" id="numRoommates" placeholder="Number of roommates">
           <button class="add-btn split-calc-btn" onclick="calculateSplit()">Calculate</button>
+        
         </div>
+          
         <div id="roommatesContainer"></div>
         <div style="margin-top:10px;">
+          
           <button class="add-btn" id="addToExpensesBtn" onclick="addRoommatesToExpenses()">Add to Expenses</button>
         </div>
         <div id="splitResult" class="split-result"></div>
@@ -279,6 +369,7 @@
     <button class="add-btn" onclick="openExpenseForm()" id="hiddenExpenseBtn">+ Add Expense</button>
   </div>
 
+  </main>
 </div>
 
 <!-- Modal for Posting Housing -->

@@ -24,28 +24,295 @@ function showSection(id) {
 }
 
 
+// ====== Search and Filter Functions ======
+let allHousingData = [];
+
+function handleSearch() {
+    const searchLocation = document.getElementById('searchLocation').value.toLowerCase();
+    const rentRange = document.getElementById('rentRange').value;
+    const propertyType = document.getElementById('propertyType').value;
+    const furnishedStatus = document.getElementById('furnishedStatus').value;
+    const bedrooms = document.getElementById('bedrooms').value;
+
+    let filteredData = allHousingData.filter(housing => {
+        // Location filter
+        if (searchLocation && !housing.location.toLowerCase().includes(searchLocation)) {
+            return false;
+        }
+
+        // Rent range filter
+        if (rentRange) {
+            const rent = parseFloat(housing.rent.replace(/,/g, ''));
+            if (rentRange === '0-10000' && (rent < 0 || rent > 10000)) return false;
+            if (rentRange === '10000-30000' && (rent < 10000 || rent > 30000)) return false;
+            if (rentRange === '30000-50000' && (rent < 30000 || rent > 50000)) return false;
+            if (rentRange === '50000-100000' && (rent < 50000 || rent > 100000)) return false;
+            if (rentRange === '100000+' && rent < 100000) return false;
+        }
+
+        // Property type filter
+        if (propertyType && housing.property_type !== propertyType) {
+            return false;
+        }
+
+        // Furnished status filter
+        if (furnishedStatus && housing.furnished_status !== furnishedStatus) {
+            return false;
+        }
+
+        // Bedrooms filter
+        if (bedrooms) {
+            const housingBedrooms = housing.bedrooms;
+            if (bedrooms === '4+' && housingBedrooms < 4) return false;
+            if (bedrooms !== '4+' && housingBedrooms != bedrooms) return false;
+        }
+
+        return true;
+    });
+
+    displayHousingData(filteredData);
+}
+
+function clearFilters() {
+    document.getElementById('searchLocation').value = '';
+    document.getElementById('rentRange').value = '';
+    document.getElementById('propertyType').value = '';
+    document.getElementById('furnishedStatus').value = '';
+    document.getElementById('bedrooms').value = '';
+    displayHousingData(allHousingData);
+}
+
+function displayHousingData(data) {
+    let list = document.getElementById("housingList");
+    list.innerHTML = "";
+
+    if (data.length === 0) {
+        list.innerHTML = '<div class="no-content">No housing posts match your search criteria.</div>';
+        return;
+    }
+
+    data.forEach(h => {
+        const verificationBadge = h.verification_status === 'verified' && h.khotiyan ?
+            `<span class="verification-badge">✅ Verified (${h.khotiyan})</span>` : '';
+
+        const propertyDetails = `
+            <div class="property-details">
+                <span class="detail-item">${h.bedrooms} Bed${h.bedrooms > 1 ? 's' : ''}</span>
+                <span class="detail-item">${h.bathrooms} Bath${h.bathrooms > 1 ? 's' : ''}</span>
+                ${h.size_sqft ? `<span class="detail-item">${h.size_sqft} sqft</span>` : ''}
+                <span class="detail-item">${h.furnished_status}</span>
+            </div>
+        `;
+
+        const availabilityInfo = h.available_from ?
+            `<p class="availability">Available from: ${new Date(h.available_from).toLocaleDateString()}</p>` : '';
+
+        const negotiableText = h.negotiable ? '<span class="negotiable">Negotiable</span>' : '';
+
+        list.innerHTML += `
+            <div class="card housing-card">
+                <div class="card-header">
+                    <h3>${h.title}</h3>
+                    ${verificationBadge}
+                </div>
+                <div class="card-body">
+                    <p class="location">📍 ${h.location}</p>
+                    <p class="rent">Rent: ৳${h.rent}</p>
+                    ${propertyDetails}
+                    <p class="description">${h.description}</p>
+                    ${availabilityInfo}
+                    <div class="card-footer">
+                        ${negotiableText}
+                        <div class="card-actions">
+                            <button class="details-btn" onclick="viewHousingDetails(${h.id})">
+                                <i class="fas fa-eye"></i> Details
+                            </button>
+                            <button class="apply-btn" onclick="applyForHousing(${h.id})">
+                                <i class="fas fa-paper-plane"></i> Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    });
+}
+
+// ====== Fetch Housing Stats ======
+function fetchHousingStats() {
+    fetch("../../backend/get_housing_stats.php")
+        .then(res => res.json())
+        .then(stats => {
+            updateFindTabStats(stats);
+        })
+        .catch(error => {
+            console.error('Error fetching housing stats:', error);
+            // Fallback to demo stats
+            const fallbackStats = {
+                pending: 0,
+                applied: 0,
+                confirmed: 0,
+                cancelled: 0,
+                nearby: allHousingData.length
+            };
+            updateFindTabStats(fallbackStats);
+        });
+}
+
 // ====== Fetch Housing ======
 function fetchHousing() {
     fetch("../../backend/fetch_housing.php")
         .then(res => res.json())
         .then(data => {
-            let list = document.getElementById("housingList");
-            list.innerHTML = "";
-            data.forEach(h => {
-                list.innerHTML += `
-          <div class="card">
-            <h3>${h.title}</h3>
-            <p>${h.location}</p>
-            <p>Rent: ${h.rent} BDT</p>
-            ${h.khotiyan ? `<p>Verified ✅ (${h.khotiyan})</p>` : ""}
-            <button>Apply</button>
-          </div>`;
-            });
+            allHousingData = data;
+            displayHousingData(data);
 
-            // demo counters from dataset
-            const stats = calculateStatsFromHousing(data);
-            updateFindTabStats(stats);
+            // Fetch real stats from database
+            fetchHousingStats();
+        })
+        .catch(error => {
+            console.error('Error fetching housing data:', error);
+            document.getElementById("housingList").innerHTML = '<div class="error">Failed to load housing data. Please try again.</div>';
         });
+}
+
+// ====== View Housing Details ======
+function viewHousingDetails(housingId) {
+    // Fetch detailed housing information
+    fetch(`../../backend/get_housing_details.php?id=${housingId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showHousingDetailsModal(data.housing);
+            } else {
+                alert('Failed to load housing details: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching housing details:', error);
+            alert('Failed to load housing details. Please try again.');
+        });
+}
+
+function showHousingDetailsModal(housing) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content glass-card housing-details-modal">
+            <div class="modal-header">
+                <h3>${housing.title}</h3>
+                <button class="close-btn" onclick="closeHousingDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="housing-details-grid">
+                    <div class="detail-section">
+                        <h4>Basic Information</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Location:</span>
+                            <span class="detail-value">${housing.location}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Rent:</span>
+                            <span class="detail-value">৳${housing.rent}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Property Type:</span>
+                            <span class="detail-value">${housing.property_type}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Size:</span>
+                            <span class="detail-value">${housing.size_sqft} sqft</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Property Details</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Bedrooms:</span>
+                            <span class="detail-value">${housing.bedrooms}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Bathrooms:</span>
+                            <span class="detail-value">${housing.bathrooms}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Balconies:</span>
+                            <span class="detail-value">${housing.balconies}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Furnished:</span>
+                            <span class="detail-value">${housing.furnished_status}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h4>Financial Details</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Service Charge:</span>
+                            <span class="detail-value">৳${housing.service_charge || 0}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Advance Deposit:</span>
+                            <span class="detail-value">৳${housing.advance_deposit || 0}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Negotiable:</span>
+                            <span class="detail-value">${housing.negotiable ? 'Yes' : 'No'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section full-width">
+                        <h4>Description</h4>
+                        <p class="housing-description">${housing.description}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="details-btn" onclick="closeHousingDetailsModal()">Close</button>
+                <button class="apply-btn" onclick="applyForHousing(${housing.id}); closeHousingDetailsModal();">Apply Now</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function closeHousingDetailsModal() {
+    const modal = document.querySelector('.modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
+// ====== Apply for Housing ======
+function applyForHousing(housingId) {
+    if (confirm('Are you sure you want to apply for this housing?')) {
+        // This would typically make an API call to apply for housing
+        fetch('../../backend/apply_housing.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                housing_id: housingId
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Application submitted successfully!');
+                    // Optionally refresh the housing list
+                    fetchHousing();
+                } else {
+                    alert('Failed to submit application: ' + (data.message || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Error applying for housing:', error);
+                alert('Failed to submit application. Please try again.');
+            });
+    }
 }
 
 // ====== Post Housing ======
@@ -392,76 +659,26 @@ function showStatusTab(statusType) {
 }
 
 function loadStatusData(statusType) {
-    // This would typically fetch from a backend endpoint
-    // For now, we'll use mock data
-    const mockData = {
-        pending: [
-            {
-                id: 1,
-                title: "Modern Apartment in Dhanmondi",
-                location: "Dhanmondi, Dhaka",
-                rent: "25000",
-                appliedDate: "2024-01-15",
-                status: "pending"
-            },
-            {
-                id: 2,
-                title: "Shared Room in Uttara",
-                location: "Uttara, Dhaka",
-                rent: "15000",
-                appliedDate: "2024-01-20",
-                status: "pending"
-            }
-        ],
-        confirmed: [
-            {
-                id: 3,
-                title: "Studio Apartment in Gulshan",
-                location: "Gulshan, Dhaka",
-                rent: "30000",
-                appliedDate: "2024-01-10",
-                confirmedDate: "2024-01-12",
-                status: "confirmed"
-            }
-        ],
-        cancelled: [
-            {
-                id: 4,
-                title: "Room in Mirpur",
-                location: "Mirpur, Dhaka",
-                rent: "18000",
-                appliedDate: "2024-01-05",
-                cancelledDate: "2024-01-08",
-                status: "cancelled"
-            }
-        ],
-        rejected: [
-            {
-                id: 5,
-                title: "Apartment in Banani",
-                location: "Banani, Dhaka",
-                rent: "35000",
-                appliedDate: "2024-01-03",
-                rejectedDate: "2024-01-06",
-                status: "rejected"
-            }
-        ]
-    };
+    fetch("../../backend/get_housing_status.php")
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                const statusData = result.data;
 
-    // Update status counts
-    updateStatusCounts(mockData);
+                // Update status counts
+                updateStatusCounts(statusData);
 
-    const data = mockData[statusType] || [];
-    const container = document.getElementById(statusType + 'List');
+                const data = statusData[statusType] || [];
+                const container = document.getElementById(statusType + 'List');
 
-    if (!container) return;
+                if (!container) return;
 
-    if (data.length === 0) {
-        container.innerHTML = '<div class="no-status">No ' + statusType + ' applications found.</div>';
-        return;
-    }
+                if (data.length === 0) {
+                    container.innerHTML = '<div class="no-status">No ' + statusType + ' applications found.</div>';
+                    return;
+                }
 
-    container.innerHTML = data.map(item => `
+                container.innerHTML = data.map(item => `
         <div class="status-item">
             <div class="status-item-header">
                 <h4 class="status-item-title">${item.title}</h4>
@@ -470,17 +687,19 @@ function loadStatusData(statusType) {
             <div class="status-item-details">
                 <p><strong>Location:</strong> ${item.location}</p>
                 <p><strong>Rent:</strong> ৳${item.rent}</p>
+                            <p><strong>Property:</strong> ${item.property_type} - ${item.bedrooms} bed, ${item.bathrooms} bath</p>
                 <p><strong>Applied:</strong> ${item.appliedDate}</p>
                 ${item.confirmedDate ? `<p><strong>Confirmed:</strong> ${item.confirmedDate}</p>` : ''}
                 ${item.cancelledDate ? `<p><strong>Cancelled:</strong> ${item.cancelledDate}</p>` : ''}
                 ${item.rejectedDate ? `<p><strong>Rejected:</strong> ${item.rejectedDate}</p>` : ''}
+                            ${item.message ? `<p><strong>Message:</strong> ${item.message}</p>` : ''}
             </div>
             <div class="status-item-actions">
                 ${item.status === 'pending' ? `
                     <button class="status-btn danger" onclick="cancelApplication(${item.id})">Cancel</button>
                     <button class="status-btn secondary" onclick="viewDetails(${item.id})">View Details</button>
                 ` : ''}
-                ${item.status === 'confirmed' ? `
+                            ${item.status === 'accepted' ? `
                     <button class="status-btn primary" onclick="contactLandlord(${item.id})">Contact Landlord</button>
                     <button class="status-btn secondary" onclick="viewDetails(${item.id})">View Details</button>
                 ` : ''}
@@ -491,19 +710,34 @@ function loadStatusData(statusType) {
             </div>
         </div>
     `).join('');
+            } else {
+                console.error('Error loading status data:', result.message);
+                const container = document.getElementById(statusType + 'List');
+                if (container) {
+                    container.innerHTML = '<div class="no-status">Error loading status data.</div>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching status data:', error);
+            const container = document.getElementById(statusType + 'List');
+            if (container) {
+                container.innerHTML = '<div class="no-status">Error loading status data.</div>';
+            }
+        });
 }
 
-function updateStatusCounts(mockData) {
+function updateStatusCounts(statusData) {
     // Update count displays
     const setCount = (id, count) => {
         const element = document.getElementById(id);
         if (element) element.textContent = count;
     };
 
-    setCount('pendingCount', mockData.pending.length);
-    setCount('confirmedCount', mockData.confirmed.length);
-    setCount('cancelledCount', mockData.cancelled.length);
-    setCount('rejectedCount', mockData.rejected.length);
+    setCount('pendingCount', statusData.pending.length);
+    setCount('confirmedCount', statusData.confirmed.length);
+    setCount('cancelledCount', statusData.cancelled.length);
+    setCount('rejectedCount', statusData.rejected.length);
 }
 
 function refreshStatus() {
