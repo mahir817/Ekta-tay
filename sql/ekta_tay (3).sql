@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 03, 2025 at 05:24 PM
+-- Generation Time: Oct 04, 2025 at 07:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -80,6 +80,24 @@ CREATE TABLE `expenses` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `food_services`
+--
+
+CREATE TABLE `food_services` (
+  `foodService_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `food_type` enum('meal','tiffin','laundry','others') DEFAULT 'meal',
+  `provider_name` varchar(255) NOT NULL,
+  `location` varchar(255) NOT NULL,
+  `available_date` date DEFAULT NULL,
+  `price` decimal(12,2) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('available','unavailable') DEFAULT 'available'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `housing`
 --
 
@@ -108,6 +126,20 @@ CREATE TABLE `housing` (
   `status` enum('available','pending','occupied') DEFAULT 'available',
   `furnished` enum('furnished','unfurnished') DEFAULT 'unfurnished'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `housing`
+--
+
+INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`, `floor_no`, `total_floors`, `furnished_status`, `parking_spaces`, `bedrooms`, `bathrooms`, `balconies`, `rent`, `service_charge`, `advance_deposit`, `available_from`, `available_for`, `negotiable`, `property_condition`, `verification_doc`, `verification_status`, `khotiyan`, `status`, `furnished`) VALUES
+(1, 1, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
+(2, 2, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished'),
+(3, 4, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
+(4, 5, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished'),
+(5, 7, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
+(6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished'),
+(7, 9, 'apartment', 1050, '4th', 6, 'semi-furnished', 1, 3, 2, 2, 28000.00, 1500.00, 56000.00, '2025-10-15', 'family', 1, 'Clean and well-maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
+(8, 10, 'apartment', 450, '2nd', 5, 'semi-furnished', 0, 1, 1, 1, 12000.00, 500.00, 12000.00, '2025-10-05', 'bachelor', 1, 'Good condition', NULL, 'verified', NULL, 'available', 'unfurnished');
 
 -- --------------------------------------------------------
 
@@ -175,6 +207,25 @@ CREATE TABLE `housing_terms` (
   `housing_id` int(11) NOT NULL,
   `term_name` varchar(100) NOT NULL,
   `term_value` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `jobs`
+--
+
+CREATE TABLE `jobs` (
+  `job_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `job_type` enum('tuition','part-time','full-time','internship') DEFAULT 'part-time',
+  `description` text NOT NULL,
+  `salary` decimal(12,2) DEFAULT 0.00,
+  `location` varchar(255) DEFAULT NULL,
+  `requirements` text DEFAULT NULL,
+  `posted_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('open','closed') DEFAULT 'open'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -249,6 +300,20 @@ CREATE TABLE `services` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `services`
+--
+
+INSERT INTO `services` (`service_id`, `user_id`, `title`, `description`, `type`, `price`, `location`, `created_at`) VALUES
+(1, 19, '2 BHK Apartment for Rent in Bashundhara R/A', 'Spacious 2-bedroom furnished apartment located in a quiet area near NSU. Includes modern kitchen, lift, generator backup, and 24/7 security.', 'housing', 32000.00, 'Bashundhara, Dhaka East', '2025-10-04 14:10:32'),
+(2, 20, 'Single Room for Bachelor in Mirpur 10', 'Affordable single room available for bachelor. Close to bus stop and market. Includes water, gas, and WiFi.', 'housing', 8500.00, 'Mirpur 10, Dhaka North', '2025-10-04 14:10:32'),
+(4, 19, '2 BHK Apartment for Rent in Bashundhara R/A', 'Spacious 2-bedroom furnished apartment located in a quiet area near NSU. Includes modern kitchen, lift, generator backup, and 24/7 security.', 'housing', 32000.00, 'Bashundhara, Dhaka East', '2025-10-04 14:11:01'),
+(5, 20, 'Single Room for Bachelor in Mirpur 10', 'Affordable single room available for bachelor. Close to bus stop and market. Includes water, gas, and WiFi.', 'housing', 8500.00, 'Mirpur 10, Dhaka North', '2025-10-04 14:11:01'),
+(7, 19, '2 BHK Apartment for Rent in Bashundhara R/A', 'Spacious 2-bedroom furnished apartment located in a quiet area near NSU. Includes modern kitchen, lift, generator backup, and 24/7 security.', 'housing', 32000.00, 'Bashundhara, Dhaka East', '2025-10-04 14:11:22'),
+(8, 20, 'Single Room for Bachelor in Mirpur 10', 'Affordable single room available for bachelor. Close to bus stop and market. Includes water, gas, and WiFi.', 'housing', 8500.00, 'Mirpur 10, Dhaka North', '2025-10-04 14:11:22'),
+(9, 17, 'Modern Flat for Rent in Uttara Sector 7', 'A 3-bedroom, 2-bathroom apartment with lift, generator, and parking. Ideal for small families or working professionals.', 'housing', 28000.00, 'Uttara, Dhaka North', '2025-10-04 15:07:04'),
+(10, 2, 'Bachelor Apartment for Rent in Mohammadpur', '1-bedroom apartment suitable for bachelors. Includes WiFi, 24/7 water, and nearby grocery store access.', 'housing', 12000.00, 'Mohammadpur, Dhaka', '2025-10-04 15:09:15');
+
 -- --------------------------------------------------------
 
 --
@@ -289,7 +354,8 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `phone`, `
 (16, 'new user8', 'user8@mail.com', '$2y$10$/6.DWV/UTUeS2eV/Bj47V.Tz4OCZkmknpRGpdkVJleM9LdDzaOxdS', '2025-09-19 15:21:13', '12345689638', 'Dhaka North', 'female'),
 (17, 'new user9', 'new9@mail.com', '$2y$10$EnARDqLr6RhvcxC5v62JBu1L4lfXSl30EC9cfQsaddwJjEk9zNdpW', '2025-09-19 15:44:38', '23638738298', 'Dhaka West', 'female'),
 (18, 'new user11', 'user11@mail.com', '$2y$10$7FRLtkNCwBVFFXqQIxu0XuJKjjiBrSbrqPFZonpyVkB6J2jdJ9Y.i', '2025-09-19 18:04:39', '127138928739', 'Dhaka East', 'female'),
-(19, 'test id', 'test@gmail.com', '$2y$10$VN4joOgEbEZtz9Sir8Qqv.wv8TonOxds9x32DY6ksf.0ceazzMeiK', '2025-10-03 14:18:46', '01277383773', 'Dhaka East', 'male');
+(19, 'test id', 'test@gmail.com', '$2y$10$VN4joOgEbEZtz9Sir8Qqv.wv8TonOxds9x32DY6ksf.0ceazzMeiK', '2025-10-03 14:18:46', '01277383773', 'Dhaka East', 'male'),
+(20, 'abc aa', 'abc@gmail.com', '$2y$10$r/ssw1XGRMnRqGr0kYRgyOHaTog9nhFLYj2Z/OT9i5XKWJqJxTCyC', '2025-10-03 19:04:05', '13209891323', 'Dhaka South', 'male');
 
 -- --------------------------------------------------------
 
@@ -352,7 +418,8 @@ INSERT INTO `user_capabilities` (`user_id`, `capability_id`) VALUES
 (19, 5),
 (19, 6),
 (19, 7),
-(19, 8);
+(19, 8),
+(20, 4);
 
 --
 -- Indexes for dumped tables
@@ -379,6 +446,12 @@ ALTER TABLE `expenses`
   ADD PRIMARY KEY (`id`),
   ADD KEY `housing_id` (`housing_id`),
   ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `food_services`
+--
+ALTER TABLE `food_services`
+  ADD PRIMARY KEY (`foodService_id`);
 
 --
 -- Indexes for table `housing`
@@ -423,6 +496,12 @@ ALTER TABLE `housing_tenants`
 ALTER TABLE `housing_terms`
   ADD PRIMARY KEY (`term_id`),
   ADD KEY `housing_id` (`housing_id`);
+
+--
+-- Indexes for table `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`job_id`);
 
 --
 -- Indexes for table `mentors`
@@ -499,16 +578,22 @@ ALTER TABLE `expenses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `food_services`
+--
+ALTER TABLE `food_services`
+  MODIFY `foodService_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `housing`
 --
 ALTER TABLE `housing`
-  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `housing_applications`
 --
 ALTER TABLE `housing_applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `housing_features`
@@ -533,6 +618,12 @@ ALTER TABLE `housing_tenants`
 --
 ALTER TABLE `housing_terms`
   MODIFY `term_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `mentors`
@@ -562,13 +653,13 @@ ALTER TABLE `rent_split`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Constraints for dumped tables

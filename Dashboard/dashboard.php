@@ -301,7 +301,7 @@ foreach ($postingCaps as $cap) {
                 <!-- Post Service Card -->
                 <?php if ($canPostService): ?>
                 <div class="stat-card fade-in-up" id="postServiceCard" style="cursor: pointer;" 
-                     onclick="window.location.href='../Post Service Page/post_service.html'">
+                     onclick="window.location.href='../Post Service Page/post_service.php">
                     <div class="stat-header">
                         <span class="stat-title">Post Service</span>
                         <div class="stat-icon">

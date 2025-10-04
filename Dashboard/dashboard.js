@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const postServiceCard = document.getElementById('postServiceCard');
     if (postServiceCard) {
         postServiceCard.addEventListener('click', function () {
-            window.location.href = 'http://localhost:8080/Ekta-Tay/Post Service Page/post_service.html';
+            window.location.href = 'http://localhost:8080/Ekta-Tay/Post Service Page/post_service.php';
         });
     }
 });

@@ -1,0 +1,89 @@
+/* General reset */
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Main container */
+form {
+    background: #fff;
+    width: 60%;
+    margin: 40px auto;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* Page heading */
+h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 30px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+h3 {
+    margin-top: 20px;
+    color: #34495e;
+    font-size: 20px;
+    border-left: 4px solid #3498db;
+    padding-left: 8px;
+}
+
+/* Labels and inputs */
+label {
+    font-weight: 600;
+    color: #333;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* Buttons */
+button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #3498db;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+/* Dynamic sections */
+#housingForm, #jobForm, #foodForm {
+    background: #f9fbfd;
+    padding: 15px 20px;
+    border: 1px solid #e0e6ed;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    form {
+        width: 90%;
+    }
+}
