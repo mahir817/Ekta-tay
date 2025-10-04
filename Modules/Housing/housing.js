@@ -125,6 +125,51 @@ function updateFindTabStats(stats) {
     set('statConfirmed', stats.confirmed);
     set('statCancelled', stats.cancelled);
     set('statNearby', stats.nearby);
+
+    // Add click handlers to status cards to redirect to status page
+    addStatusCardClickHandlers();
+}
+
+function addStatusCardClickHandlers() {
+    // Add click handler to pending card
+    const pendingCard = document.querySelector('.stat-card:nth-child(1)');
+    if (pendingCard) {
+        pendingCard.style.cursor = 'pointer';
+        pendingCard.onclick = () => {
+            showSection('status');
+            setTimeout(() => showStatusTab('pending'), 100);
+        };
+    }
+
+    // Add click handler to applied card
+    const appliedCard = document.querySelector('.stat-card:nth-child(2)');
+    if (appliedCard) {
+        appliedCard.style.cursor = 'pointer';
+        appliedCard.onclick = () => {
+            showSection('status');
+            setTimeout(() => showStatusTab('pending'), 100);
+        };
+    }
+
+    // Add click handler to confirmed card
+    const confirmedCard = document.querySelector('.stat-card:nth-child(3)');
+    if (confirmedCard) {
+        confirmedCard.style.cursor = 'pointer';
+        confirmedCard.onclick = () => {
+            showSection('status');
+            setTimeout(() => showStatusTab('confirmed'), 100);
+        };
+    }
+
+    // Add click handler to cancelled card
+    const cancelledCard = document.querySelector('.stat-card:nth-child(4)');
+    if (cancelledCard) {
+        cancelledCard.style.cursor = 'pointer';
+        cancelledCard.onclick = () => {
+            showSection('status');
+            setTimeout(() => showStatusTab('cancelled'), 100);
+        };
+    }
 }
 
 function calculateSplit() {
@@ -313,4 +358,212 @@ document.getElementById('editHouseForm')?.addEventListener('submit', function (e
             }
             closeEditHouse();
         });
+});
+
+// ====== Status Page Functions ======
+function showStatusTab(statusType) {
+    // Hide all status tab sections
+    document.querySelectorAll('.status-tab-section').forEach(sec => {
+        sec.classList.add("hidden");
+        sec.classList.remove("active");
+    });
+
+    // Show selected status section
+    const activeSection = document.getElementById(statusType);
+    if (activeSection) {
+        activeSection.classList.remove("hidden");
+        activeSection.classList.add("active");
+    }
+
+    // Remove active class from all status tab buttons
+    document.querySelectorAll('.status-tab-btn').forEach(btn => btn.classList.remove("active"));
+
+    // Add active class to clicked button
+    const buttons = document.querySelectorAll('.status-tab-btn');
+    buttons.forEach(btn => {
+        const onclick = btn.getAttribute('onclick') || '';
+        if (onclick.includes(statusType)) {
+            btn.classList.add("active");
+        }
+    });
+
+    // Load status data for the selected tab
+    loadStatusData(statusType);
+}
+
+function loadStatusData(statusType) {
+    // This would typically fetch from a backend endpoint
+    // For now, we'll use mock data
+    const mockData = {
+        pending: [
+            {
+                id: 1,
+                title: "Modern Apartment in Dhanmondi",
+                location: "Dhanmondi, Dhaka",
+                rent: "25000",
+                appliedDate: "2024-01-15",
+                status: "pending"
+            },
+            {
+                id: 2,
+                title: "Shared Room in Uttara",
+                location: "Uttara, Dhaka",
+                rent: "15000",
+                appliedDate: "2024-01-20",
+                status: "pending"
+            }
+        ],
+        confirmed: [
+            {
+                id: 3,
+                title: "Studio Apartment in Gulshan",
+                location: "Gulshan, Dhaka",
+                rent: "30000",
+                appliedDate: "2024-01-10",
+                confirmedDate: "2024-01-12",
+                status: "confirmed"
+            }
+        ],
+        cancelled: [
+            {
+                id: 4,
+                title: "Room in Mirpur",
+                location: "Mirpur, Dhaka",
+                rent: "18000",
+                appliedDate: "2024-01-05",
+                cancelledDate: "2024-01-08",
+                status: "cancelled"
+            }
+        ],
+        rejected: [
+            {
+                id: 5,
+                title: "Apartment in Banani",
+                location: "Banani, Dhaka",
+                rent: "35000",
+                appliedDate: "2024-01-03",
+                rejectedDate: "2024-01-06",
+                status: "rejected"
+            }
+        ]
+    };
+
+    // Update status counts
+    updateStatusCounts(mockData);
+
+    const data = mockData[statusType] || [];
+    const container = document.getElementById(statusType + 'List');
+
+    if (!container) return;
+
+    if (data.length === 0) {
+        container.innerHTML = '<div class="no-status">No ' + statusType + ' applications found.</div>';
+        return;
+    }
+
+    container.innerHTML = data.map(item => `
+        <div class="status-item">
+            <div class="status-item-header">
+                <h4 class="status-item-title">${item.title}</h4>
+                <span class="status-badge ${item.status}">${item.status}</span>
+            </div>
+            <div class="status-item-details">
+                <p><strong>Location:</strong> ${item.location}</p>
+                <p><strong>Rent:</strong> ৳${item.rent}</p>
+                <p><strong>Applied:</strong> ${item.appliedDate}</p>
+                ${item.confirmedDate ? `<p><strong>Confirmed:</strong> ${item.confirmedDate}</p>` : ''}
+                ${item.cancelledDate ? `<p><strong>Cancelled:</strong> ${item.cancelledDate}</p>` : ''}
+                ${item.rejectedDate ? `<p><strong>Rejected:</strong> ${item.rejectedDate}</p>` : ''}
+            </div>
+            <div class="status-item-actions">
+                ${item.status === 'pending' ? `
+                    <button class="status-btn danger" onclick="cancelApplication(${item.id})">Cancel</button>
+                    <button class="status-btn secondary" onclick="viewDetails(${item.id})">View Details</button>
+                ` : ''}
+                ${item.status === 'confirmed' ? `
+                    <button class="status-btn primary" onclick="contactLandlord(${item.id})">Contact Landlord</button>
+                    <button class="status-btn secondary" onclick="viewDetails(${item.id})">View Details</button>
+                ` : ''}
+                ${item.status === 'cancelled' || item.status === 'rejected' ? `
+                    <button class="status-btn secondary" onclick="viewDetails(${item.id})">View Details</button>
+                    <button class="status-btn primary" onclick="reapply(${item.id})">Reapply</button>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateStatusCounts(mockData) {
+    // Update count displays
+    const setCount = (id, count) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = count;
+    };
+
+    setCount('pendingCount', mockData.pending.length);
+    setCount('confirmedCount', mockData.confirmed.length);
+    setCount('cancelledCount', mockData.cancelled.length);
+    setCount('rejectedCount', mockData.rejected.length);
+}
+
+function refreshStatus() {
+    // Get current active status tab
+    const activeTab = document.querySelector('.status-tab-btn.active');
+    if (activeTab) {
+        const onclick = activeTab.getAttribute('onclick') || '';
+        const statusType = onclick.match(/showStatusTab\('(\w+)'\)/)?.[1];
+        if (statusType) {
+            loadStatusData(statusType);
+        }
+    }
+}
+
+function cancelApplication(id) {
+    if (confirm('Are you sure you want to cancel this application?')) {
+        // This would typically make an API call to cancel the application
+        alert('Application cancelled successfully.');
+        refreshStatus();
+    }
+}
+
+function contactLandlord(id) {
+    // This would typically open a contact form or messaging interface
+    alert('Contact landlord functionality would be implemented here.');
+}
+
+function viewDetails(id) {
+    // This would typically open a detailed view modal
+    alert('View details functionality would be implemented here for application ID: ' + id);
+}
+
+function reapply(id) {
+    if (confirm('Are you sure you want to reapply for this housing?')) {
+        // This would typically make an API call to reapply
+        alert('Reapplication submitted successfully.');
+        refreshStatus();
+    }
+}
+
+// ====== User Dropdown Functions ======
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        window.location.href = '../../backend/logout.php';
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function (event) {
+    const dropdown = document.getElementById('userDropdown');
+    const userProfile = document.querySelector('.user-profile');
+
+    if (dropdown && userProfile && !userProfile.contains(event.target)) {
+        dropdown.classList.remove('show');
+    }
 });

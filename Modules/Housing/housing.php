@@ -14,10 +14,65 @@
 
 <div class="housing-container">
 
+  <!-- Logo Header -->
+  <div class="logo-header">
+    <a href="../../Dashboard/dashboard.php" class="logo-link">
+      <img src="../../images/logo.png" alt="Ekta-tay Logo" class="logo-img" />
+      <span class="logo-text">Ekta-tay</span>
+    </a>
+    
+    <!-- User Profile -->
+    <div class="user-profile" onclick="toggleDropdown()">
+      <div class="user-avatar">
+        <?php 
+        // Get user info if session exists
+        if (isset($_SESSION['user_id'])) {
+          require_once "../../backend/db.php";
+          $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+          $userStmt->execute([$_SESSION['user_id']]);
+          $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+          echo strtoupper(substr($user['name'], 0, 1));
+        } else {
+          echo 'U';
+        }
+        ?>
+      </div>
+      <div class="user-info">
+        <span class="user-name">
+          <?php 
+          if (isset($user)) {
+            echo htmlspecialchars(explode(' ', $user['name'])[0]);
+          } else {
+            echo 'User';
+          }
+          ?>
+        </span>
+        <div class="user-dropdown">
+          <div class="dropdown-menu" id="userDropdown">
+            <div class="dropdown-item">
+              <i class="fas fa-user"></i>
+              <span>Profile</span>
+            </div>
+            <div class="dropdown-item">
+              <i class="fas fa-cog"></i>
+              <span>Settings</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div class="dropdown-item logout-item" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Top Navigation Tabs -->
   <div class="tabs glass-card">
     <button class="tab-btn active" onclick="showSection('find')">Find House</button>
     <button class="tab-btn" onclick="showSection('my')">My House</button>
+    <button class="tab-btn" onclick="showSection('status')">Status</button>
   </div>
 
   <!-- Sections -->
@@ -158,6 +213,67 @@
     </div>
   </div>
 
+  <!-- Status Section -->
+  <div id="status" class="tab-section hidden glass-card">
+    <div class="section-header">
+      <h2>Application Status</h2>
+      <div class="mini-actions">
+        <button class="add-btn" onclick="refreshStatus()">Refresh</button>
+      </div>
+    </div>
+
+    <!-- Status Tabs -->
+    <div class="status-tabs">
+      <button class="status-tab-btn active" onclick="showStatusTab('pending')">
+        Pending <span class="status-count" id="pendingCount">0</span>
+      </button>
+      <button class="status-tab-btn" onclick="showStatusTab('confirmed')">
+        Confirmed <span class="status-count" id="confirmedCount">0</span>
+      </button>
+      <button class="status-tab-btn" onclick="showStatusTab('cancelled')">
+        Cancelled <span class="status-count" id="cancelledCount">0</span>
+      </button>
+      <button class="status-tab-btn" onclick="showStatusTab('rejected')">
+        Rejected <span class="status-count" id="rejectedCount">0</span>
+      </button>
+    </div>
+
+    <!-- Status Content -->
+    <div id="statusContent" class="status-content">
+      <!-- Pending Applications -->
+      <div id="pending" class="status-tab-section active">
+        <h3>Pending Applications</h3>
+        <div id="pendingList" class="status-list">
+          <!-- Pending applications will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Confirmed Applications -->
+      <div id="confirmed" class="status-tab-section hidden">
+        <h3>Confirmed Applications</h3>
+        <div id="confirmedList" class="status-list">
+          <!-- Confirmed applications will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Cancelled Applications -->
+      <div id="cancelled" class="status-tab-section hidden">
+        <h3>Cancelled Applications</h3>
+        <div id="cancelledList" class="status-list">
+          <!-- Cancelled applications will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Rejected Applications -->
+      <div id="rejected" class="status-tab-section hidden">
+        <h3>Rejected Applications</h3>
+        <div id="rejectedList" class="status-list">
+          <!-- Rejected applications will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Hidden modal trigger in My House for expenses -->
   <div style="display:none">
     <button class="add-btn" onclick="openExpenseForm()" id="hiddenExpenseBtn">+ Add Expense</button>
@@ -169,15 +285,10 @@
 <div id="postModal" class="modal hidden">
   <div class="modal-content glass-card">
     <h3>Post New Housing</h3>
-    <form id="postHousingForm">
-      <input type="text" name="title" placeholder="Title" required>
-      <input type="text" name="location" placeholder="Location" required>
-      <input type="number" name="rent" placeholder="Rent" required>
-      <input type="text" name="khotiyan" placeholder="Khotiyan/Porcha No (optional)">
-      <textarea name="description" placeholder="Description"></textarea>
-      <button type="submit" class="add-btn">Submit</button>
-      <button type="button" onclick="closePostForm()" class="add-btn cancel-btn">Cancel</button>
-    </form>
+    <div style="text-align:center; margin: 24px 0;">
+      <a href="/Post Service Page/post_service.html" class="add-btn" style="font-size:1.1em; padding:10px 24px; text-decoration:none;">Go to Post Service Page</a>
+    </div>
+    <button type="button" onclick="closePostForm()" class="add-btn cancel-btn">Cancel</button>
   </div>
 </div>
 
