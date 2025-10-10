@@ -145,22 +145,30 @@ function displayHousingData(data) {
 
 // ====== Fetch Housing Stats ======
 function fetchHousingStats() {
-    fetch("../../backend/get_housing_stats.php")
+    fetch("../../backend/housing_management.php?action=get_dashboard_stats")
         .then(res => res.json())
-        .then(stats => {
-            updateFindTabStats(stats);
+        .then(data => {
+            if (data.success) {
+                updateDashboardStats(data.applicant_stats, data.owner_stats);
+            }
         })
         .catch(error => {
             console.error('Error fetching housing stats:', error);
-            const fallbackStats = {
-                pending: 0,
-                applied: 0,
-                confirmed: 0,
-                cancelled: 0,
-                nearby: allHousingData.length
-            };
-            updateFindTabStats(fallbackStats);
         });
+}
+
+function updateDashboardStats(applicantStats, ownerStats) {
+    // Update applicant stats
+    document.getElementById('statPending').textContent = applicantStats.pending || 0;
+    document.getElementById('statApplied').textContent = (applicantStats.pending || 0) + (applicantStats.shortlisted || 0) + (applicantStats.accepted || 0);
+    document.getElementById('statConfirmed').textContent = applicantStats.accepted || 0;
+    document.getElementById('statCancelled').textContent = (applicantStats.rejected || 0) + (applicantStats.withdrawn || 0);
+    
+    // Update status tab counts
+    document.getElementById('pendingCount').textContent = applicantStats.pending || 0;
+    document.getElementById('confirmedCount').textContent = applicantStats.accepted || 0;
+    document.getElementById('cancelledCount').textContent = applicantStats.withdrawn || 0;
+    document.getElementById('rejectedCount').textContent = applicantStats.rejected || 0;
 }
 
 // ====== Fetch Housing ======
@@ -251,17 +259,19 @@ function closeHousingDetailsModal() {
 
 // ====== Apply for Housing ======
 function applyForHousing(housingId) {
-    if (confirm('Are you sure you want to apply for this housing?')) {
-        fetch('../../backend/apply_housing.php', {
+    const message = prompt('Add a message with your application (optional):') || 'Application submitted';
+    if (message !== null) {
+        fetch('../../backend/housing_management.php?action=apply', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ housing_id: housingId })
+            body: JSON.stringify({ housing_id: housingId, message: message })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     alert('Application submitted successfully!');
                     fetchHousing();
+                    fetchHousingStats();
                 } else {
                     alert('Failed to submit application: ' + (data.message || 'Unknown error'));
                 }
@@ -318,7 +328,340 @@ document.getElementById("postHousingForm")?.addEventListener("submit", e => {
 
 // ... (rest of your code for expenses, stats, dropdown, etc. remains unchanged)
 
+// ====== Status Management Functions ======
+function showStatusTab(status) {
+    // Hide all status sections
+    document.querySelectorAll('.status-tab-section').forEach(sec => {
+        sec.classList.add('hidden');
+        sec.classList.remove('active');
+    });
+    
+    // Show selected section
+    document.getElementById(status).classList.remove('hidden');
+    document.getElementById(status).classList.add('active');
+    
+    // Update tab buttons
+    document.querySelectorAll('.status-tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function refreshStatus() {
+    fetchMyApplications();
+    fetchHousingStats();
+}
+
+function fetchMyApplications() {
+    fetch('../../backend/housing_management.php?action=get_my_applications')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayMyApplications(data.applications);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching applications:', error);
+        });
+}
+
+function displayMyApplications(applications) {
+    const statusLists = {
+        pending: document.getElementById('pendingList'),
+        confirmed: document.getElementById('confirmedList'),
+        cancelled: document.getElementById('cancelledList'),
+        rejected: document.getElementById('rejectedList')
+    };
+    
+    // Clear all lists
+    Object.values(statusLists).forEach(list => list.innerHTML = '');
+    
+    applications.forEach(app => {
+        const statusKey = app.status === 'accepted' ? 'confirmed' : 
+                         app.status === 'withdrawn' ? 'cancelled' : app.status;
+        
+        if (statusLists[statusKey]) {
+            statusLists[statusKey].innerHTML += `
+                <div class="status-item">
+                    <div class="status-item-header">
+                        <h4>${app.title}</h4>
+                        <span class="status-badge status-${app.status}">${app.status}</span>
+                    </div>
+                    <div class="status-item-body">
+                        <p><strong>Location:</strong> ${app.location}</p>
+                        <p><strong>Rent:</strong> ৳${app.rent}</p>
+                        <p><strong>Owner:</strong> ${app.owner_name}</p>
+                        <p><strong>Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
+                        ${app.message ? `<p><strong>Message:</strong> ${app.message}</p>` : ''}
+                    </div>
+                    <div class="status-item-actions">
+                        ${app.status === 'pending' || app.status === 'shortlisted' ? 
+                            `<button class="cancel-btn" onclick="withdrawApplication(${app.application_id})">Withdraw</button>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    // Show empty state if no applications
+    Object.entries(statusLists).forEach(([status, list]) => {
+        if (list.innerHTML === '') {
+            list.innerHTML = `<div class="no-content">No ${status} applications</div>`;
+        }
+    });
+}
+
+function withdrawApplication(applicationId) {
+    if (confirm('Are you sure you want to withdraw this application?')) {
+        fetch('../../backend/housing_management.php?action=withdraw_application', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ application_id: applicationId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Application withdrawn successfully');
+                    fetchMyApplications();
+                    fetchHousingStats();
+                } else {
+                    alert('Failed to withdraw application: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error withdrawing application:', error);
+                alert('Failed to withdraw application. Please try again.');
+            });
+    }
+}
+
+// ====== Owner Dashboard Functions ======
+function loadOwnerDashboard() {
+    fetchMyHousingPosts();
+}
+
+function fetchMyHousingPosts() {
+    fetch('../../backend/owner_dashboard.php?action=get_my_housing_posts')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayMyHousingPosts(data.posts);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching housing posts:', error);
+        });
+}
+
+function displayMyHousingPosts(posts) {
+    const container = document.getElementById('myHousingList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (posts.length === 0) {
+        container.innerHTML = '<div class="no-content">No housing posts yet.</div>';
+        return;
+    }
+    
+    posts.forEach(post => {
+        container.innerHTML += `
+            <div class="card glass-card owner-housing-card">
+                <div class="card-header">
+                    <h3>${post.title}</h3>
+                    <span class="availability-badge ${post.availability}">${post.availability}</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Location:</strong> ${post.location}</p>
+                    <p><strong>Rent:</strong> ৳${post.rent}</p>
+                    <p><strong>Type:</strong> ${post.property_type}</p>
+                    <div class="application-stats">
+                        <span class="stat-item">Pending: ${post.pending_applications}</span>
+                        <span class="stat-item">Shortlisted: ${post.shortlisted_applications}</span>
+                        <span class="stat-item">Accepted: ${post.accepted_applications}</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="details-btn" onclick="viewApplications(${post.service_id})">
+                        View Applications (${post.total_applications})
+                    </button>
+                    <button class="delete-btn" onclick="deletePost(${post.service_id})">Delete</button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function viewApplications(housingId) {
+    fetch(`../../backend/owner_dashboard.php?action=get_applications_for_housing&housing_id=${housingId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showApplicationsModal(data.applications, housingId);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching applications:', error);
+        });
+}
+
+function showApplicationsModal(applications, housingId) {
+    const modal = document.createElement('div');
+    modal.className = 'modal applications-modal';
+    modal.innerHTML = `
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h3>Applications for Housing</h3>
+                <button class="close-btn" onclick="closeApplicationsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="applications-tabs">
+                    <button class="app-tab-btn active" onclick="showAppTab('pending')">Pending (${applications.pending.length})</button>
+                    <button class="app-tab-btn" onclick="showAppTab('shortlisted')">Shortlisted (${applications.shortlisted.length})</button>
+                    <button class="app-tab-btn" onclick="showAppTab('accepted')">Accepted (${applications.accepted.length})</button>
+                    <button class="app-tab-btn" onclick="showAppTab('rejected')">Rejected (${applications.rejected.length})</button>
+                </div>
+                <div class="applications-content">
+                    ${generateApplicationsContent(applications)}
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function generateApplicationsContent(applications) {
+    let content = '';
+    
+    Object.entries(applications).forEach(([status, apps]) => {
+        const isActive = status === 'pending' ? 'active' : 'hidden';
+        content += `<div id="app-${status}" class="app-tab-section ${isActive}">`;
+        
+        if (apps.length === 0) {
+            content += `<div class="no-content">No ${status} applications</div>`;
+        } else {
+            apps.forEach(app => {
+                content += `
+                    <div class="application-item">
+                        <div class="applicant-info">
+                            <h4>${app.applicant_name}</h4>
+                            <p><strong>Phone:</strong> ${app.applicant_phone}</p>
+                            <p><strong>Email:</strong> ${app.applicant_email}</p>
+                            <p><strong>Location:</strong> ${app.applicant_location}</p>
+                            <p><strong>Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
+                            ${app.message ? `<p><strong>Message:</strong> ${app.message}</p>` : ''}
+                        </div>
+                        <div class="application-actions">
+                            ${status === 'pending' ? `
+                                <button class="shortlist-btn" onclick="shortlistApplicant(${app.application_id})">Shortlist</button>
+                                <button class="reject-btn" onclick="rejectApplicant(${app.application_id})">Reject</button>
+                            ` : ''}
+                            ${status === 'shortlisted' ? `
+                                <button class="confirm-btn" onclick="confirmTenant(${app.application_id})">Confirm Tenant</button>
+                                <button class="reject-btn" onclick="rejectApplicant(${app.application_id})">Reject</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        content += '</div>';
+    });
+    
+    return content;
+}
+
+function showAppTab(status) {
+    document.querySelectorAll('.app-tab-section').forEach(sec => {
+        sec.classList.add('hidden');
+        sec.classList.remove('active');
+    });
+    document.getElementById(`app-${status}`).classList.remove('hidden');
+    document.getElementById(`app-${status}`).classList.add('active');
+    
+    document.querySelectorAll('.app-tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function shortlistApplicant(applicationId) {
+    fetch('../../backend/housing_management.php?action=shortlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ application_id: applicationId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Applicant shortlisted successfully');
+                closeApplicationsModal();
+                loadOwnerDashboard();
+            } else {
+                alert('Failed to shortlist applicant: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error shortlisting applicant:', error);
+        });
+}
+
+function confirmTenant(applicationId) {
+    const startDate = prompt('Enter tenancy start date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+    if (startDate) {
+        fetch('../../backend/housing_management.php?action=confirm_tenant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ application_id: applicationId, start_date: startDate })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Tenant confirmed successfully');
+                    closeApplicationsModal();
+                    loadOwnerDashboard();
+                } else {
+                    alert('Failed to confirm tenant: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error confirming tenant:', error);
+            });
+    }
+}
+
+function rejectApplicant(applicationId) {
+    if (confirm('Are you sure you want to reject this applicant?')) {
+        fetch('../../backend/housing_management.php?action=reject_applicant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ application_id: applicationId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Applicant rejected successfully');
+                    closeApplicationsModal();
+                    loadOwnerDashboard();
+                } else {
+                    alert('Failed to reject applicant: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error rejecting applicant:', error);
+            });
+    }
+}
+
+function closeApplicationsModal() {
+    const modal = document.querySelector('.applications-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
 window.onload = () => {
     fetchHousing();
+    fetchHousingStats();
+    loadOwnerDashboard();
+    fetchMyApplications();
     loadExpenses();
 };

@@ -18,29 +18,50 @@ if (!isset($input['housing_id'])) {
     exit;
 }
 
-$housingId = $input['housing_id'];
+$serviceId = $input['housing_id']; // This is actually service_id from frontend
 $userId = $_SESSION['user_id'];
+$message = $input['message'] ?? 'Application submitted';
 
 try {
-    // Check if housing exists
-    $stmt = $pdo->prepare("SELECT service_id FROM services WHERE service_id = ? AND type = 'housing'");
-    $stmt->execute([$housingId]);
-    if (!$stmt->fetch()) {
+    // Get housing information using service_id
+    $stmt = $pdo->prepare("
+        SELECT s.user_id as owner_id, h.housing_id, h.availability 
+        FROM services s 
+        INNER JOIN housing h ON s.service_id = h.service_id 
+        WHERE s.service_id = ? AND s.type = 'housing'
+    ");
+    $stmt->execute([$serviceId]);
+    $housing = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$housing) {
         echo json_encode(["success" => false, "message" => "Housing not found"]);
         exit;
     }
+    
+    if ($housing['availability'] !== 'available') {
+        echo json_encode(["success" => false, "message" => "Housing is no longer available"]);
+        exit;
+    }
+    
+    if ($housing['owner_id'] == $userId) {
+        echo json_encode(["success" => false, "message" => "You cannot apply to your own housing"]);
+        exit;
+    }
 
-    // Check if user already applied
+    // Check if user already applied (using housing_id)
     $stmt = $pdo->prepare("SELECT application_id FROM housing_applications WHERE housing_id = ? AND applicant_id = ?");
-    $stmt->execute([$housingId, $userId]);
+    $stmt->execute([$housing['housing_id'], $userId]);
     if ($stmt->fetch()) {
         echo json_encode(["success" => false, "message" => "You have already applied for this housing"]);
         exit;
     }
 
-    // Insert application
-    $stmt = $pdo->prepare("INSERT INTO housing_applications (housing_id, applicant_id, status, message) VALUES (?, ?, 'pending', 'Application submitted')");
-    $stmt->execute([$housingId, $userId]);
+    // Insert application with owner_id (using housing_id)
+    $stmt = $pdo->prepare("
+        INSERT INTO housing_applications (housing_id, owner_id, applicant_id, status, message) 
+        VALUES (?, ?, ?, 'pending', ?)
+    ");
+    $stmt->execute([$housing['housing_id'], $housing['owner_id'], $userId, $message]);
 
     echo json_encode(["success" => true, "message" => "Application submitted successfully"]);
 } catch (Exception $e) {
