@@ -344,16 +344,18 @@ if (isset($_SESSION['user_id'])) {
       </div>
       <div id="myHousingList" class="card-grid">
         <?php
-        if(isset($userHousing) && count($userHousing) > 0){
-          foreach($userHousing as $post){
-            echo "<div class='card glass-card'>
-                    <h3>".htmlspecialchars($post['title'])."</h3>
-                    <p>Location: ".htmlspecialchars($post['location'])."</p>
-                    <p>Rent: ৳".htmlspecialchars($post['rent'])."</p>
-                    <p>".htmlspecialchars($post['description'])."</p>
-                  </div>";
-          }
-        } else {
+if(isset($userHousing) && count($userHousing) > 0){
+  foreach($userHousing as $post){
+    echo "<div class='card glass-card' id='post-" . $post['service_id'] . "'>
+            <h3>" . htmlspecialchars($post['title']) . "</h3>
+            <p>Location: " . htmlspecialchars($post['location']) . "</p>
+            <p>Rent: ৳" . htmlspecialchars($post['rent']) . "</p>
+            <p>" . htmlspecialchars($post['description']) . "</p>
+            <button class='add-btn cancel-btn' onclick='deletePost(" . $post['service_id'] . ")'>Delete</button>
+          </div>";
+  }
+}
+ else {
           echo "<div class='glass-card no-content'>No posts yet.</div>";
           echo "<div style='margin-top:10px;'><button class='add-btn' onclick='openPostForm()'>+ Post Housing</button></div>";
         }

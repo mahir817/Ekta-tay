@@ -263,16 +263,18 @@ foreach ($postingCaps as $cap) {
                 <?php endif; ?>
 
                 <?php if (in_array('Jobs', $availableCapabilities)): ?>
-                <div class="stat-card fade-in-up">
-                    <div class="stat-header">
-                        <span class="stat-title">Jobs</span>
-                        <div class="stat-icon">
-                            <i class="fas fa-briefcase"></i>
-                        </div>
-                    </div>
-                    <h3 class="stat-value"><?php echo $stats['jobs']; ?></h3>
-                </div>
-                <?php endif; ?>
+<div class="stat-card fade-in-up" id="jobCard" style="cursor: pointer;"
+     onclick="window.location.href='../Modules/Jobs/jobs.php'">
+    <div class="stat-header">
+        <span class="stat-title">Jobs</span>
+        <div class="stat-icon">
+            <i class="fas fa-briefcase"></i>
+        </div>
+    </div>
+    <h3 class="stat-value"><?php echo $stats['jobs']; ?></h3>
+</div>
+<?php endif; ?>
+
 
                 <?php if (in_array('Tutors', $availableCapabilities)): ?>
                 <div class="stat-card fade-in-up">
