@@ -19,7 +19,19 @@ try {
     
     $userGeneralizedLocation = $user['generalized_location'] ?? null;
     
-    // Always return all available housing - filtering will be done on frontend
+    // If user doesn't have a generalized location, return empty result
+    if (!$userGeneralizedLocation) {
+        echo json_encode([
+            "success" => true,
+            "housing" => [],
+            "nearby_count" => 0,
+            "user_area" => null,
+            "message" => "Please set your generalized location in your profile to see nearby housing."
+        ]);
+        exit;
+    }
+    
+    // Filter housing posts by user's generalized location
     $stmt = $pdo->prepare("
         SELECT s.service_id, s.title, s.description, s.location, s.price, s.created_at, s.user_id,
                h.housing_id, h.property_type, h.size_sqft, h.floor_no, h.total_floors, h.furnished_status,
@@ -28,23 +40,19 @@ try {
                h.availability, h.location as housing_location, h.coordinates, h.generalized_location
         FROM services s
         INNER JOIN housing h ON s.service_id = h.service_id
-        WHERE s.type = 'housing' AND h.availability = 'available' AND s.user_id != ?
+        WHERE s.type = 'housing' AND h.availability = 'available' AND s.user_id != ? 
+              AND h.generalized_location = ?
         ORDER BY s.created_at DESC
     ");
-    $stmt->execute([$currentUserId]);
+    $stmt->execute([$currentUserId, $userGeneralizedLocation]);
     
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Transform data to match frontend expectations
     $transformedPosts = [];
-    $nearbyCount = 0;
+    $nearbyCount = count($posts); // All posts are nearby since we filtered at DB level
     
     foreach ($posts as $post) {
-        $isNearby = ($userGeneralizedLocation && $post['generalized_location'] === $userGeneralizedLocation);
-        if ($isNearby) {
-            $nearbyCount++;
-        }
-        
         $transformedPosts[] = [
             'id' => $post['service_id'],
             'housing_id' => $post['housing_id'],
@@ -66,7 +74,7 @@ try {
             'availability' => $post['availability'],
             'coordinates' => $post['coordinates'],
             'generalized_location' => $post['generalized_location'],
-            'is_nearby' => $isNearby,
+            'is_nearby' => true, // All posts are nearby since we filtered at DB level
             'is_owner' => false, // User can't be owner of nearby housing
             'created_at' => $post['created_at']
         ];

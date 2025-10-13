@@ -124,6 +124,54 @@ if (isset($_SESSION['user_id'])) {
         </a>
       </li>
     </ul>
+    
+    <!-- User Profile at bottom of sidebar -->
+    <div class="sidebar-profile">
+      <div class="user-profile" onclick="toggleDropdown()">
+        <div class="user-avatar">
+          <?php 
+          // Get user info if session exists
+          if (isset($_SESSION['user_id'])) {
+            require_once "../../backend/db.php";
+            $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
+            $userStmt->execute([$_SESSION['user_id']]);
+            $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+            echo strtoupper(substr($user['name'], 0, 1));
+          } else {
+            echo 'U';
+          }
+          ?>
+        </div>
+        <div class="user-info">
+          <span class="user-name">
+            <?php 
+            if (isset($user)) {
+              echo htmlspecialchars(explode(' ', $user['name'])[0]);
+            } else {
+              echo 'User';
+            }
+            ?>
+          </span>
+          <div class="user-dropdown">
+            <div class="dropdown-menu" id="userDropdown">
+              <div class="dropdown-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+              </div>
+              <div class="dropdown-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item logout-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </nav>
 
   <!-- Main Content -->
@@ -135,52 +183,6 @@ if (isset($_SESSION['user_id'])) {
       <img src="../../images/logo.png" alt="Ekta-tay Logo" class="logo-img" />
       <span class="logo-text">Ekta-tay</span>
     </a>
-    
-    <!-- User Profile -->
-    <div class="user-profile" onclick="toggleDropdown()">
-      <div class="user-avatar">
-        <?php 
-        // Get user info if session exists
-        if (isset($_SESSION['user_id'])) {
-          require_once "../../backend/db.php";
-          $userStmt = $pdo->prepare("SELECT name FROM users WHERE id = ?");
-          $userStmt->execute([$_SESSION['user_id']]);
-          $user = $userStmt->fetch(PDO::FETCH_ASSOC);
-          echo strtoupper(substr($user['name'], 0, 1));
-        } else {
-          echo 'U';
-        }
-        ?>
-      </div>
-      <div class="user-info">
-        <span class="user-name">
-          <?php 
-          if (isset($user)) {
-            echo htmlspecialchars(explode(' ', $user['name'])[0]);
-          } else {
-            echo 'User';
-          }
-          ?>
-        </span>
-        <div class="user-dropdown">
-          <div class="dropdown-menu" id="userDropdown">
-            <div class="dropdown-item">
-              <i class="fas fa-user"></i>
-              <span>Profile</span>
-            </div>
-            <div class="dropdown-item">
-              <i class="fas fa-cog"></i>
-              <span>Settings</span>
-            </div>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-item logout-item" onclick="logout()">
-              <i class="fas fa-sign-out-alt"></i>
-              <span>Logout</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Top Navigation Tabs -->

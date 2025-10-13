@@ -202,14 +202,12 @@ function fetchNearbyHousing() {
             if (data.success) {
                 console.log('Fetched nearby housing data:', data);
                 
-                // Calculate nearby count based on user's generalized location
+                // Use the nearby count from server response (already filtered)
+                const nearbyCount = data.nearby_count;
                 const userLocation = data.user_area;
-                const nearbyCount = data.housing.filter(house => 
-                    house.generalized_location === userLocation
-                ).length;
                 
                 console.log('User location:', userLocation);
-                console.log('Calculated nearby count:', nearbyCount);
+                console.log('Server nearby count:', nearbyCount);
                 
                 // Update nearby housing count
                 const nearbyElement = document.getElementById('statNearby');
@@ -430,6 +428,7 @@ function showStatusTab(status) {
 function refreshStatus() {
     fetchMyApplications();
     fetchHousingStats();
+    loadMyConfirmedHousing(); // Refresh confirmed housing info
 }
 
 function fetchMyApplications() {
@@ -646,26 +645,15 @@ function generateApplicationsContent(applications) {
                 `;
             });
         }
+        
         content += '</div>';
     });
     
     return content;
 }
 
-function showAppTab(status) {
-    document.querySelectorAll('.app-tab-section').forEach(sec => {
-        sec.classList.add('hidden');
-        sec.classList.remove('active');
-    });
-    document.getElementById(`app-${status}`).classList.remove('hidden');
-    document.getElementById(`app-${status}`).classList.add('active');
-    
-    document.querySelectorAll('.app-tab-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-}
-
 function shortlistApplicant(applicationId) {
-    fetch('../../backend/housing_management.php?action=shortlist', {
+    fetch('../../backend/housing_management.php?action=shortlist_applicant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ application_id: applicationId })
@@ -836,14 +824,12 @@ function showNearbyHousing() {
             if (data.success) {
                 console.log('Nearby housing data:', data);
                 
-                // Filter housing based on user's generalized location
+                // Use the already filtered housing data from server
                 const userLocation = data.user_area;
-                const nearbyHousing = data.housing.filter(house => 
-                    house.generalized_location === userLocation
-                );
+                const nearbyHousing = data.housing; // Already filtered on server side
                 
                 console.log('User location:', userLocation);
-                console.log('Filtered nearby housing:', nearbyHousing);
+                console.log('Server-filtered nearby housing:', nearbyHousing);
                 
                 displayHousingData(nearbyHousing);
                 
@@ -913,12 +899,105 @@ Check console for detailed info.`);
         });
 }
 
+// ====== Load My Confirmed Housing ======
+function loadMyConfirmedHousing() {
+    fetch("../../backend/get_my_confirmed_housing.php")
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                displayMyHouseInfo(data);
+            } else {
+                console.error('Failed to load confirmed housing:', data.message);
+                displayMyHouseInfo({ has_confirmed_housing: false });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading confirmed housing:', error);
+            displayMyHouseInfo({ has_confirmed_housing: false });
+        });
+}
+
+function displayMyHouseInfo(data) {
+    const myHouseInfo = document.getElementById('myHouseInfo');
+    if (!myHouseInfo) return;
+    
+    if (!data.has_confirmed_housing) {
+        myHouseInfo.innerHTML = `
+            <div class="no-content">
+                <p>No confirmed housing yet.</p>
+                <small>Apply for housing and wait for confirmation to see details here.</small>
+            </div>
+        `;
+        return;
+    }
+    
+    const housing = data.housing;
+    const coordinates = housing.coordinates ? `<br><small style="color: rgba(255,255,255,0.7);">📍 ${housing.coordinates}</small>` : '';
+    const generalizedLocation = housing.generalized_location ? `<br><small style="color: rgba(106, 186, 157, 0.9);">[${housing.generalized_location}]</small>` : '';
+    
+    myHouseInfo.innerHTML = `
+        <div class="confirmed-housing-details">
+            <div class="housing-header">
+                <h4 style="color: #fff; margin: 0 0 8px 0;">${housing.title}</h4>
+                <span class="status-badge confirmed">✅ Confirmed</span>
+            </div>
+            
+            <div class="housing-location" style="margin: 8px 0;">
+                <strong>📍 Location:</strong> ${housing.location}
+                ${coordinates}
+                ${generalizedLocation}
+            </div>
+            
+            <div class="housing-basic-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0;">
+                <div><strong>Property Type:</strong> ${housing.property_type}</div>
+                <div><strong>Rent:</strong> ৳${Number(housing.rent).toLocaleString()}/month</div>
+                <div><strong>Bedrooms:</strong> ${housing.bedrooms}</div>
+                <div><strong>Bathrooms:</strong> ${housing.bathrooms}</div>
+                <div><strong>Size:</strong> ${housing.size_sqft} sqft</div>
+                <div><strong>Floor:</strong> ${housing.floor_no}/${housing.total_floors}</div>
+            </div>
+            
+            <div class="housing-financial" style="margin: 12px 0;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div><strong>Service Charge:</strong> ৳${Number(housing.service_charge).toLocaleString()}</div>
+                    <div><strong>Advance Deposit:</strong> ৳${Number(housing.advance_deposit).toLocaleString()}</div>
+                </div>
+            </div>
+            
+            <div class="housing-owner" style="margin: 12px 0; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <strong>Owner Contact:</strong><br>
+                <small>Name: ${housing.owner.name}</small><br>
+                <small>Email: ${housing.owner.email}</small><br>
+                ${housing.owner.phone ? `<small>Phone: ${housing.owner.phone}</small>` : ''}
+            </div>
+            
+            <div class="housing-dates" style="margin: 8px 0; font-size: 12px; color: rgba(255,255,255,0.7);">
+                <div>Applied: ${new Date(housing.application_date).toLocaleDateString()}</div>
+                <div>Confirmed: ${new Date(housing.confirmed_date).toLocaleDateString()}</div>
+                <div>Available from: ${new Date(housing.available_from).toLocaleDateString()}</div>
+            </div>
+            
+            <div class="housing-actions" style="margin-top: 12px;">
+                <button class="details-btn" onclick="viewFullHousingDetails(${housing.housing_id})">
+                    <i class="fas fa-eye"></i> View Full Details
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function viewFullHousingDetails(housingId) {
+    // Use existing housing details modal
+    viewHousingDetails(housingId);
+}
+
 window.onload = () => {
     fetchHousing();
     fetchHousingStats();
     loadOwnerDashboard();
     fetchMyApplications();
     loadExpenses();
+    loadMyConfirmedHousing(); // Load confirmed housing info
     
     // Add stat card click handlers after a short delay to ensure DOM is ready
     setTimeout(() => {

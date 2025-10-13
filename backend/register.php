@@ -41,7 +41,7 @@ $hashed = password_hash($password_plain, PASSWORD_DEFAULT);
 
 try {
     // Insert user
-    $stmt = $pdo->prepare("INSERT INTO users (name,email,password,phone,location,gender) VALUES (?,?,?,?,?,?)");
+    $stmt = $pdo->prepare("INSERT INTO users (name,email,password,phone,generalized_location,gender) VALUES (?,?,?,?,?,?)");
     $stmt->execute([$full_name,$email,$hashed,$phone,$location,$gender]);
     $user_id = $pdo->lastInsertId();
 
