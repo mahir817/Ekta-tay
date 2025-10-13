@@ -111,7 +111,7 @@ if (isset($_SESSION['user_id'])) {
       </li>
       
       <li class="nav-item">
-        <a href="#" class="nav-link">
+        <a href="../../Profile page/profile.php" class="nav-link">
           <i class="nav-icon fas fa-cog"></i>
           Manage
         </a>

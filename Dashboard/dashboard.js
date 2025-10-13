@@ -197,7 +197,7 @@ function handleNavigation(linkText) {
             showNotification('Services module coming soon!', 'info');
             break;
         case 'Manage':
-            showNotification('Management panel coming soon!', 'info');
+            window.location.href = '../Profile page/profile.php';
             break;
         case 'Help':
             showNotification('Help section coming soon!', 'info');
@@ -383,7 +383,7 @@ function handleDropdownAction(item) {
 
     switch (itemText) {
         case 'Profile':
-            showNotification('Profile page coming soon!', 'info');
+            window.location.href = '../Profile page/profile.php';
             break;
         case 'Settings':
             showNotification('Settings page coming soon!', 'info');
