@@ -741,10 +741,10 @@ function logout() {
         fetch('../../backend/logout.php', {
             method: 'POST'
         }).then(() => {
-            window.location.href = '../../login.php';
+            window.location.href = '../../Login Page/login.html';
         }).catch(() => {
             // Fallback logout
-            window.location.href = '../../login.php';
+            window.location.href = '../../Login Page/login.html';
         });
     }
 }
