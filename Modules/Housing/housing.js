@@ -116,7 +116,9 @@ function displayHousingData(data) {
                     ${verificationBadge}
                 </div>
                 <div class="card-body">
-                    <p class="location">📍 ${h.location}</p>
+                    <p class="location">📍 ${h.housing_location || h.location || 'Location not specified'}</p>
+                    ${h.coordinates ? `<p class="coordinates">🗺️ Coordinates: ${h.coordinates}</p>` : ''}
+                    ${h.generalized_location ? `<p class="generalized-location">🏙️ Area: ${h.generalized_location}</p>` : ''}
                     <p class="rent">Rent: ৳${h.rent}</p>
                     ${propertyDetails}
                     <p class="description">${h.description}</p>
@@ -169,6 +171,11 @@ function updateDashboardStats(applicantStats, ownerStats) {
     document.getElementById('confirmedCount').textContent = applicantStats.accepted || 0;
     document.getElementById('cancelledCount').textContent = applicantStats.withdrawn || 0;
     document.getElementById('rejectedCount').textContent = applicantStats.rejected || 0;
+    
+    // Re-add click handlers after stats update
+    setTimeout(() => {
+        addStatCardClickHandlers();
+    }, 100);
 }
 
 // ====== Fetch Housing ======
@@ -179,10 +186,33 @@ function fetchHousing() {
             allHousingData = data;
             displayHousingData(data);
             fetchHousingStats();
+            fetchNearbyHousing(); // Also fetch nearby housing count
         })
         .catch(error => {
             console.error('Error fetching housing data:', error);
             document.getElementById("housingList").innerHTML = '<div class="error">Failed to load housing data. Please try again.</div>';
+        });
+}
+
+// ====== Fetch Nearby Housing ======
+function fetchNearbyHousing() {
+    fetch("../../backend/fetch_nearby_housing.php")
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Update nearby housing count
+                const nearbyElement = document.getElementById('statNearby');
+                if (nearbyElement) {
+                    nearbyElement.textContent = data.nearby_count || 0;
+                }
+                
+                // Store nearby housing data for potential filtering
+                window.nearbyHousingData = data.housing;
+                window.userArea = data.user_area;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching nearby housing:', error);
         });
 }
 
@@ -287,7 +317,7 @@ function applyForHousing(housingId) {
 function deleteMyHousing(housingId) {
     if (!confirm('Are you sure you want to delete this housing post? This action cannot be undone.')) return;
 
-    fetch('../../backend/delete_my_house.php', {
+    fetch('../../backend/delete_housing_post.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: housingId })
@@ -296,6 +326,38 @@ function deleteMyHousing(housingId) {
         .then(data => {
             if (data.success) {
                 alert('Housing post deleted successfully.');
+                fetchHousing();
+                // Refresh the My Housing section as well
+                location.reload();
+            } else {
+                alert('Failed to delete post: ' + (data.message || 'Unknown error.'));
+            }
+        })
+        .catch(err => {
+            console.error('Error deleting housing post:', err);
+            alert('Failed to delete post. Please try again.');
+        });
+}
+
+// ====== Delete Post Function for My Housing Posts ======
+function deletePost(serviceId) {
+    if (!confirm('Are you sure you want to delete this housing post? This action cannot be undone.')) return;
+
+    fetch('../../backend/delete_housing_post.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: serviceId })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Housing post deleted successfully.');
+                // Remove the post element from the DOM
+                const postElement = document.getElementById(`post-${serviceId}`);
+                if (postElement) {
+                    postElement.remove();
+                }
+                // Refresh the housing list
                 fetchHousing();
             } else {
                 alert('Failed to delete post: ' + (data.message || 'Unknown error.'));
@@ -337,12 +399,21 @@ function showStatusTab(status) {
     });
     
     // Show selected section
-    document.getElementById(status).classList.remove('hidden');
-    document.getElementById(status).classList.add('active');
+    const targetSection = document.getElementById(status);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        targetSection.classList.add('active');
+    }
     
     // Update tab buttons
-    document.querySelectorAll('.status-tab-btn').forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
+    document.querySelectorAll('.status-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        // Check if this button corresponds to the current status
+        const btnText = btn.textContent.toLowerCase();
+        if (btnText.includes(status)) {
+            btn.classList.add('active');
+        }
+    });
 }
 
 function refreshStatus() {
@@ -658,10 +729,138 @@ function closeApplicationsModal() {
     }
 }
 
+// ====== Profile Dropdown Functions ======
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        fetch('../../backend/logout.php', {
+            method: 'POST'
+        }).then(() => {
+            window.location.href = '../../login.php';
+        }).catch(() => {
+            // Fallback logout
+            window.location.href = '../../login.php';
+        });
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const userProfile = document.querySelector('.user-profile');
+    const dropdown = document.getElementById('userDropdown');
+    
+    if (userProfile && dropdown && !userProfile.contains(event.target)) {
+        dropdown.classList.remove('show');
+    }
+});
+
+// ====== Stat Card Navigation Functions ======
+function navigateToStatus(statusType) {
+    // Switch to status tab
+    showSection('status');
+    
+    // Switch to specific status sub-tab
+    setTimeout(() => {
+        showStatusTab(statusType);
+    }, 100);
+}
+
+// Add click handlers to stat cards
+function addStatCardClickHandlers() {
+    const statCards = document.querySelectorAll('.stat-card');
+    console.log('Found stat cards:', statCards.length);
+    
+    statCards.forEach((card, index) => {
+        const title = card.querySelector('.stat-title')?.textContent?.toLowerCase();
+        console.log('Stat card title:', title);
+        
+        if (title) {
+            card.style.cursor = 'pointer';
+            // Remove any existing click handlers
+            card.replaceWith(card.cloneNode(true));
+            const newCard = document.querySelectorAll('.stat-card')[index];
+            newCard.style.cursor = 'pointer';
+            
+            newCard.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Stat card clicked:', title);
+                
+                if (title.includes('pending')) {
+                    console.log('Navigating to pending status');
+                    navigateToStatus('pending');
+                } else if (title.includes('applied') || title.includes('requests')) {
+                    console.log('Navigating to applied requests');
+                    navigateToStatus('pending'); // Show all applications
+                } else if (title.includes('confirmed')) {
+                    console.log('Navigating to confirmed status');
+                    navigateToStatus('confirmed');
+                } else if (title.includes('cancelled')) {
+                    console.log('Navigating to cancelled status');
+                    navigateToStatus('cancelled');
+                } else if (title.includes('nearby')) {
+                    console.log('Showing nearby housing');
+                    showNearbyHousing();
+                }
+            });
+        }
+    });
+}
+
+// ====== Show Nearby Housing ======
+function showNearbyHousing() {
+    // Make sure we're on the Find House tab
+    showSection('find');
+    
+    // Filter to show only nearby housing
+    if (window.nearbyHousingData) {
+        const nearbyHousing = window.nearbyHousingData.filter(house => house.is_nearby);
+        displayHousingData(nearbyHousing);
+        
+        // Update search location to show user's area
+        if (window.userArea) {
+            const searchLocation = document.getElementById('searchLocation');
+            if (searchLocation) {
+                searchLocation.value = window.userArea;
+            }
+        }
+        
+        // Show a message about the filtering
+        const housingList = document.getElementById('housingList');
+        if (nearbyHousing.length > 0) {
+            housingList.insertAdjacentHTML('afterbegin', 
+                `<div class="filter-info" style="background: rgba(106, 186, 157, 0.2); padding: 10px; border-radius: 8px; margin-bottom: 15px; color: white;">
+                    <i class="fas fa-map-marker-alt"></i> Showing ${nearbyHousing.length} housing options in your area: ${window.userArea || 'your location'}
+                    <button onclick="clearNearbyFilter()" style="float: right; background: transparent; border: 1px solid white; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Show All</button>
+                </div>`
+            );
+        }
+    }
+}
+
+function clearNearbyFilter() {
+    const searchLocation = document.getElementById('searchLocation');
+    if (searchLocation) {
+        searchLocation.value = '';
+    }
+    displayHousingData(allHousingData);
+}
+
 window.onload = () => {
     fetchHousing();
     fetchHousingStats();
     loadOwnerDashboard();
     fetchMyApplications();
     loadExpenses();
+    
+    // Add stat card click handlers after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        addStatCardClickHandlers();
+    }, 500);
 };

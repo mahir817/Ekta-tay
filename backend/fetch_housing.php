@@ -10,7 +10,7 @@ try {
                h.housing_id, h.property_type, h.size_sqft, h.floor_no, h.total_floors, h.furnished_status,
                h.bedrooms, h.bathrooms, h.balconies, h.rent, h.service_charge, h.advance_deposit,
                h.available_from, h.available_for, h.negotiable, h.khotiyan, h.verification_status,
-               h.availability
+               h.availability, h.location as housing_location, h.coordinates, h.generalized_location
         FROM services s
         INNER JOIN housing h ON s.service_id = h.service_id
         WHERE s.type = 'housing' AND h.availability = 'available'
@@ -41,6 +41,9 @@ try {
             'khotiyan' => $post['khotiyan'],
             'verification_status' => $post['verification_status'],
             'availability' => $post['availability'],
+            'housing_location' => $post['housing_location'],
+            'coordinates' => $post['coordinates'],
+            'generalized_location' => $post['generalized_location'],
             'is_owner' => ($currentUserId && $post['user_id'] == $currentUserId),
             'created_at' => $post['created_at']
         ];

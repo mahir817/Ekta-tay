@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 04, 2025 at 07:41 PM
+-- Generation Time: Oct 13, 2025 at 04:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -124,22 +124,27 @@ CREATE TABLE `housing` (
   `verification_status` enum('pending','verified','rejected') DEFAULT 'pending',
   `khotiyan` varchar(100) DEFAULT NULL,
   `status` enum('available','pending','occupied') DEFAULT 'available',
-  `furnished` enum('furnished','unfurnished') DEFAULT 'unfurnished'
+  `furnished` enum('furnished','unfurnished') DEFAULT 'unfurnished',
+  `availability` enum('available','pending','occupied') DEFAULT 'available',
+  `location` varchar(255) DEFAULT NULL,
+  `coordinates` varchar(100) DEFAULT NULL,
+  `generalized_location` varchar(50) DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `housing`
 --
 
-INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`, `floor_no`, `total_floors`, `furnished_status`, `parking_spaces`, `bedrooms`, `bathrooms`, `balconies`, `rent`, `service_charge`, `advance_deposit`, `available_from`, `available_for`, `negotiable`, `property_condition`, `verification_doc`, `verification_status`, `khotiyan`, `status`, `furnished`) VALUES
-(1, 1, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
-(2, 2, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished'),
-(3, 4, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
-(4, 5, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished'),
-(5, 7, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
-(6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished'),
-(7, 9, 'apartment', 1050, '4th', 6, 'semi-furnished', 1, 3, 2, 2, 28000.00, 1500.00, 56000.00, '2025-10-15', 'family', 1, 'Clean and well-maintained', NULL, 'verified', NULL, 'available', 'unfurnished'),
-(8, 10, 'apartment', 450, '2nd', 5, 'semi-furnished', 0, 1, 1, 1, 12000.00, 500.00, 12000.00, '2025-10-05', 'bachelor', 1, 'Good condition', NULL, 'verified', NULL, 'available', 'unfurnished');
+INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`, `floor_no`, `total_floors`, `furnished_status`, `parking_spaces`, `bedrooms`, `bathrooms`, `balconies`, `rent`, `service_charge`, `advance_deposit`, `available_from`, `available_for`, `negotiable`, `property_condition`, `verification_doc`, `verification_status`, `khotiyan`, `status`, `furnished`, `availability`, `location`, `coordinates`, `generalized_location`) VALUES
+(1, 1, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
+(2, 2, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
+(3, 4, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
+(4, 5, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
+(5, 7, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'occupied', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
+(6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
+(7, 9, 'apartment', 1050, '4th', 6, 'semi-furnished', 1, 3, 2, 2, 28000.00, 1500.00, 56000.00, '2025-10-15', 'family', 1, 'Clean and well-maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', NULL, NULL, NULL),
+(9, 10, 'apartment', 1800, '5th', 10, 'furnished', 2, 3, 3, 3, 85000.00, 3000.00, 170000.00, '2025-11-01', 'family', 1, 'Premium condition, fully furnished with lake view', NULL, 'verified', NULL, 'available', 'furnished', 'available', 'Gulshan 1, Dhaka', '23.7936,90.4154', 'Dhaka North'),
+(10, 11, 'room', 250, '2nd', 5, 'unfurnished', 0, 1, 1, 0, 7000.00, 500.00, 7000.00, '2025-10-20', 'bachelor', 0, 'Decent single room, utilities included', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Jatrabari, Dhaka', '23.7106,90.4350', 'Dhaka South');
 
 -- --------------------------------------------------------
 
@@ -150,11 +155,21 @@ INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`,
 CREATE TABLE `housing_applications` (
   `application_id` int(11) NOT NULL,
   `housing_id` int(11) NOT NULL,
+  `owner_id` int(11) NOT NULL,
   `applicant_id` int(11) NOT NULL,
-  `status` enum('pending','accepted','rejected','cancelled') DEFAULT 'pending',
+  `status` enum('pending','shortlisted','accepted','rejected','withdrawn') DEFAULT 'pending',
   `message` text DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `housing_applications`
+--
+
+INSERT INTO `housing_applications` (`application_id`, `housing_id`, `owner_id`, `applicant_id`, `status`, `message`, `created_at`, `updated_at`) VALUES
+(4, 7, 17, 2, 'withdrawn', 'fuck you', '2025-10-10 18:52:43', '2025-10-10 18:55:42'),
+(5, 5, 19, 2, 'accepted', 'fucascascx', '2025-10-10 18:56:11', '2025-10-10 18:57:21');
 
 -- --------------------------------------------------------
 
@@ -190,11 +205,21 @@ CREATE TABLE `housing_images` (
 CREATE TABLE `housing_tenants` (
   `tenant_id` int(11) NOT NULL,
   `housing_id` int(11) NOT NULL,
+  `owner_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date DEFAULT NULL,
-  `active` tinyint(1) DEFAULT 1
+  `active` tinyint(1) DEFAULT 1,
+  `status` enum('active','inactive','terminated') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `housing_tenants`
+--
+
+INSERT INTO `housing_tenants` (`tenant_id`, `housing_id`, `owner_id`, `user_id`, `start_date`, `end_date`, `active`, `status`, `created_at`) VALUES
+(2, 5, 19, 2, '2025-10-10', NULL, 1, 'active', '2025-10-10 18:57:21');
 
 -- --------------------------------------------------------
 
@@ -218,14 +243,114 @@ CREATE TABLE `housing_terms` (
 CREATE TABLE `jobs` (
   `job_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `job_type` enum('tuition','part-time','full-time','internship') DEFAULT 'part-time',
-  `description` text NOT NULL,
-  `salary` decimal(12,2) DEFAULT 0.00,
+  `job_type` enum('part-time','full-time','freelance','internship') DEFAULT NULL,
+  `company` varchar(100) DEFAULT NULL,
+  `experience_level` enum('entry','junior','mid','senior') DEFAULT NULL,
+  `work_type` enum('remote','onsite','hybrid') DEFAULT NULL,
+  `subject` enum('mathematics','physics','chemistry','biology','english','bangla','ict','accounting','economics','business_studies') DEFAULT NULL,
+  `class_level` enum('class-1-5','class-6-8','class-9-10','class-11-12','university') DEFAULT NULL,
+  `tuition_type` enum('home','online','center','group') DEFAULT NULL,
+  `student_count` enum('1','2-3','4-6','6+') DEFAULT NULL,
+  `schedule` varchar(255) DEFAULT NULL,
+  `gender_preference` enum('male','female') DEFAULT NULL,
+  `status` enum('active','paused','closed','filled') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_applications`
+--
+
+CREATE TABLE `job_applications` (
+  `application_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `applicant_id` int(11) NOT NULL,
+  `cover_letter` text DEFAULT NULL,
+  `phone` varchar(15) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `status` enum('pending','reviewed','accepted','rejected','cancelled') DEFAULT 'pending',
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_benefits`
+--
+
+CREATE TABLE `job_benefits` (
+  `benefit_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `benefit_name` varchar(100) NOT NULL,
+  `benefit_value` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_documents`
+--
+
+CREATE TABLE `job_documents` (
+  `document_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `document_url` varchar(255) NOT NULL,
+  `document_type` enum('attachment','image','pdf','link') DEFAULT 'attachment',
+  `uploaded_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_hires`
+--
+
+CREATE TABLE `job_hires` (
+  `hire_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date DEFAULT NULL,
+  `salary` decimal(10,2) DEFAULT NULL,
+  `contract_type` enum('permanent','temporary','contract','internship') DEFAULT 'permanent',
+  `active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_interviews`
+--
+
+CREATE TABLE `job_interviews` (
+  `interview_id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `scheduled_at` datetime NOT NULL,
+  `interview_type` enum('phone','video','in-person','technical') DEFAULT 'phone',
   `location` varchar(255) DEFAULT NULL,
-  `requirements` text DEFAULT NULL,
-  `posted_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `status` enum('open','closed') DEFAULT 'open'
+  `meeting_link` varchar(255) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('scheduled','completed','cancelled','rescheduled') DEFAULT 'scheduled',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_requirements`
+--
+
+CREATE TABLE `job_requirements` (
+  `requirement_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `requirement_text` varchar(255) NOT NULL,
+  `is_mandatory` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -312,7 +437,28 @@ INSERT INTO `services` (`service_id`, `user_id`, `title`, `description`, `type`,
 (7, 19, '2 BHK Apartment for Rent in Bashundhara R/A', 'Spacious 2-bedroom furnished apartment located in a quiet area near NSU. Includes modern kitchen, lift, generator backup, and 24/7 security.', 'housing', 32000.00, 'Bashundhara, Dhaka East', '2025-10-04 14:11:22'),
 (8, 20, 'Single Room for Bachelor in Mirpur 10', 'Affordable single room available for bachelor. Close to bus stop and market. Includes water, gas, and WiFi.', 'housing', 8500.00, 'Mirpur 10, Dhaka North', '2025-10-04 14:11:22'),
 (9, 17, 'Modern Flat for Rent in Uttara Sector 7', 'A 3-bedroom, 2-bathroom apartment with lift, generator, and parking. Ideal for small families or working professionals.', 'housing', 28000.00, 'Uttara, Dhaka North', '2025-10-04 15:07:04'),
-(10, 2, 'Bachelor Apartment for Rent in Mohammadpur', '1-bedroom apartment suitable for bachelors. Includes WiFi, 24/7 water, and nearby grocery store access.', 'housing', 12000.00, 'Mohammadpur, Dhaka', '2025-10-04 15:09:15');
+(10, 19, 'Luxury Apartment in Gulshan 1', 'Fully furnished 3BHK with lake view, 24/7 security, and modern facilities.', 'housing', 85000.00, 'Gulshan 1, Dhaka North', '2025-10-13 14:00:31'),
+(11, 2, 'Shared Bachelor Room in Jatrabari', 'Budget-friendly room for bachelors near Jatrabari Bus Stand. Utilities included.', 'housing', 7000.00, 'Jatrabari, Dhaka South', '2025-10-13 14:00:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tuition_sessions`
+--
+
+CREATE TABLE `tuition_sessions` (
+  `session_id` int(11) NOT NULL,
+  `hire_id` int(11) NOT NULL,
+  `session_date` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `topic_covered` varchar(255) DEFAULT NULL,
+  `homework_assigned` text DEFAULT NULL,
+  `student_performance` enum('excellent','good','average','needs_improvement') DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('scheduled','completed','cancelled') DEFAULT 'scheduled',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -458,7 +604,8 @@ ALTER TABLE `food_services`
 --
 ALTER TABLE `housing`
   ADD PRIMARY KEY (`housing_id`),
-  ADD KEY `service_id` (`service_id`);
+  ADD KEY `service_id` (`service_id`),
+  ADD KEY `idx_housing_availability` (`availability`);
 
 --
 -- Indexes for table `housing_applications`
@@ -466,7 +613,9 @@ ALTER TABLE `housing`
 ALTER TABLE `housing_applications`
   ADD PRIMARY KEY (`application_id`),
   ADD KEY `housing_id` (`housing_id`),
-  ADD KEY `applicant_id` (`applicant_id`);
+  ADD KEY `idx_housing_applications_status` (`status`),
+  ADD KEY `idx_housing_applications_owner` (`owner_id`),
+  ADD KEY `idx_housing_applications_applicant` (`applicant_id`);
 
 --
 -- Indexes for table `housing_features`
@@ -488,7 +637,9 @@ ALTER TABLE `housing_images`
 ALTER TABLE `housing_tenants`
   ADD PRIMARY KEY (`tenant_id`),
   ADD KEY `housing_id` (`housing_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `housing_tenants_owner_fk` (`owner_id`),
+  ADD KEY `idx_housing_tenants_status` (`status`);
 
 --
 -- Indexes for table `housing_terms`
@@ -501,7 +652,57 @@ ALTER TABLE `housing_terms`
 -- Indexes for table `jobs`
 --
 ALTER TABLE `jobs`
-  ADD PRIMARY KEY (`job_id`);
+  ADD PRIMARY KEY (`job_id`),
+  ADD KEY `service_id` (`service_id`),
+  ADD KEY `idx_jobs_status` (`status`),
+  ADD KEY `idx_jobs_type` (`job_type`),
+  ADD KEY `idx_jobs_subject` (`subject`);
+
+--
+-- Indexes for table `job_applications`
+--
+ALTER TABLE `job_applications`
+  ADD PRIMARY KEY (`application_id`),
+  ADD KEY `service_id` (`service_id`),
+  ADD KEY `applicant_id` (`applicant_id`),
+  ADD KEY `idx_job_applications_status` (`status`);
+
+--
+-- Indexes for table `job_benefits`
+--
+ALTER TABLE `job_benefits`
+  ADD PRIMARY KEY (`benefit_id`),
+  ADD KEY `job_id` (`job_id`);
+
+--
+-- Indexes for table `job_documents`
+--
+ALTER TABLE `job_documents`
+  ADD PRIMARY KEY (`document_id`),
+  ADD KEY `job_id` (`job_id`);
+
+--
+-- Indexes for table `job_hires`
+--
+ALTER TABLE `job_hires`
+  ADD PRIMARY KEY (`hire_id`),
+  ADD KEY `job_id` (`job_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `application_id` (`application_id`);
+
+--
+-- Indexes for table `job_interviews`
+--
+ALTER TABLE `job_interviews`
+  ADD PRIMARY KEY (`interview_id`),
+  ADD KEY `application_id` (`application_id`);
+
+--
+-- Indexes for table `job_requirements`
+--
+ALTER TABLE `job_requirements`
+  ADD PRIMARY KEY (`requirement_id`),
+  ADD KEY `job_id` (`job_id`);
 
 --
 -- Indexes for table `mentors`
@@ -539,7 +740,15 @@ ALTER TABLE `rent_split`
 --
 ALTER TABLE `services`
   ADD PRIMARY KEY (`service_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `idx_services_type` (`type`);
+
+--
+-- Indexes for table `tuition_sessions`
+--
+ALTER TABLE `tuition_sessions`
+  ADD PRIMARY KEY (`session_id`),
+  ADD KEY `hire_id` (`hire_id`);
 
 --
 -- Indexes for table `users`
@@ -587,13 +796,13 @@ ALTER TABLE `food_services`
 -- AUTO_INCREMENT for table `housing`
 --
 ALTER TABLE `housing`
-  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `housing_applications`
 --
 ALTER TABLE `housing_applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `housing_features`
@@ -611,7 +820,7 @@ ALTER TABLE `housing_images`
 -- AUTO_INCREMENT for table `housing_tenants`
 --
 ALTER TABLE `housing_tenants`
-  MODIFY `tenant_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `tenant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `housing_terms`
@@ -624,6 +833,42 @@ ALTER TABLE `housing_terms`
 --
 ALTER TABLE `jobs`
   MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_applications`
+--
+ALTER TABLE `job_applications`
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_benefits`
+--
+ALTER TABLE `job_benefits`
+  MODIFY `benefit_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_documents`
+--
+ALTER TABLE `job_documents`
+  MODIFY `document_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_hires`
+--
+ALTER TABLE `job_hires`
+  MODIFY `hire_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_interviews`
+--
+ALTER TABLE `job_interviews`
+  MODIFY `interview_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_requirements`
+--
+ALTER TABLE `job_requirements`
+  MODIFY `requirement_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `mentors`
@@ -653,7 +898,13 @@ ALTER TABLE `rent_split`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `tuition_sessions`
+--
+ALTER TABLE `tuition_sessions`
+  MODIFY `session_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -689,7 +940,8 @@ ALTER TABLE `housing`
 --
 ALTER TABLE `housing_applications`
   ADD CONSTRAINT `housing_applications_ibfk_1` FOREIGN KEY (`housing_id`) REFERENCES `housing` (`housing_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `housing_applications_ibfk_2` FOREIGN KEY (`applicant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `housing_applications_ibfk_2` FOREIGN KEY (`applicant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `housing_applications_owner_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `housing_features`
@@ -708,13 +960,59 @@ ALTER TABLE `housing_images`
 --
 ALTER TABLE `housing_tenants`
   ADD CONSTRAINT `housing_tenants_ibfk_1` FOREIGN KEY (`housing_id`) REFERENCES `housing` (`housing_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `housing_tenants_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `housing_tenants_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `housing_tenants_owner_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `housing_terms`
 --
 ALTER TABLE `housing_terms`
   ADD CONSTRAINT `housing_terms_ibfk_1` FOREIGN KEY (`housing_id`) REFERENCES `housing` (`housing_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `jobs`
+--
+ALTER TABLE `jobs`
+  ADD CONSTRAINT `jobs_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_applications`
+--
+ALTER TABLE `job_applications`
+  ADD CONSTRAINT `job_applications_ibfk_1` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `job_applications_ibfk_2` FOREIGN KEY (`applicant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_benefits`
+--
+ALTER TABLE `job_benefits`
+  ADD CONSTRAINT `job_benefits_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`job_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_documents`
+--
+ALTER TABLE `job_documents`
+  ADD CONSTRAINT `job_documents_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`job_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_hires`
+--
+ALTER TABLE `job_hires`
+  ADD CONSTRAINT `job_hires_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`job_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `job_hires_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `job_hires_ibfk_3` FOREIGN KEY (`application_id`) REFERENCES `job_applications` (`application_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_interviews`
+--
+ALTER TABLE `job_interviews`
+  ADD CONSTRAINT `job_interviews_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `job_applications` (`application_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `job_requirements`
+--
+ALTER TABLE `job_requirements`
+  ADD CONSTRAINT `job_requirements_ibfk_1` FOREIGN KEY (`job_id`) REFERENCES `jobs` (`job_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `mentors`
@@ -748,6 +1046,12 @@ ALTER TABLE `rent_split`
 --
 ALTER TABLE `services`
   ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `tuition_sessions`
+--
+ALTER TABLE `tuition_sessions`
+  ADD CONSTRAINT `tuition_sessions_ibfk_1` FOREIGN KEY (`hire_id`) REFERENCES `job_hires` (`hire_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_capabilities`

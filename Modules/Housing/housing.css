@@ -75,7 +75,6 @@
     align-items: center;
     gap: 0.5rem;
 }
-
 .user-name {
     font-weight: 500;
     color: white;
@@ -84,7 +83,7 @@
 /* User Dropdown */
 .user-dropdown {
     position: relative;
-    z-index: 999999;
+    z-index: 9999999;
 }
 
 .dropdown-menu {
@@ -102,7 +101,7 @@
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    z-index: 99999;
+    z-index: 9999999;
     /* increase z-index */
 }
 
@@ -110,7 +109,7 @@
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
-    z-index: 999999;
+    z-index: 9999999;
 }
 
 .dropdown-item {
@@ -404,6 +403,13 @@ body {
     background: rgba(255, 255, 255, 0.22);
 }
 
+.stat-card[style*="cursor: pointer"]:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
 .stat-card.wide {
     grid-column: span 2;
 }
@@ -440,26 +446,40 @@ body {
 }
 
 .split-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
     margin: 10px 0;
 }
 
+.split-form input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 .split-card {
     position: relative;
-    padding-bottom: 48px;
+    padding: 16px;
+    overflow: hidden;
 }
 
 .split-calc-btn {
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
+    width: 100%;
+    margin-top: 8px;
 }
 
-@media (max-width: 520px) {
+@media (min-width: 521px) {
     .split-form {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .split-calc-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 8px;
     }
 }
 
@@ -953,6 +973,20 @@ body {
     gap: 6px;
 }
 
+.coordinates {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    margin: 4px 0;
+    font-family: monospace;
+}
+
+.generalized-location {
+    color: rgba(106, 186, 157, 0.9);
+    font-size: 13px;
+    margin: 4px 0;
+    font-weight: 600;
+}
+
 .rent {
     color: #fff;
     font-weight: 600;
@@ -984,6 +1018,7 @@ body {
     margin: 12px 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
