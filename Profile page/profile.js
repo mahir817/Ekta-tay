@@ -46,17 +46,12 @@ function updateProfileDisplay() {
     
     // Update profile header
     document.getElementById('profileName').textContent = user.name || 'No name';
-    document.getElementById('profileTagline').textContent = user.tagline || 'No tagline set';
     document.getElementById('profileLocation').textContent = user.generalized_location || user.location || 'Location not set';
     
-    // Update avatar
+    // Update avatar (always show initials since profile_img is not supported)
     const avatarElements = document.querySelectorAll('#profileAvatar, #sidebarProfile .rounded-full');
     avatarElements.forEach(el => {
-        if (user.profile_img) {
-            el.innerHTML = `<img src="../${user.profile_img}" alt="Profile" class="w-full h-full object-cover rounded-full">`;
-        } else {
-            el.textContent = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-        }
+        el.textContent = user.name ? user.name.charAt(0).toUpperCase() : 'U';
     });
     
     // Update capabilities badges
@@ -221,11 +216,11 @@ function loadPosts() {
                     <div class="flex items-center space-x-4 text-sm text-white/60 mt-1">
                         <span class="capitalize">${post.type}</span>
                         <span>${post.location}</span>
-                        <span class="status-badge status-${post.status}">${post.status}</span>
+                        <span class="status-badge status-active">Active</span>
                     </div>
                 </div>
                 <div class="text-right">
-                    <div class="text-white font-semibold">৳${post.price || post.additional_info || 'N/A'}</div>
+                    <div class="text-white font-semibold">৳${post.price || 'N/A'}</div>
                     <div class="text-white/60 text-sm">${post.application_count || 0} applications</div>
                 </div>
             </div>
@@ -478,7 +473,6 @@ function openEditProfileModal() {
     document.getElementById('editLocation').value = user.location || '';
     document.getElementById('editGeneralizedLocation').value = user.generalized_location || '';
     document.getElementById('editGender').value = user.gender || '';
-    document.getElementById('editTagline').value = user.tagline || '';
     
     document.getElementById('editProfileModal').classList.remove('hidden');
 }

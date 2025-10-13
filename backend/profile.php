@@ -12,15 +12,19 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 try {
-    // Fetch user data
+    // Fetch user data (only existing columns)
     $userStmt = $pdo->prepare("
         SELECT id, name, email, phone, location, generalized_location, 
-               gender, created_at, profile_img, tagline
+               gender, created_at
         FROM users 
         WHERE id = ?
     ");
     $userStmt->execute([$user_id]);
     $user = $userStmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Add default values for missing columns
+    $user['profile_img'] = null;
+    $user['tagline'] = null;
 
     if (!$user) {
         http_response_code(404);
@@ -38,18 +42,11 @@ try {
     $capStmt->execute([$user_id]);
     $capabilities = $capStmt->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch user posts from services table
+    // Fetch user posts from services table (simplified)
     $postsStmt = $pdo->prepare("
         SELECT s.service_id, s.title, s.description, s.type, s.location, 
-               s.price, s.status, s.created_at,
-               CASE 
-                   WHEN s.type = 'housing' THEN h.rent
-                   WHEN s.type = 'job' THEN j.company
-                   ELSE NULL
-               END as additional_info
+               s.price, s.created_at
         FROM services s
-        LEFT JOIN housing h ON s.service_id = h.service_id AND s.type = 'housing'
-        LEFT JOIN jobs j ON s.service_id = j.service_id AND s.type = 'job'
         WHERE s.user_id = ?
         ORDER BY s.created_at DESC
     ");
@@ -65,6 +62,10 @@ try {
     ];
 
     foreach ($posts as $post) {
+        // Add default status since column doesn't exist
+        $post['status'] = 'active';
+        $post['application_count'] = 0; // Default value
+        
         $type = $post['type'];
         if (isset($postsByType[$type])) {
             $postsByType[$type][] = $post;

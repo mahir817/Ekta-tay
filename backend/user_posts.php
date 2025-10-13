@@ -15,26 +15,12 @@ try {
     // Get type filter if provided
     $type = isset($_GET['type']) ? $_GET['type'] : null;
     
+    // Simplified query to work with existing database structure
     $sql = "
         SELECT s.service_id, s.title, s.description, s.type, s.location, 
-               s.price, s.status, s.created_at,
-               CASE 
-                   WHEN s.type = 'housing' THEN h.rent
-                   WHEN s.type = 'job' THEN j.company
-                   WHEN s.type = 'food' THEN fs.provider_name
-                   ELSE NULL
-               END as additional_info,
-               CASE 
-                   WHEN s.type = 'housing' THEN h.property_type
-                   WHEN s.type = 'job' THEN j.job_type
-                   WHEN s.type = 'food' THEN fs.food_type
-                   ELSE NULL
-               END as sub_type,
+               s.price, s.created_at,
                (SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id) as application_count
         FROM services s
-        LEFT JOIN housing h ON s.service_id = h.service_id AND s.type = 'housing'
-        LEFT JOIN jobs j ON s.service_id = j.service_id AND s.type = 'job'
-        LEFT JOIN food_services fs ON s.service_id = fs.service_id AND s.type = 'food'
         WHERE s.user_id = ?
     ";
     
@@ -60,6 +46,9 @@ try {
     ];
 
     foreach ($posts as $post) {
+        // Add default status since column doesn't exist
+        $post['status'] = 'active';
+        
         $postType = $post['type'];
         if (isset($postsByType[$postType])) {
             $postsByType[$postType][] = $post;

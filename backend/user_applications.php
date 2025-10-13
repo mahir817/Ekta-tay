@@ -15,23 +15,15 @@ try {
     // Get status filter if provided
     $status = isset($_GET['status']) ? $_GET['status'] : null;
     
+    // Simplified query to work with existing database structure
     $sql = "
         SELECT ja.application_id, ja.service_id, ja.status as app_status, 
                ja.created_at as applied_at, ja.cover_letter, ja.notes,
                s.title, s.type, s.location, s.price, s.description,
-               u.name as poster_name, u.email as poster_email,
-               CASE 
-                   WHEN s.type = 'housing' THEN h.rent
-                   WHEN s.type = 'job' THEN j.company
-                   WHEN s.type = 'food' THEN fs.provider_name
-                   ELSE NULL
-               END as additional_info
+               u.name as poster_name, u.email as poster_email
         FROM job_applications ja
         JOIN services s ON ja.service_id = s.service_id
         JOIN users u ON s.user_id = u.id
-        LEFT JOIN housing h ON s.service_id = h.service_id AND s.type = 'housing'
-        LEFT JOIN jobs j ON s.service_id = j.service_id AND s.type = 'job'
-        LEFT JOIN food_services fs ON s.service_id = fs.service_id AND s.type = 'food'
         WHERE ja.applicant_id = ?
     ";
     

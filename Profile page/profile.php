@@ -117,16 +117,10 @@ $user = $userStmt->fetch(PDO::FETCH_ASSOC);
                     <!-- Profile Header Card -->
                     <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20" id="profileHeaderCard">
                         <div class="text-center">
-                            <div class="relative inline-block mb-4">
-                                <div class="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto" id="profileAvatar">
-                                    <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
-                                </div>
-                                <button class="absolute bottom-0 right-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm hover:bg-blue-600 transition-colors" onclick="openEditProfileModal()">
-                                    <i class="fas fa-camera"></i>
-                                </button>
+                            <div class="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4" id="profileAvatar">
+                                <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
                             </div>
                             <h2 class="text-xl font-bold text-white mb-1" id="profileName">Loading...</h2>
-                            <p class="text-white/70 mb-2" id="profileTagline">Loading...</p>
                             <p class="text-white/60 text-sm mb-4" id="profileLocation">Loading...</p>
                             
                             <!-- Capabilities Badges -->
@@ -337,12 +331,8 @@ $user = $userStmt->fetch(PDO::FETCH_ASSOC);
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 w-full max-w-md">
                 <h3 class="text-xl font-semibold text-white mb-6">Edit Profile</h3>
-                <form id="editProfileForm" enctype="multipart/form-data">
+                <form id="editProfileForm">
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-white/70 text-sm mb-2">Profile Picture</label>
-                            <input type="file" name="profile_img" accept="image/*" class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white">
-                        </div>
                         <div>
                             <label class="block text-white/70 text-sm mb-2">Name</label>
                             <input type="text" name="name" id="editName" class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50" placeholder="Your name">
@@ -372,10 +362,6 @@ $user = $userStmt->fetch(PDO::FETCH_ASSOC);
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                             </select>
-                        </div>
-                        <div>
-                            <label class="block text-white/70 text-sm mb-2">Tagline</label>
-                            <input type="text" name="tagline" id="editTagline" class="w-full p-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50" placeholder="A short tagline about yourself">
                         </div>
                     </div>
                     <div class="flex space-x-4 mt-6">

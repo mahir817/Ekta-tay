@@ -48,37 +48,7 @@ try {
         $updateValues[] = $_POST['gender'];
     }
 
-    if (isset($_POST['tagline'])) {
-        $updateFields[] = "tagline = ?";
-        $updateValues[] = trim($_POST['tagline']);
-    }
-
-    // Handle profile picture upload
-    if (isset($_FILES['profile_img']) && $_FILES['profile_img']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = '../images/profiles/';
-        
-        // Create directory if it doesn't exist
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-
-        $fileExtension = strtolower(pathinfo($_FILES['profile_img']['name'], PATHINFO_EXTENSION));
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
-
-        if (in_array($fileExtension, $allowedExtensions)) {
-            $fileName = 'profile_' . $user_id . '_' . time() . '.' . $fileExtension;
-            $uploadPath = $uploadDir . $fileName;
-
-            if (move_uploaded_file($_FILES['profile_img']['tmp_name'], $uploadPath)) {
-                $updateFields[] = "profile_img = ?";
-                $updateValues[] = 'images/profiles/' . $fileName;
-            } else {
-                throw new Exception("Failed to upload profile image");
-            }
-        } else {
-            throw new Exception("Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.");
-        }
-    }
+    // Profile image and tagline features removed - not supported in current database
 
     if (empty($updateFields)) {
         echo json_encode(["success" => false, "message" => "No valid fields to update"]);
@@ -97,12 +67,16 @@ try {
         // Fetch updated user data
         $userStmt = $pdo->prepare("
             SELECT id, name, email, phone, location, generalized_location, 
-                   gender, created_at, profile_img, tagline
+                   gender, created_at
             FROM users 
             WHERE id = ?
         ");
         $userStmt->execute([$user_id]);
         $updatedUser = $userStmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Add default values for missing columns
+        $updatedUser['profile_img'] = null;
+        $updatedUser['tagline'] = null;
 
         echo json_encode([
             "success" => true, 
