@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 13, 2025 at 04:01 PM
+-- Generation Time: Oct 13, 2025 at 07:47 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -143,8 +143,7 @@ INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`,
 (5, 7, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'occupied', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
 (6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
 (7, 9, 'apartment', 1050, '4th', 6, 'semi-furnished', 1, 3, 2, 2, 28000.00, 1500.00, 56000.00, '2025-10-15', 'family', 1, 'Clean and well-maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', NULL, NULL, NULL),
-(9, 10, 'apartment', 1800, '5th', 10, 'furnished', 2, 3, 3, 3, 85000.00, 3000.00, 170000.00, '2025-11-01', 'family', 1, 'Premium condition, fully furnished with lake view', NULL, 'verified', NULL, 'available', 'furnished', 'available', 'Gulshan 1, Dhaka', '23.7936,90.4154', 'Dhaka North'),
-(10, 11, 'room', 250, '2nd', 5, 'unfurnished', 0, 1, 1, 0, 7000.00, 500.00, 7000.00, '2025-10-20', 'bachelor', 0, 'Decent single room, utilities included', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Jatrabari, Dhaka', '23.7106,90.4350', 'Dhaka South');
+(9, 10, 'apartment', 1800, '5th', 10, 'furnished', 2, 3, 3, 3, 85000.00, 3000.00, 170000.00, '2025-11-01', 'family', 1, 'Premium condition, fully furnished with lake view', NULL, 'verified', NULL, 'available', 'furnished', 'available', 'Gulshan 1, Dhaka', '23.7936,90.4154', 'Dhaka North');
 
 -- --------------------------------------------------------
 
@@ -437,8 +436,7 @@ INSERT INTO `services` (`service_id`, `user_id`, `title`, `description`, `type`,
 (7, 19, '2 BHK Apartment for Rent in Bashundhara R/A', 'Spacious 2-bedroom furnished apartment located in a quiet area near NSU. Includes modern kitchen, lift, generator backup, and 24/7 security.', 'housing', 32000.00, 'Bashundhara, Dhaka East', '2025-10-04 14:11:22'),
 (8, 20, 'Single Room for Bachelor in Mirpur 10', 'Affordable single room available for bachelor. Close to bus stop and market. Includes water, gas, and WiFi.', 'housing', 8500.00, 'Mirpur 10, Dhaka North', '2025-10-04 14:11:22'),
 (9, 17, 'Modern Flat for Rent in Uttara Sector 7', 'A 3-bedroom, 2-bathroom apartment with lift, generator, and parking. Ideal for small families or working professionals.', 'housing', 28000.00, 'Uttara, Dhaka North', '2025-10-04 15:07:04'),
-(10, 19, 'Luxury Apartment in Gulshan 1', 'Fully furnished 3BHK with lake view, 24/7 security, and modern facilities.', 'housing', 85000.00, 'Gulshan 1, Dhaka North', '2025-10-13 14:00:31'),
-(11, 2, 'Shared Bachelor Room in Jatrabari', 'Budget-friendly room for bachelors near Jatrabari Bus Stand. Utilities included.', 'housing', 7000.00, 'Jatrabari, Dhaka South', '2025-10-13 14:00:31');
+(10, 19, 'Luxury Apartment in Gulshan 1', 'Fully furnished 3BHK with lake view, 24/7 security, and modern facilities.', 'housing', 85000.00, 'Gulshan 1, Dhaka North', '2025-10-13 14:00:31');
 
 -- --------------------------------------------------------
 
@@ -474,6 +472,7 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `phone` varchar(15) NOT NULL,
   `location` varchar(50) NOT NULL,
+  `generalized_location` enum('Dhaka North','Dhaka South','Dhaka East','Dhaka West') DEFAULT NULL,
   `gender` enum('male','female') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -481,27 +480,29 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `phone`, `location`, `gender`) VALUES
-(1, 'Demo User', 'demo@example.com', '$2y$10$wHhG6p1xZ1V6lF7lA4L4ZOqf9D3HTxYyXQ9x9xZ6D9Q4yZ7u5o6e.', '2025-09-13 14:36:32', '', '', 'male'),
-(2, 'Mahir Ahmed', 'mahir101748@gmail.com', '$2y$10$cSzWLtXFkYN8YkcRU4F/GeJr61XM7PNf9NsyeqvEP2oFVKTzFPXBO', '2025-09-13 15:03:48', '01999373432', 'Dhaka North', 'male'),
-(3, 'random xyz', 'randomxyz@mail.com', '$2y$10$u2//P1cE4PvITtDC7NpaQO89VX/A3rLYhEUaT7b/9NbCPYOeHL2pG', '2025-09-13 15:38:01', '01999372222', 'Dhaka South', 'female'),
-(4, 'Rayhan Ahmed', 'rayhan01748@gmail.com', '$2y$10$tTIb7T822Q4ERsdoA/f0T.Y7p7n8rdHdjopw37pDoCcuevpnYm.fe', '2025-09-14 05:51:50', '01999373435', 'Dhaka South', 'male'),
-(5, 'John cina', 'johncena@gmail.com', '$2y$10$NoHgA.F.N3B.FcvtS5VBmeWn6ajXiEDFodFEboYQG1YTLFYpMa.u.', '2025-09-17 17:57:02', '01238924723', 'Dhaka South', 'male'),
-(6, 'asdf jkl', 'asdf@gmail.com', '$2y$10$aL1Xuey/hW4MwSJEnPJ/N.FfKKXbZpSwqkhv9cLOHH7tW8C2smFdO', '2025-09-17 18:02:26', '1234567891011', 'Dhaka East', 'male'),
-(7, 'new user', 'newuser@gmail.com', '$2y$10$sJvzj7aXKCV7y90qPjMo8.Pp0Jte16dPEzBEhaseb5DxKEv6AmX4q', '2025-09-17 18:10:13', '01345435432', 'Dhaka West', 'male'),
-(8, 'new user2', 'newuser2@gmail.com', '$2y$10$LtkrjeWWh4eLIYfLdMvBUOwQ2pnVLdDd.GV9p5sWcLjD3M31YtLcy', '2025-09-17 18:12:40', '01346435432', 'Dhaka South', 'male'),
-(9, 'new user3', 'newuser3@gmail.com', '$2y$10$LNqtpPPSo7zA4nV52dtpS.00Kk8Cb38Wti7mU9pOaQK2b59AD13T2', '2025-09-17 18:28:41', '0199937445982', 'Dhaka South', 'female'),
-(10, 'new user3', 'user3@gmail.com', '$2y$10$X8VpPf4atF9DCUGHA4kgauVHL16Oy.BZpTHoaPcPJA/RgsijBtKqi', '2025-09-17 18:29:29', '0199932948793', 'Dhaka South', 'male'),
-(11, 'new user4', 'newuser4@gmail.com', '$2y$10$QF55iS9LT.Wp8vnxdjzhAOPnXyL8xOFIGNGbVBQ8mZLpwiEJcv6MK', '2025-09-17 18:33:09', '01923232323', 'Dhaka North', 'male'),
-(12, 'abcd efgh', 'abcd@gmail.com', '$2y$10$2iWU49d019i04BbDo9XPyOi9v/.sMGPgFuq1GnpYObKgRJGnhmq5G', '2025-09-19 14:11:00', '017118394722', 'Dhaka South', 'male'),
-(13, 'jon snow', 'snow@mail.com', '$2y$10$nRDKLpcyAcABBy24ovSzsec5CDiPFQBHiZjIjFaVfecIUE3FmAQei', '2025-09-19 14:19:07', '01293745289', 'Dhaka North', 'male'),
-(14, 'Walter White', 'white@mail.com', '$2y$10$XPpC262XlhnbJ4.ZuZydKOsS3ikjTZ/GLMv0ualHEBqKMKpnVLzTK', '2025-09-19 15:08:09', '12345678900', 'Dhaka North', 'male'),
-(15, 'new user7', 'user7@mail.com', '$2y$10$peHMDI49xqi.N2Frg6L5H.U00BmKC1pfHCIrsJVwv8SPyjOc/1cei', '2025-09-19 15:19:06', '12345678901', 'Dhaka North', 'female'),
-(16, 'new user8', 'user8@mail.com', '$2y$10$/6.DWV/UTUeS2eV/Bj47V.Tz4OCZkmknpRGpdkVJleM9LdDzaOxdS', '2025-09-19 15:21:13', '12345689638', 'Dhaka North', 'female'),
-(17, 'new user9', 'new9@mail.com', '$2y$10$EnARDqLr6RhvcxC5v62JBu1L4lfXSl30EC9cfQsaddwJjEk9zNdpW', '2025-09-19 15:44:38', '23638738298', 'Dhaka West', 'female'),
-(18, 'new user11', 'user11@mail.com', '$2y$10$7FRLtkNCwBVFFXqQIxu0XuJKjjiBrSbrqPFZonpyVkB6J2jdJ9Y.i', '2025-09-19 18:04:39', '127138928739', 'Dhaka East', 'female'),
-(19, 'test id', 'test@gmail.com', '$2y$10$VN4joOgEbEZtz9Sir8Qqv.wv8TonOxds9x32DY6ksf.0ceazzMeiK', '2025-10-03 14:18:46', '01277383773', 'Dhaka East', 'male'),
-(20, 'abc aa', 'abc@gmail.com', '$2y$10$r/ssw1XGRMnRqGr0kYRgyOHaTog9nhFLYj2Z/OT9i5XKWJqJxTCyC', '2025-10-03 19:04:05', '13209891323', 'Dhaka South', 'male');
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `phone`, `location`, `generalized_location`, `gender`) VALUES
+(1, 'Demo User', 'demo@example.com', '$2y$10$wHhG6p1xZ1V6lF7lA4L4ZOqf9D3HTxYyXQ9x9xZ6D9Q4yZ7u5o6e.', '2025-09-13 14:36:32', '', '', '', 'male'),
+(2, 'Mahir Ahmed', 'mahir101748@gmail.com', '$2y$10$cSzWLtXFkYN8YkcRU4F/GeJr61XM7PNf9NsyeqvEP2oFVKTzFPXBO', '2025-09-13 15:03:48', '01999373432', 'Dhaka North', 'Dhaka North', 'male'),
+(3, 'random xyz', 'randomxyz@mail.com', '$2y$10$u2//P1cE4PvITtDC7NpaQO89VX/A3rLYhEUaT7b/9NbCPYOeHL2pG', '2025-09-13 15:38:01', '01999372222', 'Dhaka South', 'Dhaka South', 'female'),
+(4, 'Rayhan Ahmed', 'rayhan01748@gmail.com', '$2y$10$tTIb7T822Q4ERsdoA/f0T.Y7p7n8rdHdjopw37pDoCcuevpnYm.fe', '2025-09-14 05:51:50', '01999373435', 'Dhaka South', 'Dhaka South', 'male'),
+(5, 'John cina', 'johncena@gmail.com', '$2y$10$NoHgA.F.N3B.FcvtS5VBmeWn6ajXiEDFodFEboYQG1YTLFYpMa.u.', '2025-09-17 17:57:02', '01238924723', 'Dhaka South', 'Dhaka South', 'male'),
+(6, 'asdf jkl', 'asdf@gmail.com', '$2y$10$aL1Xuey/hW4MwSJEnPJ/N.FfKKXbZpSwqkhv9cLOHH7tW8C2smFdO', '2025-09-17 18:02:26', '1234567891011', 'Dhaka East', 'Dhaka East', 'male'),
+(7, 'new user', 'newuser@gmail.com', '$2y$10$sJvzj7aXKCV7y90qPjMo8.Pp0Jte16dPEzBEhaseb5DxKEv6AmX4q', '2025-09-17 18:10:13', '01345435432', 'Dhaka West', 'Dhaka West', 'male'),
+(8, 'new user2', 'newuser2@gmail.com', '$2y$10$LtkrjeWWh4eLIYfLdMvBUOwQ2pnVLdDd.GV9p5sWcLjD3M31YtLcy', '2025-09-17 18:12:40', '01346435432', 'Dhaka South', 'Dhaka South', 'male'),
+(9, 'new user3', 'newuser3@gmail.com', '$2y$10$LNqtpPPSo7zA4nV52dtpS.00Kk8Cb38Wti7mU9pOaQK2b59AD13T2', '2025-09-17 18:28:41', '0199937445982', 'Dhaka South', 'Dhaka South', 'female'),
+(10, 'new user3', 'user3@gmail.com', '$2y$10$X8VpPf4atF9DCUGHA4kgauVHL16Oy.BZpTHoaPcPJA/RgsijBtKqi', '2025-09-17 18:29:29', '0199932948793', 'Dhaka South', 'Dhaka South', 'male'),
+(11, 'new user4', 'newuser4@gmail.com', '$2y$10$QF55iS9LT.Wp8vnxdjzhAOPnXyL8xOFIGNGbVBQ8mZLpwiEJcv6MK', '2025-09-17 18:33:09', '01923232323', 'Dhaka North', 'Dhaka North', 'male'),
+(12, 'abcd efgh', 'abcd@gmail.com', '$2y$10$2iWU49d019i04BbDo9XPyOi9v/.sMGPgFuq1GnpYObKgRJGnhmq5G', '2025-09-19 14:11:00', '017118394722', 'Dhaka South', 'Dhaka South', 'male'),
+(13, 'jon snow', 'snow@mail.com', '$2y$10$nRDKLpcyAcABBy24ovSzsec5CDiPFQBHiZjIjFaVfecIUE3FmAQei', '2025-09-19 14:19:07', '01293745289', 'Dhaka North', 'Dhaka North', 'male'),
+(14, 'Walter White', 'white@mail.com', '$2y$10$XPpC262XlhnbJ4.ZuZydKOsS3ikjTZ/GLMv0ualHEBqKMKpnVLzTK', '2025-09-19 15:08:09', '12345678900', 'Dhaka North', 'Dhaka North', 'male'),
+(15, 'new user7', 'user7@mail.com', '$2y$10$peHMDI49xqi.N2Frg6L5H.U00BmKC1pfHCIrsJVwv8SPyjOc/1cei', '2025-09-19 15:19:06', '12345678901', 'Dhaka North', 'Dhaka North', 'female'),
+(16, 'new user8', 'user8@mail.com', '$2y$10$/6.DWV/UTUeS2eV/Bj47V.Tz4OCZkmknpRGpdkVJleM9LdDzaOxdS', '2025-09-19 15:21:13', '12345689638', 'Dhaka North', 'Dhaka North', 'female'),
+(17, 'new user9', 'new9@mail.com', '$2y$10$EnARDqLr6RhvcxC5v62JBu1L4lfXSl30EC9cfQsaddwJjEk9zNdpW', '2025-09-19 15:44:38', '23638738298', 'Dhaka West', 'Dhaka West', 'female'),
+(18, 'new user11', 'user11@mail.com', '$2y$10$7FRLtkNCwBVFFXqQIxu0XuJKjjiBrSbrqPFZonpyVkB6J2jdJ9Y.i', '2025-09-19 18:04:39', '127138928739', 'Dhaka East', 'Dhaka East', 'female'),
+(19, 'test id', 'test@gmail.com', '$2y$10$VN4joOgEbEZtz9Sir8Qqv.wv8TonOxds9x32DY6ksf.0ceazzMeiK', '2025-10-03 14:18:46', '01277383773', 'Dhaka East', 'Dhaka East', 'male'),
+(20, 'abc aa', 'abc@gmail.com', '$2y$10$r/ssw1XGRMnRqGr0kYRgyOHaTog9nhFLYj2Z/OT9i5XKWJqJxTCyC', '2025-10-03 19:04:05', '13209891323', 'Dhaka South', 'Dhaka South', 'male'),
+(21, 'abcd ef', 'efg@gmail.com', '$2y$10$1xc2ODfwHznFfGEbVuRT/.GihF39ETMYyw6I0rT7lflOfCgkNW6ca', '2025-10-13 15:12:08', '913809734982', 'Dhaka South', 'Dhaka South', 'male'),
+(26, 'aaa aaa', 'a@gmail.com', '$2y$10$/9lk4sddCDeuiChTH9emL.22bphijV1AZ8THPR7FJAMn5DK7qYqgO', '2025-10-13 15:59:44', '187231939136', '', 'Dhaka South', 'male');
 
 -- --------------------------------------------------------
 
@@ -565,7 +566,15 @@ INSERT INTO `user_capabilities` (`user_id`, `capability_id`) VALUES
 (19, 6),
 (19, 7),
 (19, 8),
-(20, 4);
+(20, 4),
+(21, 1),
+(21, 2),
+(21, 3),
+(21, 4),
+(21, 5),
+(21, 6),
+(21, 7),
+(21, 8);
 
 --
 -- Indexes for dumped tables
@@ -755,7 +764,8 @@ ALTER TABLE `tuition_sessions`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `idx_users_generalized_location` (`generalized_location`);
 
 --
 -- Indexes for table `user_capabilities`
@@ -910,7 +920,7 @@ ALTER TABLE `tuition_sessions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- Constraints for dumped tables

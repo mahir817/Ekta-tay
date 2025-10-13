@@ -154,7 +154,7 @@ if (isset($_SESSION['user_id'])) {
           </span>
           <div class="user-dropdown">
             <div class="dropdown-menu" id="userDropdown">
-              <div class="dropdown-item">
+              <div class="dropdown-item" onclick="window.location.href='../../Profile page/profile.php'">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>
               </div>
