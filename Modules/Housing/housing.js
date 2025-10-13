@@ -200,10 +200,21 @@ function fetchNearbyHousing() {
         .then(res => res.json())
         .then(data => {
             if (data.success) {
+                console.log('Fetched nearby housing data:', data);
+                
+                // Calculate nearby count based on user's generalized location
+                const userLocation = data.user_area;
+                const nearbyCount = data.housing.filter(house => 
+                    house.generalized_location === userLocation
+                ).length;
+                
+                console.log('User location:', userLocation);
+                console.log('Calculated nearby count:', nearbyCount);
+                
                 // Update nearby housing count
                 const nearbyElement = document.getElementById('statNearby');
                 if (nearbyElement) {
-                    nearbyElement.textContent = data.nearby_count || 0;
+                    nearbyElement.textContent = nearbyCount;
                 }
                 
                 // Store nearby housing data for potential filtering
@@ -818,30 +829,55 @@ function showNearbyHousing() {
     // Make sure we're on the Find House tab
     showSection('find');
     
-    // Filter to show only nearby housing
-    if (window.nearbyHousingData) {
-        const nearbyHousing = window.nearbyHousingData.filter(house => house.is_nearby);
-        displayHousingData(nearbyHousing);
-        
-        // Update search location to show user's area
-        if (window.userArea) {
-            const searchLocation = document.getElementById('searchLocation');
-            if (searchLocation) {
-                searchLocation.value = window.userArea;
+    // Get user's generalized location and filter housing data
+    fetch("../../backend/fetch_nearby_housing.php")
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Nearby housing data:', data);
+                
+                // Filter housing based on user's generalized location
+                const userLocation = data.user_area;
+                const nearbyHousing = data.housing.filter(house => 
+                    house.generalized_location === userLocation
+                );
+                
+                console.log('User location:', userLocation);
+                console.log('Filtered nearby housing:', nearbyHousing);
+                
+                displayHousingData(nearbyHousing);
+                
+                // Update search location to show user's area
+                if (userLocation) {
+                    const searchLocation = document.getElementById('searchLocation');
+                    if (searchLocation) {
+                        searchLocation.value = userLocation;
+                    }
+                }
+                
+                // Show a message about the filtering
+                const housingList = document.getElementById('housingList');
+                if (nearbyHousing.length > 0) {
+                    housingList.insertAdjacentHTML('afterbegin', 
+                        `<div class="filter-info" style="background: rgba(106, 186, 157, 0.2); padding: 10px; border-radius: 8px; margin-bottom: 15px; color: white;">
+                            <i class="fas fa-map-marker-alt"></i> Showing ${nearbyHousing.length} housing options in your area: ${userLocation}
+                            <button onclick="clearNearbyFilter()" style="float: right; background: transparent; border: 1px solid white; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Show All</button>
+                        </div>`
+                    );
+                } else {
+                    housingList.innerHTML = `<div class="no-content">No housing posts found in your area (${userLocation}). ${userLocation ? 'Try browsing all available housing.' : 'Please set your generalized location in your profile.'}</div>`;
+                }
+            } else {
+                console.error('Failed to fetch nearby housing:', data.message);
+                // Fallback: show all housing
+                displayHousingData(allHousingData);
             }
-        }
-        
-        // Show a message about the filtering
-        const housingList = document.getElementById('housingList');
-        if (nearbyHousing.length > 0) {
-            housingList.insertAdjacentHTML('afterbegin', 
-                `<div class="filter-info" style="background: rgba(106, 186, 157, 0.2); padding: 10px; border-radius: 8px; margin-bottom: 15px; color: white;">
-                    <i class="fas fa-map-marker-alt"></i> Showing ${nearbyHousing.length} housing options in your area: ${window.userArea || 'your location'}
-                    <button onclick="clearNearbyFilter()" style="float: right; background: transparent; border: 1px solid white; color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer;">Show All</button>
-                </div>`
-            );
-        }
-    }
+        })
+        .catch(error => {
+            console.error('Error fetching nearby housing:', error);
+            // Fallback: show all housing
+            displayHousingData(allHousingData);
+        });
 }
 
 function clearNearbyFilter() {
@@ -850,6 +886,31 @@ function clearNearbyFilter() {
         searchLocation.value = '';
     }
     displayHousingData(allHousingData);
+}
+
+// Debug function to test nearby housing logic
+function debugNearbyHousing() {
+    fetch("../../backend/debug_nearby_housing.php")
+        .then(res => res.json())
+        .then(data => {
+            console.log('=== NEARBY HOUSING DEBUG ===');
+            console.log('Current user:', data.current_user);
+            console.log('User generalized location:', data.user_generalized_location);
+            console.log('Total housing posts:', data.total_housing_posts);
+            console.log('Nearby count:', data.nearby_count);
+            console.log('Nearby housing:', data.nearby_housing);
+            console.log('All housing locations:', data.all_housing_locations);
+            console.log('=== END DEBUG ===');
+            
+            alert(`Debug Info:
+User Location: ${data.user_generalized_location || 'Not set'}
+Total Housing: ${data.total_housing_posts}
+Nearby Housing: ${data.nearby_count}
+Check console for detailed info.`);
+        })
+        .catch(error => {
+            console.error('Debug error:', error);
+        });
 }
 
 window.onload = () => {
@@ -863,4 +924,13 @@ window.onload = () => {
     setTimeout(() => {
         addStatCardClickHandlers();
     }, 500);
+    
+    // Add debug button (temporary)
+    setTimeout(() => {
+        const debugBtn = document.createElement('button');
+        debugBtn.textContent = 'Debug Nearby Housing';
+        debugBtn.onclick = debugNearbyHousing;
+        debugBtn.style.cssText = 'position: fixed; top: 10px; right: 10px; z-index: 9999999; background: red; color: white; padding: 5px; border: none; border-radius: 4px; cursor: pointer;';
+        document.body.appendChild(debugBtn);
+    }, 1000);
 };

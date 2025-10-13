@@ -19,41 +19,19 @@ try {
     
     $userGeneralizedLocation = $user['generalized_location'] ?? null;
     
-    // If user doesn't have a generalized location, return all available housing
-    if (!$userGeneralizedLocation) {
-        $stmt = $pdo->prepare("
-            SELECT s.service_id, s.title, s.description, s.location, s.price, s.created_at, s.user_id,
-                   h.housing_id, h.property_type, h.size_sqft, h.floor_no, h.total_floors, h.furnished_status,
-                   h.bedrooms, h.bathrooms, h.balconies, h.rent, h.service_charge, h.advance_deposit,
-                   h.available_from, h.available_for, h.negotiable, h.khotiyan, h.verification_status,
-                   h.availability, h.location as housing_location, h.coordinates, h.generalized_location
-            FROM services s
-            INNER JOIN housing h ON s.service_id = h.service_id
-            WHERE s.type = 'housing' AND h.availability = 'available' AND s.user_id != ?
-            ORDER BY s.created_at DESC
-            LIMIT 50
-        ");
-        $stmt->execute([$currentUserId]);
-    } else {
-        // Fetch housing from the same generalized location area first, then others
-        $stmt = $pdo->prepare("
-            SELECT s.service_id, s.title, s.description, s.location, s.price, s.created_at, s.user_id,
-                   h.housing_id, h.property_type, h.size_sqft, h.floor_no, h.total_floors, h.furnished_status,
-                   h.bedrooms, h.bathrooms, h.balconies, h.rent, h.service_charge, h.advance_deposit,
-                   h.available_from, h.available_for, h.negotiable, h.khotiyan, h.verification_status,
-                   h.availability, h.location as housing_location, h.coordinates, h.generalized_location,
-                   CASE 
-                       WHEN h.generalized_location = ? THEN 1 
-                       ELSE 2 
-                   END as priority_order
-            FROM services s
-            INNER JOIN housing h ON s.service_id = h.service_id
-            WHERE s.type = 'housing' AND h.availability = 'available' AND s.user_id != ?
-            ORDER BY priority_order ASC, s.created_at DESC
-            LIMIT 50
-        ");
-        $stmt->execute([$userGeneralizedLocation, $currentUserId]);
-    }
+    // Always return all available housing - filtering will be done on frontend
+    $stmt = $pdo->prepare("
+        SELECT s.service_id, s.title, s.description, s.location, s.price, s.created_at, s.user_id,
+               h.housing_id, h.property_type, h.size_sqft, h.floor_no, h.total_floors, h.furnished_status,
+               h.bedrooms, h.bathrooms, h.balconies, h.rent, h.service_charge, h.advance_deposit,
+               h.available_from, h.available_for, h.negotiable, h.khotiyan, h.verification_status,
+               h.availability, h.location as housing_location, h.coordinates, h.generalized_location
+        FROM services s
+        INNER JOIN housing h ON s.service_id = h.service_id
+        WHERE s.type = 'housing' AND h.availability = 'available' AND s.user_id != ?
+        ORDER BY s.created_at DESC
+    ");
+    $stmt->execute([$currentUserId]);
     
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
