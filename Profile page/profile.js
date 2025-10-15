@@ -262,7 +262,14 @@ function loadApplications() {
     
     let filteredApps = applications;
     if (currentAppStatus !== 'all') {
-        filteredApps = applications.filter(app => app.app_status === currentAppStatus);
+        if (currentAppStatus === 'pending') {
+            // Include both pending and shortlisted as "pending"
+            filteredApps = applications.filter(app => 
+                app.app_status === 'pending' || app.app_status === 'shortlisted'
+            );
+        } else {
+            filteredApps = applications.filter(app => app.app_status === currentAppStatus);
+        }
     }
     
     if (filteredApps.length === 0) {
@@ -287,7 +294,7 @@ function loadApplications() {
                         <span>by ${app.poster_name}</span>
                     </div>
                 </div>
-                <span class="status-badge status-${app.app_status}">${app.app_status}</span>
+                <span class="status-badge status-${app.app_status}">${app.app_status === 'shortlisted' ? 'Shortlisted' : app.app_status.charAt(0).toUpperCase() + app.app_status.slice(1)}</span>
             </div>
             <p class="text-white/80 text-sm mb-3">${app.cover_letter ? app.cover_letter.substring(0, 100) + '...' : 'No cover letter'}</p>
             <div class="flex items-center justify-between text-sm">

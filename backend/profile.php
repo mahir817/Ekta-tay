@@ -72,10 +72,13 @@ try {
         }
     }
 
-    // Fetch user applications
-    $applicationsStmt = $pdo->prepare("
+    // Fetch user applications from both job_applications and housing_applications
+    $applications = [];
+    
+    // Fetch job applications
+    $jobAppsStmt = $pdo->prepare("
         SELECT ja.application_id, ja.service_id, ja.status as app_status, 
-               ja.created_at as applied_at,
+               ja.created_at as applied_at, ja.cover_letter,
                s.title, s.type, s.location, s.price,
                u.name as poster_name
         FROM job_applications ja
@@ -84,8 +87,32 @@ try {
         WHERE ja.applicant_id = ?
         ORDER BY ja.created_at DESC
     ");
-    $applicationsStmt->execute([$user_id]);
-    $applications = $applicationsStmt->fetchAll(PDO::FETCH_ASSOC);
+    $jobAppsStmt->execute([$user_id]);
+    $jobApplications = $jobAppsStmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Fetch housing applications
+    $housingAppsStmt = $pdo->prepare("
+        SELECT ha.application_id, h.housing_id as service_id, ha.status as app_status, 
+               ha.created_at as applied_at, ha.message as cover_letter,
+               s.title, s.type, s.location, h.rent as price,
+               u.name as poster_name
+        FROM housing_applications ha
+        JOIN housing h ON ha.housing_id = h.housing_id
+        JOIN services s ON h.service_id = s.service_id
+        JOIN users u ON ha.owner_id = u.id
+        WHERE ha.applicant_id = ?
+        ORDER BY ha.created_at DESC
+    ");
+    $housingAppsStmt->execute([$user_id]);
+    $housingApplications = $housingAppsStmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Combine all applications
+    $applications = array_merge($jobApplications, $housingApplications);
+    
+    // Sort by applied_at date (most recent first)
+    usort($applications, function($a, $b) {
+        return strtotime($b['applied_at']) - strtotime($a['applied_at']);
+    });
 
     // Fetch expenses
     $expensesStmt = $pdo->prepare("
@@ -144,7 +171,7 @@ try {
                 "total_applications" => count($applications),
                 "total_expenses" => $expenseSummary['total_count'] ?? 0,
                 "pending_applications" => count(array_filter($applications, function($app) {
-                    return $app['app_status'] === 'pending';
+                    return $app['app_status'] === 'pending' || $app['app_status'] === 'shortlisted';
                 }))
             ]
         ]
