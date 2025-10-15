@@ -20,6 +20,7 @@ try {
             handleApplyToHousing();
             break;
         case 'shortlist':
+        case 'shortlist_applicant':
             handleShortlistApplicant();
             break;
         case 'confirm_tenant':

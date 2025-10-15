@@ -274,48 +274,14 @@ $user = $userStmt->fetch(PDO::FETCH_ASSOC);
 
                         <!-- Settings Tab -->
                         <div id="settingsTab" class="tab-content hidden">
-                            <div class="space-y-6">
-                                <!-- Account Settings -->
-                                <div class="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
-                                    <h3 class="text-xl font-semibold text-white mb-6">Account Settings</h3>
-                                    <div class="space-y-4">
-                                        <button class="w-full text-left p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <h4 class="text-white font-medium">Change Password</h4>
-                                                    <p class="text-white/60 text-sm">Update your account password</p>
-                                                </div>
-                                                <i class="fas fa-chevron-right text-white/40"></i>
-                                            </div>
-                                        </button>
-                                        <button class="w-full text-left p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <h4 class="text-white font-medium">Privacy Settings</h4>
-                                                    <p class="text-white/60 text-sm">Manage your privacy preferences</p>
-                                                </div>
-                                                <i class="fas fa-chevron-right text-white/40"></i>
-                                            </div>
-                                        </button>
-                                        <button class="w-full text-left p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <h4 class="text-white font-medium">Notification Settings</h4>
-                                                    <p class="text-white/60 text-sm">Configure your notifications</p>
-                                                </div>
-                                                <i class="fas fa-chevron-right text-white/40"></i>
-                                            </div>
-                                        </button>
+                            <div class="flex items-center justify-center min-h-96">
+                                <div class="text-center">
+                                    <div class="bg-white/10 backdrop-blur-md rounded-xl p-12 border border-white/20">
+                                        <i class="fas fa-cog text-6xl text-white/40 mb-6"></i>
+                                        <h3 class="text-2xl font-semibold text-white mb-4">Settings Coming Soon</h3>
+                                        <p class="text-white/60 text-lg">We're working on bringing you advanced settings and customization options.</p>
+                                        <p class="text-white/40 text-sm mt-2">Stay tuned for updates!</p>
                                     </div>
-                                </div>
-
-                                <!-- Danger Zone -->
-                                <div class="bg-red-500/10 backdrop-blur-md rounded-xl p-6 border border-red-500/20">
-                                    <h3 class="text-xl font-semibold text-red-300 mb-6">Danger Zone</h3>
-                                    <button onclick="confirmDeleteAccount()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl transition-colors">
-                                        <i class="fas fa-trash mr-2"></i>Delete Account
-                                    </button>
-                                    <p class="text-red-300/70 text-sm mt-2">This action cannot be undone</p>
                                 </div>
                             </div>
                         </div>

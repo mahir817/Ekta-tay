@@ -243,8 +243,11 @@ function viewHousingDetails(housingId) {
 }
 
 function showHousingDetailsModal(housing) {
+    // Close any existing housing details modal first
+    closeHousingDetailsModal();
+    
     const modal = document.createElement('div');
-    modal.className = 'modal';
+    modal.className = 'modal housing-details-modal-container';
     modal.innerHTML = `
         <div class="modal-content glass-card housing-details-modal">
             <div class="modal-header">
@@ -277,6 +280,14 @@ function showHousingDetailsModal(housing) {
                         <h4>Description</h4>
                         <p class="housing-description">${housing.description}</p>
                     </div>
+                    <div class="detail-section full-width">
+                        <h4>House Photos</h4>
+                        <div id="housingPhotos-${housing.id}" class="housing-photos-container">
+                            <div class="loading-photos">
+                                <i class="fas fa-spinner fa-spin"></i> Loading photos...
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -284,15 +295,130 @@ function showHousingDetailsModal(housing) {
                 <button class="apply-btn" onclick="applyForHousing(${housing.id}); closeHousingDetailsModal();">Apply Now</button>
             </div>
         </div>`;
+    
+    // Add click outside to close functionality
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeHousingDetailsModal();
+        }
+    });
+    
     document.body.appendChild(modal);
     setTimeout(() => modal.classList.add('show'), 10);
+    
+    // Load housing photos
+    loadHousingPhotos(housing.id);
+}
+
+function loadHousingPhotos(housingId) {
+    const photosContainer = document.getElementById(`housingPhotos-${housingId}`);
+    if (!photosContainer) return;
+    
+    fetch(`../../backend/get_housing_images.php?housing_id=${housingId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayHousingPhotos(photosContainer, data.images);
+            } else {
+                photosContainer.innerHTML = `
+                    <div class="no-photos">
+                        <i class="fas fa-image text-white/40 text-2xl mb-2"></i>
+                        <p class="text-white/60">No photos available</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading housing photos:', error);
+            photosContainer.innerHTML = `
+                <div class="no-photos">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-2xl mb-2"></i>
+                    <p class="text-red-400">Failed to load photos</p>
+                </div>
+            `;
+        });
+}
+
+function displayHousingPhotos(container, images) {
+    if (!images || images.length === 0) {
+        container.innerHTML = `
+            <div class="no-photos">
+                <i class="fas fa-image text-white/40 text-4xl mb-3"></i>
+                <p class="text-white/60">No photos available for this property</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let photosHTML = '<div class="photos-grid">';
+    
+    images.forEach((image, index) => {
+        const isPrimary = image.is_primary == 1;
+        photosHTML += `
+            <div class="photo-item ${isPrimary ? 'primary-photo' : ''}" onclick="openPhotoViewer('${image.image_path}', '${image.image_name || 'House Photo'}')">
+                <img src="${image.image_path}" alt="${image.image_name || 'House Photo'}" loading="lazy" />
+                ${isPrimary ? '<div class="primary-badge"><i class="fas fa-star"></i> Primary</div>' : ''}
+                <div class="photo-overlay">
+                    <i class="fas fa-expand text-white text-xl"></i>
+                </div>
+            </div>
+        `;
+    });
+    
+    photosHTML += '</div>';
+    container.innerHTML = photosHTML;
+}
+
+function openPhotoViewer(imagePath, imageName) {
+    const viewer = document.createElement('div');
+    viewer.className = 'photo-viewer-modal';
+    viewer.innerHTML = `
+        <div class="photo-viewer-content">
+            <div class="photo-viewer-header">
+                <h4>${imageName}</h4>
+                <button class="close-btn" onclick="closePhotoViewer()">&times;</button>
+            </div>
+            <div class="photo-viewer-body">
+                <img src="${imagePath}" alt="${imageName}" />
+            </div>
+        </div>
+    `;
+    
+    viewer.addEventListener('click', function(e) {
+        if (e.target === viewer) {
+            closePhotoViewer();
+        }
+    });
+    
+    document.body.appendChild(viewer);
+    setTimeout(() => viewer.classList.add('show'), 10);
+}
+
+function closePhotoViewer() {
+    const viewer = document.querySelector('.photo-viewer-modal');
+    if (viewer) {
+        viewer.classList.remove('show');
+        setTimeout(() => viewer.remove(), 300);
+    }
 }
 
 function closeHousingDetailsModal() {
-    const modal = document.querySelector('.modal');
+    // First try to find the specific housing details modal container
+    const modal = document.querySelector('.housing-details-modal-container');
     if (modal) {
         modal.classList.remove('show');
         setTimeout(() => modal.remove(), 300);
+        return;
+    }
+    
+    // Fallback: find any modal with housing-details-modal class inside
+    const housingModal = document.querySelector('.housing-details-modal');
+    if (housingModal) {
+        const parentModal = housingModal.closest('.modal');
+        if (parentModal) {
+            parentModal.classList.remove('show');
+            setTimeout(() => parentModal.remove(), 300);
+        }
     }
 }
 
@@ -625,11 +751,17 @@ function generateApplicationsContent(applications) {
                     <div class="application-item">
                         <div class="applicant-info">
                             <h4>${app.applicant_name}</h4>
-                            <p><strong>Phone:</strong> ${app.applicant_phone}</p>
-                            <p><strong>Email:</strong> ${app.applicant_email}</p>
-                            <p><strong>Location:</strong> ${app.applicant_location}</p>
-                            <p><strong>Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
-                            ${app.message ? `<p><strong>Message:</strong> ${app.message}</p>` : ''}
+                            ${status === 'shortlisted' || status === 'accepted' ? `
+                                <div class="contact-info-highlight">
+                                    <p class="phone-highlight"><strong>📞 Phone:</strong> <span class="phone-number">${app.applicant_phone}</span></p>
+                                    <p><strong>📧 Email:</strong> ${app.applicant_email}</p>
+                                </div>
+                            ` : `
+                                <p><strong>Email:</strong> ${app.applicant_email}</p>
+                            `}
+                            <p><strong>📍 Location:</strong> ${app.applicant_location}</p>
+                            <p><strong>📅 Applied:</strong> ${new Date(app.created_at).toLocaleDateString()}</p>
+                            ${app.message ? `<p><strong>💬 Message:</strong> ${app.message}</p>` : ''}
                         </div>
                         <div class="application-actions">
                             ${status === 'pending' ? `
@@ -718,6 +850,29 @@ function rejectApplicant(applicationId) {
                 console.error('Error rejecting applicant:', error);
             });
     }
+}
+
+function showAppTab(status) {
+    // Hide all app tab sections
+    document.querySelectorAll('.app-tab-section').forEach(section => {
+        section.classList.add('hidden');
+        section.classList.remove('active');
+    });
+    
+    // Show selected section
+    const targetSection = document.getElementById(`app-${status}`);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        targetSection.classList.add('active');
+    }
+    
+    // Update tab buttons
+    document.querySelectorAll('.app-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase().includes(status)) {
+            btn.classList.add('active');
+        }
+    });
 }
 
 function closeApplicationsModal() {
