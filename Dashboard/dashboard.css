@@ -733,3 +733,255 @@ body::before {
         left: 100%;
     }
 }
+
+/* Enhanced Stat Cards */
+.enhanced-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 200px;
+    padding: 25px;
+}
+
+.enhanced-card .stat-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.enhanced-card .stat-main {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.enhanced-card .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 5px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.enhanced-card .stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+}
+
+/* Progress Bars */
+.stat-progress {
+    margin-top: auto;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+    position: relative;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.progress-fill.jobs {
+    background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+}
+
+.progress-fill.tutors {
+    background: linear-gradient(90deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.progress-fill.services {
+    background: linear-gradient(90deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+/* Breakdown Items */
+.stat-breakdown {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+}
+
+.breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.breakdown-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.breakdown-dot.available {
+    background: #4CAF50;
+}
+
+.breakdown-dot.mine {
+    background: #2196F3;
+}
+
+.breakdown-dot.active {
+    background: #FF9800;
+}
+
+.breakdown-dot.inactive {
+    background: #9E9E9E;
+}
+
+/* Visual Elements */
+.stat-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.tutor-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.tutor-icon {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.tutor-icon:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+
+.tutor-icon:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+.more-count {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-left: 5px;
+}
+
+.service-rating {
+    display: flex;
+    gap: 3px;
+}
+
+.service-rating .fa-star {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.3);
+    transition: color 0.3s ease;
+}
+
+.service-rating .fa-star.filled {
+    color: #FFD700;
+}
+
+/* Enhanced Expense Chart */
+.chart-circle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.progress-ring {
+    position: absolute;
+    transform: rotate(-90deg);
+}
+
+.progress-ring-progress {
+    transition: stroke-dashoffset 2s ease-in-out;
+    stroke-linecap: round;
+}
+
+.chart-center {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.chart-total {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.25rem;
+}
+
+.chart-label {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Enhanced Legend */
+.expense-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.legend-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.legend-text {
+    flex: 1;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.legend-amount {
+    font-weight: 600;
+    color: white;
+    font-size: 0.875rem;
+}

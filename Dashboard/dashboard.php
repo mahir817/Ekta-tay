@@ -301,18 +301,16 @@ foreach ($postingCaps as $cap) {
                 <?php endif; ?>
 
                 <?php if (in_array('Jobs', $availableCapabilities)): ?>
-<div class="stat-card fade-in-up" id="jobCard" style="cursor: pointer;"
-     onclick="window.location.href='../Modules/Jobs/jobs.php'">
-    <div class="stat-header">
-        <span class="stat-title">Jobs</span>
-        <div class="stat-icon">
-            <i class="fas fa-briefcase"></i>
-        </div>
-    </div>
-    <h3 class="stat-value"><?php echo $stats['jobs']; ?></h3>
-</div>
-<?php endif; ?>
-
+                <div class="stat-card fade-in-up" id="jobCard" style="cursor: pointer;" onclick="window.location.href='../Modules/Jobs/jobs.php'">
+                    <div class="stat-header">
+                        <span class="stat-title">Jobs</span>
+                        <div class="stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                    </div>
+                    <h3 class="stat-value"><?php echo $stats['jobs']; ?></h3>
+                </div>
+                <?php endif; ?>
 
                 <?php if (in_array('Tutors', $availableCapabilities)): ?>
                 <div class="stat-card fade-in-up">
@@ -329,9 +327,9 @@ foreach ($postingCaps as $cap) {
                 <?php if (in_array('Services', $availableCapabilities)): ?>
                 <div class="stat-card fade-in-up">
                     <div class="stat-header">
-                        <span class="stat-title">Food services</span>
+                        <span class="stat-title">Food Services</span>
                         <div class="stat-icon">
-                            <i class="fas fa-wrench"></i>
+                            <i class="fas fa-utensils"></i>
                         </div>
                     </div>
                     <h3 class="stat-value"><?php echo $stats['services']; ?></h3>
@@ -430,16 +428,34 @@ foreach ($postingCaps as $cap) {
                                 <div class="chart-total">৳<?php echo number_format($totalExpenses, 0); ?></div>
                                 <div class="chart-label">Total Expenses</div>
                             </div>
+                            <!-- Animated progress ring -->
+                            <svg class="progress-ring" width="120" height="120">
+                                <circle class="progress-ring-circle" stroke="rgba(255,255,255,0.2)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                                <circle class="progress-ring-progress" stroke="url(#gradient)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" 
+                                        style="stroke-dasharray: <?php echo 2 * 3.14159 * 52; ?>; stroke-dashoffset: <?php echo 2 * 3.14159 * 52 * (1 - min($totalExpenses / 50000, 1)); ?>;"/>
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
                         </div>
                         <div class="expense-legend">
                             <?php if ($expenseData): ?>
-                                <?php foreach ($expenseData as $expense): ?>
+                                <?php 
+                                $colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'];
+                                $colorIndex = 0;
+                                foreach ($expenseData as $expense): 
+                                ?>
                                 <div class="legend-item">
-                                    <div class="legend-dot" style="background: #667eea;"></div>
+                                    <div class="legend-dot" style="background: <?php echo $colors[$colorIndex % count($colors)]; ?>;"></div>
                                     <span class="legend-text"><?php echo $expense['category']; ?></span>
                                     <span class="legend-amount">৳<?php echo number_format($expense['total'], 0); ?></span>
                                 </div>
-                                <?php endforeach; ?>
+                                <?php 
+                                $colorIndex++;
+                                endforeach; ?>
                             <?php else: ?>
                                 <div class="legend-item">
                                     <div class="legend-dot" style="background: #667eea;"></div>

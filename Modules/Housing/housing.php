@@ -217,37 +217,81 @@ if (isset($_SESSION['user_id'])) {
 
     <!-- Overview Stats -->
     <div class="stats-grid">
-      <div class="stat-card">
+      <div class="stat-card enhanced-housing-card">
         <div class="stat-header">
           <span class="stat-title">Pending</span>
+          <div class="stat-icon pending">
+            <i class="fas fa-clock"></i>
+          </div>
         </div>
-        <p class="stat-value" id="statPending">0</p>
-        <p class="stat-sub">Applications pending</p>
+        <div class="stat-content">
+          <p class="stat-value" id="statPending">0</p>
+          <p class="stat-sub">Applications pending</p>
+          <div class="progress-bar">
+            <div class="progress-fill pending-fill" id="pendingProgress"></div>
+          </div>
+        </div>
       </div>
-      <div class="stat-card">
+      
+      <div class="stat-card enhanced-housing-card">
         <div class="stat-header">
           <span class="stat-title">Applied Requests</span>
+          <div class="stat-icon applied">
+            <i class="fas fa-paper-plane"></i>
+          </div>
         </div>
-        <p class="stat-value" id="statApplied">0</p>
-        <p class="stat-sub">Total submitted</p>
+        <div class="stat-content">
+          <p class="stat-value" id="statApplied">0</p>
+          <p class="stat-sub">Total submitted</p>
+          <div class="progress-bar">
+            <div class="progress-fill applied-fill" id="appliedProgress"></div>
+          </div>
+        </div>
       </div>
-      <div class="stat-card">
+      
+      <div class="stat-card enhanced-housing-card">
         <div class="stat-header">
           <span class="stat-title">Confirmed</span>
+          <div class="stat-icon confirmed">
+            <i class="fas fa-check-circle"></i>
+          </div>
         </div>
-        <p class="stat-value" id="statConfirmed">0</p>
-        <p class="stat-sub">Approved requests</p>
+        <div class="stat-content">
+          <p class="stat-value" id="statConfirmed">0</p>
+          <p class="stat-sub">Approved requests</p>
+          <div class="progress-bar">
+            <div class="progress-fill confirmed-fill" id="confirmedProgress"></div>
+          </div>
+        </div>
       </div>
-      <div class="stat-card">
+      
+      <div class="stat-card enhanced-housing-card">
         <div class="stat-header">
           <span class="stat-title">Cancelled</span>
+          <div class="stat-icon cancelled">
+            <i class="fas fa-times-circle"></i>
+          </div>
         </div>
-        <p class="stat-value" id="statCancelled">0</p>
-        <p class="stat-sub">Closed requests</p>
+        <div class="stat-content">
+          <p class="stat-value" id="statCancelled">0</p>
+          <p class="stat-sub">Closed requests</p>
+          <div class="progress-bar">
+            <div class="progress-fill cancelled-fill" id="cancelledProgress"></div>
+          </div>
+        </div>
       </div>
-      <div class="stat-card wide">
+      
+      <div class="stat-card wide enhanced-housing-card">
         <div class="stat-header">
           <span class="stat-title">Nearby Houses</span>
+          <div class="stat-icon nearby">
+            <i class="fas fa-map-marker-alt"></i>
+          </div>
+        </div>
+        <div class="nearby-visual">
+          <div class="nearby-chart" id="nearbyChart">
+            <!-- Visual representation will be added here -->
+          </div>
         </div>
         <p class="stat-value" id="statNearby">24</p>
         <p class="stat-sub">Houses available near you</p>

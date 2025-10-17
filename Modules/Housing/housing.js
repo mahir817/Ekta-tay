@@ -160,11 +160,40 @@ function fetchHousingStats() {
 }
 
 function updateDashboardStats(applicantStats, ownerStats) {
+    const maxValue = 20; // Maximum value for progress calculation
+    
+    // Calculate values
+    const pending = applicantStats.pending || 0;
+    const applied = (applicantStats.pending || 0) + (applicantStats.shortlisted || 0) + (applicantStats.accepted || 0);
+    const confirmed = applicantStats.accepted || 0;
+    const cancelled = (applicantStats.rejected || 0) + (applicantStats.withdrawn || 0);
+    
     // Update applicant stats
-    document.getElementById('statPending').textContent = applicantStats.pending || 0;
-    document.getElementById('statApplied').textContent = (applicantStats.pending || 0) + (applicantStats.shortlisted || 0) + (applicantStats.accepted || 0);
-    document.getElementById('statConfirmed').textContent = applicantStats.accepted || 0;
-    document.getElementById('statCancelled').textContent = (applicantStats.rejected || 0) + (applicantStats.withdrawn || 0);
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statApplied').textContent = applied;
+    document.getElementById('statConfirmed').textContent = confirmed;
+    document.getElementById('statCancelled').textContent = cancelled;
+    
+    // Update progress bars with animation
+    setTimeout(() => {
+        const pendingProgress = Math.min(pending / maxValue * 100, 100);
+        const appliedProgress = Math.min(applied / maxValue * 100, 100);
+        const confirmedProgress = Math.min(confirmed / maxValue * 100, 100);
+        const cancelledProgress = Math.min(cancelled / maxValue * 100, 100);
+        
+        const pendingBar = document.getElementById('pendingProgress');
+        const appliedBar = document.getElementById('appliedProgress');
+        const confirmedBar = document.getElementById('confirmedProgress');
+        const cancelledBar = document.getElementById('cancelledProgress');
+        
+        if (pendingBar) pendingBar.style.width = pendingProgress + '%';
+        if (appliedBar) appliedBar.style.width = appliedProgress + '%';
+        if (confirmedBar) confirmedBar.style.width = confirmedProgress + '%';
+        if (cancelledBar) cancelledBar.style.width = cancelledProgress + '%';
+    }, 500);
+    
+    // Update nearby houses visual chart
+    updateNearbyChart(24); // Default nearby count
     
     // Update status tab counts
     document.getElementById('pendingCount').textContent = applicantStats.pending || 0;
@@ -176,6 +205,36 @@ function updateDashboardStats(applicantStats, ownerStats) {
     setTimeout(() => {
         addStatCardClickHandlers();
     }, 100);
+}
+
+function updateNearbyChart(nearbyCount) {
+    const chartContainer = document.getElementById('nearbyChart');
+    if (!chartContainer) return;
+    
+    // Clear existing bars
+    chartContainer.innerHTML = '';
+    
+    // Create animated bars representing nearby houses
+    const barCount = Math.min(nearbyCount, 12); // Max 12 bars for visual appeal
+    const maxHeight = 50;
+    
+    for (let i = 0; i < 12; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'nearby-bar';
+        
+        // Vary heights based on data with some randomness for visual appeal
+        let height;
+        if (i < barCount) {
+            height = Math.max(15, Math.random() * maxHeight);
+        } else {
+            height = Math.max(5, Math.random() * 20);
+        }
+        
+        bar.style.height = height + 'px';
+        bar.style.animationDelay = (i * 0.1) + 's';
+        
+        chartContainer.appendChild(bar);
+    }
 }
 
 // ====== Fetch Housing ======
