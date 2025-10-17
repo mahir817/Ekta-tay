@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2025 at 02:39 PM
+-- Generation Time: Oct 17, 2025 at 03:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -95,6 +95,13 @@ CREATE TABLE `food_services` (
   `status` enum('available','unavailable') DEFAULT 'available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `food_services`
+--
+
+INSERT INTO `food_services` (`foodService_id`, `service_id`, `food_type`, `provider_name`, `location`, `available_date`, `price`, `description`, `status`) VALUES
+(1, 19, 'meal', 'wretrg', 'cdfgfn', '2025-10-15', 23456.00, 'sfdgfh', 'available');
+
 -- --------------------------------------------------------
 
 --
@@ -171,6 +178,18 @@ INSERT INTO `housing_applications` (`application_id`, `housing_id`, `owner_id`, 
 (5, 5, 19, 2, 'accepted', 'fucascascx', '2025-10-10 18:56:11', '2025-10-10 18:57:21'),
 (6, 9, 19, 2, 'rejected', 'Application submitted', '2025-10-15 16:56:44', '2025-10-15 17:01:06'),
 (7, 6, 20, 19, 'accepted', 'sadcsd', '2025-10-15 17:02:53', '2025-10-15 17:05:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `housing_features`
+--
+
+CREATE TABLE `housing_features` (
+  `feature_id` int(11) NOT NULL,
+  `housing_id` int(11) NOT NULL,
+  `feature_name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -387,6 +406,23 @@ CREATE TABLE `orders` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `payment_history`
+--
+
+CREATE TABLE `payment_history` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `expense_id` int(10) UNSIGNED DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `provider` varchar(40) DEFAULT NULL,
+  `reference` varchar(120) DEFAULT NULL,
+  `status` enum('success','failed','pending') NOT NULL DEFAULT 'success',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `rent_split`
 --
 
@@ -432,12 +468,115 @@ INSERT INTO `services` (`service_id`, `user_id`, `title`, `description`, `type`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `shared_expenses`
+--
+
+CREATE TABLE `shared_expenses` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `owner_id` int(10) UNSIGNED NOT NULL,
+  `title` varchar(150) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `date` date NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shared_expense_shares`
+--
+
+CREATE TABLE `shared_expense_shares` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `shared_expense_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `share_amount` decimal(10,2) NOT NULL,
+  `status` enum('paid','unpaid','pending') NOT NULL DEFAULT 'unpaid'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tuitions`
+--
+
+CREATE TABLE `tuitions` (
+  `tuition_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
+  `subject` enum('mathematics','physics','chemistry','biology','english','bangla','ict','accounting','economics','business_studies') NOT NULL,
+  `class_level` enum('class-1-5','class-6-8','class-9-10','class-11-12','university') NOT NULL,
+  `tuition_type` enum('home','online','center','group') NOT NULL,
+  `student_count` enum('1','2-3','4-6','6+') DEFAULT '1',
+  `schedule` varchar(255) DEFAULT NULL,
+  `gender_preference` enum('male','female') DEFAULT NULL,
+  `experience_years` int(11) DEFAULT NULL,
+  `qualification` varchar(255) DEFAULT NULL,
+  `hourly_rate` decimal(10,2) DEFAULT NULL,
+  `status` enum('active','paused','closed') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tuitions`
+--
+
+INSERT INTO `tuitions` (`tuition_id`, `service_id`, `subject`, `class_level`, `tuition_type`, `student_count`, `schedule`, `gender_preference`, `experience_years`, `qualification`, `hourly_rate`, `status`, `created_at`) VALUES
+(1, 23, 'chemistry', 'class-6-8', 'online', '1', '4', '', 5, 'df', 3546.00, 'active', '2025-10-15 16:09:11'),
+(2, 24, 'biology', 'class-9-10', 'online', '1', '4', '', 6, 'sfdgf', 576.00, 'active', '2025-10-15 16:11:33'),
+(3, 25, 'biology', 'class-9-10', 'online', '1', '4', '', 7, 'asdfd', 546.00, 'active', '2025-10-15 16:25:02'),
+(4, 28, 'chemistry', 'class-6-8', 'home', '2-3', '4', '', 8, 'sfdg', 456.00, 'active', '2025-10-15 17:55:44'),
+(5, 29, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:01:46'),
+(6, 30, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:02:01');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tuition_applications`
+--
+
+CREATE TABLE `tuition_applications` (
+  `application_id` int(11) NOT NULL,
+  `tuition_id` int(11) NOT NULL,
+  `tutor_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `status` enum('pending','accepted','rejected','withdrawn') DEFAULT 'pending',
+  `message` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tuition_sessions`
 --
 
 CREATE TABLE `tuition_sessions` (
   `session_id` int(11) NOT NULL,
   `hire_id` int(11) NOT NULL,
+  `session_date` date NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `topic_covered` varchar(255) DEFAULT NULL,
+  `homework_assigned` text DEFAULT NULL,
+  `student_performance` enum('excellent','good','average','needs_improvement') DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('scheduled','completed','cancelled') DEFAULT 'scheduled',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tuition_sessions_new`
+--
+
+CREATE TABLE `tuition_sessions_new` (
+  `session_id` int(11) NOT NULL,
+  `tuition_id` int(11) NOT NULL,
+  `tutor_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
   `session_date` date NOT NULL,
   `start_time` time NOT NULL,
   `end_time` time NOT NULL,
@@ -570,6 +709,28 @@ INSERT INTO `user_capabilities` (`user_id`, `capability_id`) VALUES
 (21, 6),
 (21, 7),
 (21, 8);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `v_expense_status_summary`
+-- (See below for the actual view)
+--
+CREATE TABLE `v_expense_status_summary` (
+`user_id` int(11)
+,`pending_total` decimal(32,2)
+,`paid_total` decimal(32,2)
+,`unpaid_total` decimal(32,2)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `v_expense_status_summary`
+--
+DROP TABLE IF EXISTS `v_expense_status_summary`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_expense_status_summary`  AS SELECT `expenses`.`user_id` AS `user_id`, sum(case when `expenses`.`status` = 'pending' then `expenses`.`amount` else 0 end) AS `pending_total`, sum(case when `expenses`.`status` = 'paid' then `expenses`.`amount` else 0 end) AS `paid_total`, sum(case when `expenses`.`status` = 'unpaid' then `expenses`.`amount` else 0 end) AS `unpaid_total` FROM `expenses` GROUP BY `expenses`.`user_id` ;
 
 --
 -- Indexes for dumped tables
@@ -788,7 +949,7 @@ ALTER TABLE `expenses`
 -- AUTO_INCREMENT for table `food_services`
 --
 ALTER TABLE `food_services`
-  MODIFY `foodService_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `foodService_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `housing`

@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 session_start();
 require_once "../backend/db.php";
 @include __DIR__ . "/../backend/session.php";
@@ -164,8 +166,13 @@ $errorMessage = '';
 
 // Handle form submission using PDO and correct schema (services -> subtype)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Force display error for debugging
+    echo "<div style='background: red; color: white; padding: 10px; margin: 10px;'>FORM SUBMITTED! POST METHOD DETECTED</div>";
+    error_log("POST request received");
+    error_log("POST data: " . print_r($_POST, true));
     $serviceType = $_POST['service_type'] ?? '';
     $userId = (int)$_SESSION['user_id'];
+    error_log("Service type: $serviceType, User ID: $userId");
 
     // Common fields for services table
     $title = trim($_POST['title'] ?? '');
@@ -200,12 +207,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ensurePostServiceSchema($pdo);
 
         try {
+            error_log("Starting database transaction");
             $pdo->beginTransaction();
 
             // Insert into services (title/description/price/location)
             $serviceStmt = $pdo->prepare(
                 "INSERT INTO services (user_id, title, description, type, price, location) VALUES (:user_id, :title, :description, :type, :price, :location)"
             );
+            error_log("Executing services insert with data: " . print_r([
+                ':user_id' => $userId,
+                ':title' => $title,
+                ':description' => $description,
+                ':type' => $serviceType,
+                ':price' => $price,
+                ':location' => $location !== '' ? $location : null,
+            ], true));
             $serviceStmt->execute([
                 ':user_id' => $userId,
                 ':title' => $title,
@@ -215,23 +231,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':location' => $location !== '' ? $location : null,
             ]);
             $serviceId = (int)$pdo->lastInsertId();
+            error_log("Services insert successful, service ID: $serviceId");
 
             if ($serviceType === 'housing') {
+                error_log("Processing housing service");
                 $housingStmt = $pdo->prepare(
                     "INSERT INTO housing (
                         service_id, property_type, size_sqft, floor_no, total_floors,
                         furnished_status, parking_spaces, bedrooms, bathrooms, balconies,
                         rent, service_charge, advance_deposit, available_from, available_for,
-                        negotiable, property_condition, status, furnished, location, coordinates, generalized_location
+                        negotiable, property_condition, status, location, coordinates, generalized_location
                     ) VALUES (
                         :service_id, :property_type, :size_sqft, :floor_no, :total_floors,
                         :furnished_status, :parking_spaces, :bedrooms, :bathrooms, :balconies,
                         :rent, :service_charge, :advance_deposit, :available_from, :available_for,
-                        :negotiable, :property_condition, 'available', :furnished, :location, :coordinates, :generalized_location
+                        :negotiable, :property_condition, 'available', :location, :coordinates, :generalized_location
                     )"
                 );
 
-                $housingStmt->execute([
+                $housingData = [
                     ':service_id' => $serviceId,
                     ':property_type' => $_POST['property_type'] ?? 'apartment',
                     ':size_sqft' => $_POST['size_sqft'] !== '' ? (int)$_POST['size_sqft'] : null,
@@ -249,12 +267,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':available_for' => $_POST['available_for'] ?? 'any',
                     ':negotiable' => isset($_POST['negotiable']) && $_POST['negotiable'] == '1' ? 1 : 0,
                     ':property_condition' => $_POST['property_condition'] ?? 'N/A',
-                    ':furnished' => $_POST['furnished'] ?? 'unfurnished',
                     ':location' => $location !== '' ? $location : null,
                     ':coordinates' => trim($_POST['coordinates'] ?? ''),
                     ':generalized_location' => $_POST['generalized_location'] ?? ''
-                ]);
+                ];
+                error_log("Housing data to insert: " . print_r($housingData, true));
+                $housingStmt->execute($housingData);
+                error_log("Housing insert successful");
             } elseif ($serviceType === 'job') {
+                error_log("Processing job service");
                 $jobStmt = $pdo->prepare(
                     "INSERT INTO jobs (
                         service_id, job_type, company, experience_level, work_type,
@@ -279,6 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':application_deadline' => $_POST['application_deadline'] !== '' ? $_POST['application_deadline'] : null,
                 ]);
             } elseif ($serviceType === 'tuition') {
+                error_log("Processing tuition service");
                 $tuitionStmt = $pdo->prepare(
                     "INSERT INTO tuitions (
                         service_id, subject, class_level, tuition_type, student_count, schedule,
@@ -300,7 +322,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':qualification' => $_POST['tuition_qualification'] ?? null,
                     ':hourly_rate' => $_POST['tuition_hourly_rate'] !== '' ? (float)$_POST['tuition_hourly_rate'] : null,
                 ]);
+                error_log("Tuition insert successful");
             } elseif ($serviceType === 'food') {
+                error_log("Processing food service");
                 $foodStmt = $pdo->prepare(
                     "INSERT INTO food_services (
                         service_id, food_type, provider_name, location, available_date, price, description
@@ -317,11 +341,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':price' => $price,
                     ':description' => $description,
                 ]);
+                error_log("Food service insert successful");
             }
 
             $pdo->commit();
+            error_log("Transaction committed successfully");
             $posted = true;
             $postedServiceId = $serviceId;
+            error_log("Post marked as successful with service ID: $serviceId");
             $postedSummary = [
                 'service_id' => $serviceId,
                 'type' => $serviceType,

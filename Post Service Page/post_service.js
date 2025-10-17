@@ -11,6 +11,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const descriptionInput = form.querySelector("textarea[name='description']");
     const priceInput = form.querySelector("input[name='price']");
 
+    console.log("Elements found:");
+    console.log("serviceType:", serviceType);
+    console.log("housingForm:", housingForm);
+    console.log("form:", form);
+
     function setRequiredForType(type) {
         // clear all
         form.querySelectorAll('[data-dynamic-required="1"]').forEach(el => {
@@ -57,12 +62,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // toggle form sections
     serviceType.addEventListener("change", function () {
+        console.log("Service type changed to:", this.value);
         housingForm.style.display = "none";
         jobForm.style.display = "none";
         tuitionForm.style.display = "none";
         foodForm.style.display = "none";
 
-        if (this.value === "housing") housingForm.style.display = "block";
+        if (this.value === "housing") {
+            housingForm.style.display = "block";
+            console.log("Housing form should now be visible");
+        }
         if (this.value === "job") jobForm.style.display = "block";
         if (this.value === "tuition") tuitionForm.style.display = "block";
         if (this.value === "food") foodForm.style.display = "block";
