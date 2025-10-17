@@ -68,14 +68,60 @@ if (in_array('food_service', $capabilities)) {
 require_once "../backend/log_activity.php";
 $activities = getRecentActivities($user_id, 5);
 
-// Debug: Check if we have activities for this user
-$debugActivitiesCount = 0;
+// Quick debug - check if we have activities in database
+$activityCount = 0;
 try {
-    $debugStmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id = ?");
-    $debugStmt->execute([$user_id]);
-    $debugActivitiesCount = $debugStmt->fetchColumn();
+    $countStmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id = ?");
+    $countStmt->execute([$user_id]);
+    $activityCount = $countStmt->fetchColumn();
+    
+    // If we have activities but getRecentActivities returns empty, fetch them directly
+    if ($activityCount > 0 && empty($activities)) {
+        $directStmt = $pdo->prepare("
+            SELECT activity_title as title, 
+                   activity_description as description,
+                   icon,
+                   created_at
+            FROM user_activities 
+            WHERE user_id = ? 
+            ORDER BY created_at DESC 
+            LIMIT 5
+        ");
+        $directStmt->execute([$user_id]);
+        $directActivities = $directStmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Calculate time manually with proper timezone handling
+        foreach ($directActivities as &$activity) {
+            $createdTime = new DateTime($activity['created_at']);
+            $now = new DateTime();
+            $diff = $now->getTimestamp() - $createdTime->getTimestamp();
+            
+            if ($diff < 60) {
+                $activity['time'] = 'Just now';
+            } elseif ($diff < 3600) {
+                $minutes = floor($diff / 60);
+                $activity['time'] = $minutes . ' minute' . ($minutes != 1 ? 's' : '') . ' ago';
+            } elseif ($diff < 86400) {
+                $hours = floor($diff / 3600);
+                $activity['time'] = $hours . ' hour' . ($hours != 1 ? 's' : '') . ' ago';
+            } elseif ($diff < 604800) {
+                $days = floor($diff / 86400);
+                $activity['time'] = $days . ' day' . ($days != 1 ? 's' : '') . ' ago';
+            } else {
+                $activity['time'] = $createdTime->format('M d, Y');
+            }
+            
+            // Ensure icon is not empty
+            if (empty($activity['icon'])) {
+                $activity['icon'] = '📝';
+            }
+            
+            unset($activity['created_at']);
+        }
+        $activities = $directActivities;
+    }
 } catch (Exception $e) {
-    // Table might not exist
+    // Ignore errors
 }
 
 // Get expense data if user has expense tracking capability
@@ -323,15 +369,7 @@ foreach ($postingCaps as $cap) {
                             </div>
                             <div class="activity-content">
                                 <div class="activity-title">No recent activities</div>
-                                <div class="activity-time">
-                                    <?php if ($debugActivitiesCount > 0): ?>
-                                        Found <?php echo $debugActivitiesCount; ?> activities in database for user <?php echo $user_id; ?>, but getRecentActivities() returned empty.
-                                        <a href="../fix_activities_user.php" style="color: #4CAF50;">Debug Activities</a>
-                                    <?php else: ?>
-                                        Start using your capabilities to see activities here. 
-                                        <a href="../fix_activities_user.php" style="color: #4CAF50;">Add Sample Activities</a>
-                                    <?php endif; ?>
-                                </div>
+                                <div class="activity-time">Start using your capabilities to see activities here</div>
                             </div>
                         </li>
                         <?php else: ?>
@@ -494,8 +532,9 @@ foreach ($postingCaps as $cap) {
         .then(response => response.json())
         .then(data => {
             loading.style.display = 'none';
+            console.log('Activities response:', data); // Debug log
             
-            if (data.success && data.activities.length > 0) {
+            if (data.success && data.activities && data.activities.length > 0) {
                 let html = '<ul class="activity-list" style="max-height: 400px; overflow-y: auto;">';
                 data.activities.forEach(activity => {
                     html += `
@@ -519,9 +558,30 @@ foreach ($postingCaps as $cap) {
         })
         .catch(error => {
             loading.style.display = 'none';
-            list.innerHTML = '<p style="text-align: center; color: #ff6b6b; padding: 20px;">Error loading activities</p>';
+            console.error('Error loading activities:', error);
+            
+            // Fallback: try to get activities from the current page data
+            const currentActivities = <?php echo json_encode($activities); ?>;
+            if (currentActivities && currentActivities.length > 0) {
+                let html = '<ul class="activity-list" style="max-height: 400px; overflow-y: auto;">';
+                currentActivities.forEach(activity => {
+                    html += `
+                        <li class="activity-item" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <div class="activity-icon">${activity.icon || '📝'}</div>
+                            <div class="activity-content">
+                                <div class="activity-title">${activity.title}</div>
+                                ${activity.description ? `<div class="activity-description" style="font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 2px;">${activity.description}</div>` : ''}
+                                <div class="activity-time">${activity.time}</div>
+                            </div>
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                list.innerHTML = html;
+            } else {
+                list.innerHTML = '<p style="text-align: center; color: #ff6b6b; padding: 20px;">Error loading activities</p>';
+            }
             list.style.display = 'block';
-            console.error('Error:', error);
         });
     }
     

@@ -19,6 +19,7 @@ function logActivity($userId, $activityType, $title, $description = null, $relat
         'logout' => '🚪'
     ];
     
+    // Set default icon if none provided
     $icon = $icon ?: ($defaultIcons[$activityType] ?? '📝');
     
     try {
@@ -51,24 +52,58 @@ function logActivity($userId, $activityType, $title, $description = null, $relat
 function getRecentActivities($userId, $limit = 5) {
     global $pdo;
     
+    // Ensure we have a PDO connection
+    if (!$pdo) {
+        require_once __DIR__ . '/db.php';
+    }
+    
     try {
         $stmt = $pdo->prepare("
             SELECT activity_title as title, 
                    activity_description as description,
                    icon,
-                   CASE 
-                       WHEN created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR) THEN CONCAT(TIMESTAMPDIFF(MINUTE, created_at, NOW()), ' minutes ago')
-                       WHEN created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR) THEN CONCAT(TIMESTAMPDIFF(HOUR, created_at, NOW()), ' hours ago')
-                       WHEN created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN CONCAT(TIMESTAMPDIFF(DAY, created_at, NOW()), ' days ago')
-                       ELSE DATE_FORMAT(created_at, '%M %d, %Y')
-                   END as time
+                   created_at,
+                   UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(created_at) as seconds_ago
             FROM user_activities 
             WHERE user_id = ? 
             ORDER BY created_at DESC 
             LIMIT ?
         ");
         $stmt->execute([$userId, $limit]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Calculate time strings in PHP with proper DateTime handling
+        foreach ($activities as &$activity) {
+            $createdTime = new DateTime($activity['created_at']);
+            $now = new DateTime();
+            $diff = $now->getTimestamp() - $createdTime->getTimestamp();
+            
+            if ($diff < 60) {
+                $activity['time'] = 'Just now';
+            } elseif ($diff < 3600) {
+                $minutes = floor($diff / 60);
+                $activity['time'] = $minutes . ' minute' . ($minutes != 1 ? 's' : '') . ' ago';
+            } elseif ($diff < 86400) {
+                $hours = floor($diff / 3600);
+                $activity['time'] = $hours . ' hour' . ($hours != 1 ? 's' : '') . ' ago';
+            } elseif ($diff < 604800) {
+                $days = floor($diff / 86400);
+                $activity['time'] = $days . ' day' . ($days != 1 ? 's' : '') . ' ago';
+            } else {
+                $activity['time'] = $createdTime->format('M d, Y');
+            }
+            
+            // Ensure icon is not empty
+            if (empty($activity['icon'])) {
+                $activity['icon'] = '📝';
+            }
+            
+            // Remove the fields we don't need anymore
+            unset($activity['seconds_ago']);
+            unset($activity['created_at']);
+        }
+        
+        return $activities;
     } catch (Exception $e) {
         error_log("Failed to get activities: " . $e->getMessage());
         return [];
