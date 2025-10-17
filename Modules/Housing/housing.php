@@ -281,20 +281,61 @@ if (isset($_SESSION['user_id'])) {
         </div>
       </div>
       
-      <div class="stat-card wide enhanced-housing-card">
+      <div class="stat-card wide enhanced-housing-card nearby-houses-card">
         <div class="stat-header">
           <span class="stat-title">Nearby Houses</span>
           <div class="stat-icon nearby">
             <i class="fas fa-map-marker-alt"></i>
           </div>
         </div>
-        <div class="nearby-visual">
-          <div class="nearby-chart" id="nearbyChart">
-            <!-- Visual representation will be added here -->
+        
+        <div class="nearby-content">
+          <div class="nearby-main">
+            <div class="nearby-count-section">
+              <p class="stat-value" id="statNearby">24</p>
+              <p class="stat-sub">Houses available</p>
+              <div class="location-info">
+                <i class="fas fa-location-dot"></i>
+                <span id="userLocation">In your area</span>
+              </div>
+            </div>
+            
+            <div class="nearby-visual">
+              <div class="nearby-chart" id="nearbyChart">
+                <!-- Animated bars will be added here -->
+              </div>
+              <div class="chart-labels">
+                <span>This Week</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="nearby-actions">
+            <button class="nearby-btn primary" onclick="showTab('find')">
+              <i class="fas fa-search"></i>
+              Browse All
+            </button>
+            <button class="nearby-btn secondary" onclick="refreshNearbyHouses()">
+              <i class="fas fa-sync-alt"></i>
+              Refresh
+            </button>
+          </div>
+          
+          <div class="nearby-stats">
+            <div class="mini-stat">
+              <span class="mini-stat-value" id="nearbyNew">3</span>
+              <span class="mini-stat-label">New Today</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-stat-value" id="nearbyAffordable">12</span>
+              <span class="mini-stat-label">In Budget</span>
+            </div>
+            <div class="mini-stat">
+              <span class="mini-stat-value" id="nearbyPremium">9</span>
+              <span class="mini-stat-label">Premium</span>
+            </div>
           </div>
         </div>
-        <p class="stat-value" id="statNearby">24</p>
-        <p class="stat-sub">Houses available near you</p>
       </div>
     </div>
 
@@ -524,13 +565,35 @@ if(isset($userHousing) && count($userHousing) > 0){
 <!-- Modal for Adding Expense -->
 <div id="expenseModal" class="modal hidden">
   <div class="modal-content glass-card">
-    <h3>Add Expense</h3>
+    <h3>Add Housing Expense</h3>
     <form id="expenseForm">
-      <input type="text" name="name" placeholder="Expense Name" required>
-      <input type="number" name="amount" placeholder="Amount" required>
-      <input type="date" name="due_date" required>
-      <button type="submit" class="add-btn">Save</button>
-      <button type="button" onclick="closeExpenseForm()" class="add-btn cancel-btn">Cancel</button>
+      <input type="text" name="title" placeholder="Expense Name (e.g., Monthly Rent)" required>
+      
+      <select name="category" required>
+        <option value="">Select Category</option>
+        <option value="Rent">Rent</option>
+        <option value="Utilities">Utilities (Gas, Water, Electric)</option>
+        <option value="Internet">Internet</option>
+        <option value="Maintenance">Maintenance & Repairs</option>
+        <option value="Groceries">Groceries</option>
+        <option value="Cleaning">Cleaning Supplies</option>
+        <option value="Others">Others</option>
+      </select>
+      
+      <input type="number" name="amount" step="0.01" placeholder="Amount (৳)" required>
+      <input type="date" name="date" required>
+      
+      <select name="status">
+        <option value="unpaid">Unpaid</option>
+        <option value="paid">Paid</option>
+      </select>
+      
+      <textarea name="description" placeholder="Additional notes (optional)" rows="3"></textarea>
+      
+      <div class="form-actions">
+        <button type="submit" class="add-btn">Save Expense</button>
+        <button type="button" onclick="closeExpenseForm()" class="add-btn cancel-btn">Cancel</button>
+      </div>
     </form>
   </div>
 </div>

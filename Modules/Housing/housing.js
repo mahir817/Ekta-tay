@@ -160,13 +160,14 @@ function fetchHousingStats() {
 }
 
 function updateDashboardStats(applicantStats, ownerStats) {
-    const maxValue = 20; // Maximum value for progress calculation
-    
     // Calculate values
     const pending = applicantStats.pending || 0;
     const applied = (applicantStats.pending || 0) + (applicantStats.shortlisted || 0) + (applicantStats.accepted || 0);
     const confirmed = applicantStats.accepted || 0;
     const cancelled = (applicantStats.rejected || 0) + (applicantStats.withdrawn || 0);
+    
+    // Calculate total applications
+    const totalApplications = pending + (applicantStats.shortlisted || 0) + confirmed + cancelled;
     
     // Update applicant stats
     document.getElementById('statPending').textContent = pending;
@@ -174,26 +175,13 @@ function updateDashboardStats(applicantStats, ownerStats) {
     document.getElementById('statConfirmed').textContent = confirmed;
     document.getElementById('statCancelled').textContent = cancelled;
     
-    // Update progress bars with animation
+    // Update progress bars with dual colors
     setTimeout(() => {
-        const pendingProgress = Math.min(pending / maxValue * 100, 100);
-        const appliedProgress = Math.min(applied / maxValue * 100, 100);
-        const confirmedProgress = Math.min(confirmed / maxValue * 100, 100);
-        const cancelledProgress = Math.min(cancelled / maxValue * 100, 100);
-        
-        const pendingBar = document.getElementById('pendingProgress');
-        const appliedBar = document.getElementById('appliedProgress');
-        const confirmedBar = document.getElementById('confirmedProgress');
-        const cancelledBar = document.getElementById('cancelledProgress');
-        
-        if (pendingBar) pendingBar.style.width = pendingProgress + '%';
-        if (appliedBar) appliedBar.style.width = appliedProgress + '%';
-        if (confirmedBar) confirmedBar.style.width = confirmedProgress + '%';
-        if (cancelledBar) cancelledBar.style.width = cancelledProgress + '%';
+        updateDualProgressBar('pendingProgress', pending, totalApplications);
+        updateDualProgressBar('appliedProgress', applied, totalApplications);
+        updateDualProgressBar('confirmedProgress', confirmed, totalApplications);
+        updateDualProgressBar('cancelledProgress', cancelled, totalApplications);
     }, 500);
-    
-    // Update nearby houses visual chart
-    updateNearbyChart(24); // Default nearby count
     
     // Update status tab counts
     document.getElementById('pendingCount').textContent = applicantStats.pending || 0;
@@ -207,34 +195,44 @@ function updateDashboardStats(applicantStats, ownerStats) {
     }, 100);
 }
 
-function updateNearbyChart(nearbyCount) {
-    const chartContainer = document.getElementById('nearbyChart');
-    if (!chartContainer) return;
+function updateDualProgressBar(progressId, currentValue, totalValue) {
+    const progressBar = document.getElementById(progressId);
+    if (!progressBar) return;
     
-    // Clear existing bars
-    chartContainer.innerHTML = '';
+    // Clear existing content
+    progressBar.innerHTML = '';
     
-    // Create animated bars representing nearby houses
-    const barCount = Math.min(nearbyCount, 12); // Max 12 bars for visual appeal
-    const maxHeight = 50;
-    
-    for (let i = 0; i < 12; i++) {
-        const bar = document.createElement('div');
-        bar.className = 'nearby-bar';
-        
-        // Vary heights based on data with some randomness for visual appeal
-        let height;
-        if (i < barCount) {
-            height = Math.max(15, Math.random() * maxHeight);
-        } else {
-            height = Math.max(5, Math.random() * 20);
-        }
-        
-        bar.style.height = height + 'px';
-        bar.style.animationDelay = (i * 0.1) + 's';
-        
-        chartContainer.appendChild(bar);
+    if (totalValue === 0) {
+        progressBar.style.width = '100%';
+        return;
     }
+    
+    // Always show full width bar
+    progressBar.style.width = '100%';
+    
+    // Calculate percentages within the bar
+    const currentPercentage = (currentValue / totalValue) * 100;
+    const remainingPercentage = 100 - currentPercentage;
+    
+    // Create the current status section
+    const currentSection = document.createElement('div');
+    currentSection.className = 'progress-current-section';
+    currentSection.style.width = currentPercentage + '%';
+    
+    // Create the remaining total section
+    const remainingSection = document.createElement('div');
+    remainingSection.className = 'progress-remaining-section';
+    remainingSection.style.width = remainingPercentage + '%';
+    
+    progressBar.appendChild(currentSection);
+    progressBar.appendChild(remainingSection);
+    
+    // Add text overlay showing "current / total"
+    const textOverlay = document.createElement('div');
+    textOverlay.className = 'progress-text';
+    textOverlay.textContent = `${currentValue}/${totalValue}`;
+    
+    progressBar.appendChild(textOverlay);
 }
 
 // ====== Fetch Housing ======
@@ -1206,6 +1204,7 @@ window.onload = () => {
     fetchMyApplications();
     loadExpenses();
     loadMyConfirmedHousing(); // Load confirmed housing info
+    initializeNearbyHousesCard(); // Initialize nearby houses card
     
     // Add stat card click handlers after a short delay to ensure DOM is ready
     setTimeout(() => {
@@ -1221,3 +1220,126 @@ window.onload = () => {
         document.body.appendChild(debugBtn);
     }, 1000);
 };
+
+// ====== Nearby Houses Card Functions ======
+function initializeNearbyHousesCard() {
+    // Create animated chart bars
+    createNearbyChart();
+    
+    // Load nearby houses data
+    fetchNearbyHousesData();
+    
+    // Set user location
+    updateUserLocation();
+}
+
+function createNearbyChart() {
+    const chartContainer = document.getElementById('nearbyChart');
+    if (!chartContainer) return;
+    
+    // Clear existing bars
+    chartContainer.innerHTML = '';
+    
+    // Create 10 animated bars with varying heights
+    const barHeights = [25, 45, 35, 55, 30, 50, 40, 35, 45, 25];
+    
+    barHeights.forEach((height, index) => {
+        const bar = document.createElement('div');
+        bar.className = 'nearby-bar';
+        bar.style.height = height + 'px';
+        bar.style.animationDelay = (index * 0.1) + 's';
+        
+        // Add hover tooltip
+        bar.title = `${Math.floor(Math.random() * 5) + 1} houses`;
+        
+        chartContainer.appendChild(bar);
+    });
+}
+
+function fetchNearbyHousesData() {
+    fetch('../../backend/fetch_nearby_housing.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateNearbyStats(data.nearby_count, data.breakdown);
+            } else {
+                console.error('Failed to fetch nearby houses:', data.message);
+                // Set default values
+                updateNearbyStats(24, { new: 3, affordable: 12, premium: 9 });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching nearby houses:', error);
+            // Set default values
+            updateNearbyStats(24, { new: 3, affordable: 12, premium: 9 });
+        });
+}
+
+function updateNearbyStats(totalCount, breakdown) {
+    // Update main count
+    document.getElementById('statNearby').textContent = totalCount;
+    
+    // Update mini stats
+    document.getElementById('nearbyNew').textContent = breakdown.new || 3;
+    document.getElementById('nearbyAffordable').textContent = breakdown.affordable || 12;
+    document.getElementById('nearbyPremium').textContent = breakdown.premium || 9;
+}
+
+function updateUserLocation() {
+    // This would typically get the user's location from their profile
+    // For now, we'll use a placeholder
+    const locationElement = document.getElementById('userLocation');
+    if (locationElement) {
+        locationElement.textContent = 'Dhaka North'; // This should come from user data
+    }
+}
+
+function refreshNearbyHouses() {
+    // Show loading state
+    const refreshBtn = document.querySelector('.nearby-btn.secondary');
+    const originalContent = refreshBtn.innerHTML;
+    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    refreshBtn.disabled = true;
+    
+    // Simulate refresh
+    setTimeout(() => {
+        fetchNearbyHousesData();
+        createNearbyChart();
+        
+        // Reset button
+        refreshBtn.innerHTML = originalContent;
+        refreshBtn.disabled = false;
+        
+        // Show success feedback
+        showNotification('Nearby houses refreshed!', 'success');
+    }, 1500);
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#00b894' : '#667eea'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
