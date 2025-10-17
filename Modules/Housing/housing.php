@@ -111,6 +111,20 @@ if (isset($_SESSION['user_id'])) {
       </li>
       
       <li class="nav-item">
+        <a href="../../Post Service Page/post_service.php" class="nav-link">
+          <i class="nav-icon fas fa-plus-circle"></i>
+          Post Service
+        </a>
+      </li>
+      
+      <li class="nav-item">
+        <a href="../../Expenses Page/expenses.php" class="nav-link">
+          <i class="nav-icon fas fa-wallet"></i>
+          Expenses
+        </a>
+      </li>
+      
+      <li class="nav-item">
         <a href="../../Profile page/profile.php" class="nav-link">
           <i class="nav-icon fas fa-cog"></i>
           Manage
