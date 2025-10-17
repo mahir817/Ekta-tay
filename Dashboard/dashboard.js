@@ -196,6 +196,9 @@ function handleNavigation(linkText) {
         case 'Services':
             showNotification('Services module coming soon!', 'info');
             break;
+        case 'Expenses':
+            window.location.href = '../Expenses Page/expenses.php';
+            break;
         case 'Manage':
             window.location.href = '../Profile page/profile.php';
             break;

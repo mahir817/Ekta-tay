@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 13, 2025 at 07:47 PM
+-- Generation Time: Oct 17, 2025 at 02:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -141,7 +141,7 @@ INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`,
 (3, 4, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
 (4, 5, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
 (5, 7, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'occupied', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
-(6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
+(6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'occupied', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
 (7, 9, 'apartment', 1050, '4th', 6, 'semi-furnished', 1, 3, 2, 2, 28000.00, 1500.00, 56000.00, '2025-10-15', 'family', 1, 'Clean and well-maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', NULL, NULL, NULL),
 (9, 10, 'apartment', 1800, '5th', 10, 'furnished', 2, 3, 3, 3, 85000.00, 3000.00, 170000.00, '2025-11-01', 'family', 1, 'Premium condition, fully furnished with lake view', NULL, 'verified', NULL, 'available', 'furnished', 'available', 'Gulshan 1, Dhaka', '23.7936,90.4154', 'Dhaka North');
 
@@ -168,19 +168,9 @@ CREATE TABLE `housing_applications` (
 
 INSERT INTO `housing_applications` (`application_id`, `housing_id`, `owner_id`, `applicant_id`, `status`, `message`, `created_at`, `updated_at`) VALUES
 (4, 7, 17, 2, 'withdrawn', 'fuck you', '2025-10-10 18:52:43', '2025-10-10 18:55:42'),
-(5, 5, 19, 2, 'accepted', 'fucascascx', '2025-10-10 18:56:11', '2025-10-10 18:57:21');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `housing_features`
---
-
-CREATE TABLE `housing_features` (
-  `feature_id` int(11) NOT NULL,
-  `housing_id` int(11) NOT NULL,
-  `feature_name` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(5, 5, 19, 2, 'accepted', 'fucascascx', '2025-10-10 18:56:11', '2025-10-10 18:57:21'),
+(6, 9, 19, 2, 'rejected', 'Application submitted', '2025-10-15 16:56:44', '2025-10-15 17:01:06'),
+(7, 6, 20, 19, 'accepted', 'sadcsd', '2025-10-15 17:02:53', '2025-10-15 17:05:57');
 
 -- --------------------------------------------------------
 
@@ -218,7 +208,8 @@ CREATE TABLE `housing_tenants` (
 --
 
 INSERT INTO `housing_tenants` (`tenant_id`, `housing_id`, `owner_id`, `user_id`, `start_date`, `end_date`, `active`, `status`, `created_at`) VALUES
-(2, 5, 19, 2, '2025-10-10', NULL, 1, 'active', '2025-10-10 18:57:21');
+(2, 5, 19, 2, '2025-10-10', NULL, 1, 'active', '2025-10-10 18:57:21'),
+(20, 6, 20, 19, '2025-10-15', NULL, 1, 'active', '2025-10-15 17:05:57');
 
 -- --------------------------------------------------------
 
@@ -500,7 +491,7 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `phone`, `
 (17, 'new user9', 'new9@mail.com', '$2y$10$EnARDqLr6RhvcxC5v62JBu1L4lfXSl30EC9cfQsaddwJjEk9zNdpW', '2025-09-19 15:44:38', '23638738298', 'Dhaka West', 'Dhaka West', 'female'),
 (18, 'new user11', 'user11@mail.com', '$2y$10$7FRLtkNCwBVFFXqQIxu0XuJKjjiBrSbrqPFZonpyVkB6J2jdJ9Y.i', '2025-09-19 18:04:39', '127138928739', 'Dhaka East', 'Dhaka East', 'female'),
 (19, 'test id', 'test@gmail.com', '$2y$10$VN4joOgEbEZtz9Sir8Qqv.wv8TonOxds9x32DY6ksf.0ceazzMeiK', '2025-10-03 14:18:46', '01277383773', 'Dhaka East', 'Dhaka East', 'male'),
-(20, 'abc aa', 'abc@gmail.com', '$2y$10$r/ssw1XGRMnRqGr0kYRgyOHaTog9nhFLYj2Z/OT9i5XKWJqJxTCyC', '2025-10-03 19:04:05', '13209891323', 'Dhaka South', 'Dhaka South', 'male'),
+(20, 'abc aa', 'abc@gmail.com', '$2y$10$r/ssw1XGRMnRqGr0kYRgyOHaTog9nhFLYj2Z/OT9i5XKWJqJxTCyC', '2025-10-03 19:04:05', '13209891323', 'Dhaka South', 'Dhaka South', 'female'),
 (21, 'abcd ef', 'efg@gmail.com', '$2y$10$1xc2ODfwHznFfGEbVuRT/.GihF39ETMYyw6I0rT7lflOfCgkNW6ca', '2025-10-13 15:12:08', '913809734982', 'Dhaka South', 'Dhaka South', 'male'),
 (26, 'aaa aaa', 'a@gmail.com', '$2y$10$/9lk4sddCDeuiChTH9emL.22bphijV1AZ8THPR7FJAMn5DK7qYqgO', '2025-10-13 15:59:44', '187231939136', '', 'Dhaka South', 'male');
 
@@ -523,6 +514,8 @@ INSERT INTO `user_capabilities` (`user_id`, `capability_id`) VALUES
 (2, 1),
 (2, 4),
 (2, 5),
+(2, 6),
+(2, 7),
 (3, 2),
 (3, 3),
 (3, 6),
@@ -567,6 +560,8 @@ INSERT INTO `user_capabilities` (`user_id`, `capability_id`) VALUES
 (19, 7),
 (19, 8),
 (20, 4),
+(20, 5),
+(20, 6),
 (21, 1),
 (21, 2),
 (21, 3),
@@ -625,13 +620,6 @@ ALTER TABLE `housing_applications`
   ADD KEY `idx_housing_applications_status` (`status`),
   ADD KEY `idx_housing_applications_owner` (`owner_id`),
   ADD KEY `idx_housing_applications_applicant` (`applicant_id`);
-
---
--- Indexes for table `housing_features`
---
-ALTER TABLE `housing_features`
-  ADD PRIMARY KEY (`feature_id`),
-  ADD KEY `housing_id` (`housing_id`);
 
 --
 -- Indexes for table `housing_images`
@@ -812,13 +800,7 @@ ALTER TABLE `housing`
 -- AUTO_INCREMENT for table `housing_applications`
 --
 ALTER TABLE `housing_applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `housing_features`
---
-ALTER TABLE `housing_features`
-  MODIFY `feature_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `housing_images`
@@ -830,7 +812,7 @@ ALTER TABLE `housing_images`
 -- AUTO_INCREMENT for table `housing_tenants`
 --
 ALTER TABLE `housing_tenants`
-  MODIFY `tenant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `tenant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `housing_terms`
@@ -952,12 +934,6 @@ ALTER TABLE `housing_applications`
   ADD CONSTRAINT `housing_applications_ibfk_1` FOREIGN KEY (`housing_id`) REFERENCES `housing` (`housing_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `housing_applications_ibfk_2` FOREIGN KEY (`applicant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `housing_applications_owner_fk` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `housing_features`
---
-ALTER TABLE `housing_features`
-  ADD CONSTRAINT `housing_features_ibfk_1` FOREIGN KEY (`housing_id`) REFERENCES `housing` (`housing_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `housing_images`

@@ -198,6 +198,15 @@ foreach ($postingCaps as $cap) {
                 </li>
                 <?php endif; ?>
                 
+                <?php if (in_array('Expenses', $availableCapabilities)): ?>
+                <li class="nav-item">
+                    <a href="../Expenses Page/expenses.php" class="nav-link">
+                        <i class="nav-icon fas fa-wallet"></i>
+                        Expenses
+                    </a>
+                </li>
+                <?php endif; ?>
+                
                 <li class="nav-item">
                     <a href="../Profile page/profile.php" class="nav-link">
                         <i class="nav-icon fas fa-cog"></i>
@@ -361,15 +370,24 @@ foreach ($postingCaps as $cap) {
             <div class="content-grid">
                 <!-- Expense Tracking -->
                 <?php if (in_array('expense_tracking', $capabilities)): ?>
-                <div class="glass-card fade-in-up">
+                <div class="glass-card fade-in-up" id="expenseTrackingCard" style="cursor: pointer;" onclick="window.location.href='../Expenses Page/expenses.php'">
                     <div class="card-header">
                         <h2 class="card-title">Expense Tracking</h2>
+                        <a href="../Expenses Page/expenses.php" class="card-action">View Details</a>
                     </div>
                     <div class="expense-chart">
                         <div class="chart-circle">
                             <div class="chart-center">
-                                <div class="chart-total">$5,000</div>
-                                <div class="chart-label">Expenses</div>
+                                <?php 
+                                $totalExpenses = 0;
+                                if ($expenseData) {
+                                    foreach ($expenseData as $expense) {
+                                        $totalExpenses += $expense['total'];
+                                    }
+                                }
+                                ?>
+                                <div class="chart-total">৳<?php echo number_format($totalExpenses, 0); ?></div>
+                                <div class="chart-label">Total Expenses</div>
                             </div>
                         </div>
                         <div class="expense-legend">
@@ -378,29 +396,14 @@ foreach ($postingCaps as $cap) {
                                 <div class="legend-item">
                                     <div class="legend-dot" style="background: #667eea;"></div>
                                     <span class="legend-text"><?php echo $expense['category']; ?></span>
-                                    <span class="legend-amount">$<?php echo number_format($expense['total'], 2); ?></span>
+                                    <span class="legend-amount">৳<?php echo number_format($expense['total'], 0); ?></span>
                                 </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="legend-item">
                                     <div class="legend-dot" style="background: #667eea;"></div>
-                                    <span class="legend-text">Housing</span>
-                                    <span class="legend-amount">$1,500</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-dot" style="background: #764ba2;"></div>
-                                    <span class="legend-text">Food</span>
-                                    <span class="legend-amount">$1,200</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-dot" style="background: #f093fb;"></div>
-                                    <span class="legend-text">Tuition</span>
-                                    <span class="legend-amount">$800</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="legend-dot" style="background: #f5576c;"></div>
-                                    <span class="legend-text">Transportation</span>
-                                    <span class="legend-amount">$800</span>
+                                    <span class="legend-text">No expenses yet</span>
+                                    <span class="legend-amount">৳0</span>
                                 </div>
                             <?php endif; ?>
                         </div>
