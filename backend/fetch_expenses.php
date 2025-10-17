@@ -19,21 +19,21 @@ try {
     $where = ["user_id = :uid"];
     $params = [':uid' => $userId];
 
-    if ($category !== '') { $where[] = 'category = :cat'; $params[':cat'] = $category; }
+    // Skip category filter since it doesn't exist in current schema
     if ($status !== '') { $where[] = 'status = :st'; $params[':st'] = $status; }
-    if ($from !== '') { $where[] = 'date >= :from'; $params[':from'] = $from; }
-    if ($to !== '') { $where[] = 'date <= :to'; $params[':to'] = $to; }
+    if ($from !== '') { $where[] = 'due_date >= :from'; $params[':from'] = $from; }
+    if ($to !== '') { $where[] = 'due_date <= :to'; $params[':to'] = $to; }
 
     $orderBy = match($sort) {
-        'date_asc' => 'date ASC',
+        'date_asc' => 'due_date ASC',
         'amount_desc' => 'amount DESC',
         'amount_asc' => 'amount ASC',
-        default => 'date DESC'
+        default => 'due_date DESC'
     };
 
-    // Personal expenses
+    // Personal expenses - using actual database columns
     $stmt = $pdo->prepare("
-        SELECT id, title, category, amount, date, type, status
+        SELECT id, name as title, 'Others' as category, amount, due_date as date, 'personal' as type, status
         FROM expenses
         WHERE " . implode(' AND ', $where) . " ORDER BY $orderBy
     ");

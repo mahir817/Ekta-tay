@@ -64,28 +64,18 @@ if (in_array('food_service', $capabilities)) {
     $stats['services'] = 0;
 }
 
-// Get recent activities
-$activities = [];
-if (in_array('find_room', $capabilities)) {
-    $activities[] = [
-        'icon' => '🏠',
-        'title' => 'New roommate requests',
-        'time' => '2 hours ago'
-    ];
-}
-if (in_array('expense_tracking', $capabilities)) {
-    $activities[] = [
-        'icon' => '💳',
-        'title' => 'Payment processing',
-        'time' => '1 hour ago'
-    ];
-}
-if (in_array('find_job', $capabilities)) {
-    $activities[] = [
-        'icon' => '💼',
-        'title' => 'Job application updates',
-        'time' => '3 hours ago'
-    ];
+// Get recent activities from database
+require_once "../backend/log_activity.php";
+$activities = getRecentActivities($user_id, 5);
+
+// Debug: Check if we have activities for this user
+$debugActivitiesCount = 0;
+try {
+    $debugStmt = $pdo->prepare("SELECT COUNT(*) FROM user_activities WHERE user_id = ?");
+    $debugStmt->execute([$user_id]);
+    $debugActivitiesCount = $debugStmt->fetchColumn();
+} catch (Exception $e) {
+    // Table might not exist
 }
 
 // Get expense data if user has expense tracking capability
@@ -323,7 +313,7 @@ foreach ($postingCaps as $cap) {
                 <div class="glass-card fade-in-up">
                     <div class="card-header">
                         <h2 class="card-title">Recent Activities</h2>
-                        <a href="#" class="card-action">View All</a>
+                        <a href="#" class="card-action" onclick="showAllActivities()">View All</a>
                     </div>
                     <ul class="activity-list">
                         <?php if (empty($activities)): ?>
@@ -333,16 +323,29 @@ foreach ($postingCaps as $cap) {
                             </div>
                             <div class="activity-content">
                                 <div class="activity-title">No recent activities</div>
-                                <div class="activity-time">Start using your capabilities to see activities here</div>
+                                <div class="activity-time">
+                                    <?php if ($debugActivitiesCount > 0): ?>
+                                        Found <?php echo $debugActivitiesCount; ?> activities in database for user <?php echo $user_id; ?>, but getRecentActivities() returned empty.
+                                        <a href="../fix_activities_user.php" style="color: #4CAF50;">Debug Activities</a>
+                                    <?php else: ?>
+                                        Start using your capabilities to see activities here. 
+                                        <a href="../fix_activities_user.php" style="color: #4CAF50;">Add Sample Activities</a>
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </li>
                         <?php else: ?>
                         <?php foreach ($activities as $activity): ?>
                         <li class="activity-item">
-                            <div class="activity-icon"><?php echo $activity['icon']; ?></div>
+                            <div class="activity-icon"><?php echo htmlspecialchars($activity['icon']); ?></div>
                             <div class="activity-content">
-                                <div class="activity-title"><?php echo $activity['title']; ?></div>
-                                <div class="activity-time"><?php echo $activity['time']; ?></div>
+                                <div class="activity-title"><?php echo htmlspecialchars($activity['title']); ?></div>
+                                <?php if (!empty($activity['description'])): ?>
+                                <div class="activity-description" style="font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 2px;">
+                                    <?php echo htmlspecialchars($activity['description']); ?>
+                                </div>
+                                <?php endif; ?>
+                                <div class="activity-time"><?php echo htmlspecialchars($activity['time']); ?></div>
                             </div>
                         </li>
                         <?php endforeach; ?>
@@ -450,6 +453,194 @@ foreach ($postingCaps as $cap) {
         </main>
     </div>
 
+    <!-- Activities Modal -->
+    <div id="activitiesModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>All Activities</h2>
+                <button class="modal-close" onclick="closeActivitiesModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="activitiesLoading" style="text-align: center; padding: 20px;">
+                    <i class="fas fa-spinner fa-spin"></i> Loading activities...
+                </div>
+                <div id="activitiesList" style="display: none;">
+                    <!-- Activities will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="dashboard.js"></script>
+    <script>
+    // Activities Modal Functions
+    function showAllActivities() {
+        const modal = document.getElementById('activitiesModal');
+        const loading = document.getElementById('activitiesLoading');
+        const list = document.getElementById('activitiesList');
+        
+        modal.style.display = 'flex';
+        loading.style.display = 'block';
+        list.style.display = 'none';
+        
+        // Fetch all activities
+        fetch('../backend/log_activity.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'action=get&limit=50'
+        })
+        .then(response => response.json())
+        .then(data => {
+            loading.style.display = 'none';
+            
+            if (data.success && data.activities.length > 0) {
+                let html = '<ul class="activity-list" style="max-height: 400px; overflow-y: auto;">';
+                data.activities.forEach(activity => {
+                    html += `
+                        <li class="activity-item" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <div class="activity-icon">${activity.icon}</div>
+                            <div class="activity-content">
+                                <div class="activity-title">${activity.title}</div>
+                                ${activity.description ? `<div class="activity-description" style="font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 2px;">${activity.description}</div>` : ''}
+                                <div class="activity-time">${activity.time}</div>
+                            </div>
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                list.innerHTML = html;
+            } else {
+                list.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); padding: 20px;">No activities found</p>';
+            }
+            
+            list.style.display = 'block';
+        })
+        .catch(error => {
+            loading.style.display = 'none';
+            list.innerHTML = '<p style="text-align: center; color: #ff6b6b; padding: 20px;">Error loading activities</p>';
+            list.style.display = 'block';
+            console.error('Error:', error);
+        });
+    }
+    
+    function closeActivitiesModal() {
+        document.getElementById('activitiesModal').style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('activitiesModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeActivitiesModal();
+        }
+    });
+    </script>
+
+    <style>
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+    
+    .modal-content {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow: hidden;
+        color: white;
+    }
+    
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .modal-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .modal-body {
+        padding: 20px;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+    
+    .modal-body .activity-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .modal-body .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 0;
+    }
+    
+    .modal-body .activity-icon {
+        font-size: 1.2rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    
+    .modal-body .activity-content {
+        flex: 1;
+    }
+    
+    .modal-body .activity-title {
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+    
+    .modal-body .activity-time {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+    </style>
 </body>
 </html>

@@ -11,24 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-// Ensure schema exists
-try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS expenses (
-        id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-        user_id INT UNSIGNED NOT NULL,
-        title VARCHAR(150) NOT NULL,
-        category VARCHAR(50) NOT NULL,
-        amount DECIMAL(10,2) NOT NULL,
-        date DATE NOT NULL,
-        type ENUM('personal','shared') NOT NULL DEFAULT 'personal',
-        status ENUM('paid','unpaid','pending') NOT NULL DEFAULT 'unpaid',
-        description TEXT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-} catch (Throwable $e) {
-    echo json_encode(['success' => false, 'message' => 'DB Schema Error: '.$e->getMessage()]);
-    exit();
-}
+// Using existing expenses table schema
 
 try {
     $userId = (int)$_SESSION['user_id'];
@@ -45,9 +28,17 @@ try {
         exit();
     }
 
-    $stmt = $pdo->prepare("INSERT INTO expenses (user_id, title, category, amount, date, type, status, description) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$userId, $title, $category, $amount, $date, $type, $status, $description ?: null]);
+    // Use existing database schema: name, amount, due_date, status
+    $stmt = $pdo->prepare("INSERT INTO expenses (user_id, name, amount, due_date, status) 
+                           VALUES (?, ?, ?, ?, ?)");
+    $stmt->execute([$userId, $title, $amount, $date, $status]);
+    $expenseId = $pdo->lastInsertId();
+
+    // Log activity
+    require_once __DIR__ . '/log_activity.php';
+    $activityTitle = "Added new expense";
+    $activityDescription = "Added: " . $title . " - ৳" . number_format($amount, 0);
+    logActivity($userId, 'expense_added', $activityTitle, $activityDescription, $expenseId);
 
     echo json_encode(['success' => true, 'message' => 'Expense added successfully']);
 } catch (Throwable $e) {

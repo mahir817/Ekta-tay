@@ -99,6 +99,19 @@ function handleApplyToHousing() {
         VALUES (?, ?, ?, 'pending', ?)
     ");
     $stmt->execute([$housing['housing_id'], $housing['owner_id'], $userId, $message]);
+    $applicationId = $pdo->lastInsertId();
+    
+    // Log activity
+    require_once __DIR__ . '/log_activity.php';
+    
+    // Get housing title for activity description
+    $titleStmt = $pdo->prepare("SELECT title FROM services WHERE service_id = ?");
+    $titleStmt->execute([$serviceId]);
+    $housingTitle = $titleStmt->fetchColumn() ?: 'Housing Post';
+    
+    $activityTitle = "Applied for housing";
+    $activityDescription = "Applied to: " . $housingTitle;
+    logActivity($userId, 'housing_application', $activityTitle, $activityDescription, $applicationId);
     
     echo json_encode(["success" => true, "message" => "Application submitted successfully"]);
 }

@@ -346,6 +346,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pdo->commit();
             error_log("Transaction committed successfully");
+            
+            // Log activity
+            require_once "../backend/log_activity.php";
+            $activityTitle = "Posted new " . $serviceType;
+            $activityDescription = "Posted: " . $title;
+            logActivity($userId, $serviceType . '_post', $activityTitle, $activityDescription, $serviceId);
+            
             $posted = true;
             $postedServiceId = $serviceId;
             error_log("Post marked as successful with service ID: $serviceId");
