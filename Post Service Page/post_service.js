@@ -17,21 +17,34 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("form:", form);
 
     function setRequiredForType(type) {
-        // clear all
-        form.querySelectorAll('[data-dynamic-required="1"]').forEach(el => {
-            el.removeAttribute('required');
+        // Clear ALL required attributes from ALL form sections first
+        form.querySelectorAll('input[required], select[required], textarea[required]').forEach(el => {
+            // Skip the main required fields (title, description, service_type)
+            if (!['title', 'description', 'service_type'].includes(el.name)) {
+                el.removeAttribute('required');
+            }
         });
 
+        // Clear dynamic required markers
+        form.querySelectorAll('[data-dynamic-required="1"]').forEach(el => {
+            el.removeAttribute('data-dynamic-required');
+        });
+
+        // Set required fields based on selected type
         if (type === 'housing') {
             const rentEl = form.querySelector("input[name='rent']");
-            if (rentEl) rentEl.setAttribute('required', 'required');
-            rentEl && rentEl.setAttribute('data-dynamic-required', '1');
+            if (rentEl) {
+                rentEl.setAttribute('required', 'required');
+                rentEl.setAttribute('data-dynamic-required', '1');
+            }
         }
 
         if (type === 'job') {
             const companyEl = form.querySelector("input[name='company']");
-            if (companyEl) companyEl.setAttribute('required', 'required');
-            companyEl && companyEl.setAttribute('data-dynamic-required', '1');
+            if (companyEl) {
+                companyEl.setAttribute('required', 'required');
+                companyEl.setAttribute('data-dynamic-required', '1');
+            }
         }
 
         if (type === 'tuition') {
@@ -50,13 +63,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (type === 'food') {
             const providerEl = form.querySelector("input[name='provider_name']");
-            if (providerEl) providerEl.setAttribute('required', 'required');
-            providerEl && providerEl.setAttribute('data-dynamic-required', '1');
-            if (priceInput) priceInput.setAttribute('required', 'required');
-            priceInput && priceInput.setAttribute('data-dynamic-required', '1');
+            if (providerEl) {
+                providerEl.setAttribute('required', 'required');
+                providerEl.setAttribute('data-dynamic-required', '1');
+            }
+            if (priceInput) {
+                priceInput.setAttribute('required', 'required');
+                priceInput.setAttribute('data-dynamic-required', '1');
+            }
             const locationEl = form.querySelector("input[name='location']");
-            if (locationEl) locationEl.setAttribute('required', 'required');
-            locationEl && locationEl.setAttribute('data-dynamic-required', '1');
+            if (locationEl) {
+                locationEl.setAttribute('required', 'required');
+                locationEl.setAttribute('data-dynamic-required', '1');
+            }
         }
     }
 

@@ -799,7 +799,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!-- Tuition Form -->
                     <div id="tuitionForm" style="display:none;">
                         <h3>Tuition Details</h3>
-                        Subject: <select name="tuition_subject" required>
+                        Subject: <select name="tuition_subject">
                             <option value="">-- Select Subject --</option>
                             <option value="mathematics">Mathematics</option>
                             <option value="physics">Physics</option>
@@ -812,7 +812,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="economics">Economics</option>
                             <option value="business_studies">Business Studies</option>
                         </select><br>
-                        Class Level: <select name="tuition_class_level" required>
+                        Class Level: <select name="tuition_class_level">
                             <option value="">-- Select Level --</option>
                             <option value="class-1-5">Class 1-5</option>
                             <option value="class-6-8">Class 6-8</option>
@@ -820,7 +820,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="class-11-12">Class 11-12</option>
                             <option value="university">University</option>
                         </select><br>
-                        Tuition Type: <select name="tuition_type" required>
+                        Tuition Type: <select name="tuition_type">
                             <option value="">-- Select Type --</option>
                             <option value="home">Home</option>
                             <option value="online">Online</option>
@@ -866,6 +866,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 
     <script src="post_service.js"></script>
+    <script>
+    // Additional debugging
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("=== POST SERVICE DEBUG ===");
+        
+        const form = document.querySelector('form');
+        const serviceType = document.getElementById('service_type');
+        const submitBtn = document.querySelector('button[type="submit"]');
+        
+        console.log("Form found:", !!form);
+        console.log("Service type found:", !!serviceType);
+        console.log("Submit button found:", !!submitBtn);
+        
+        if (form) {
+            console.log("Form method:", form.method);
+            console.log("Form action:", form.action);
+            
+            form.addEventListener('submit', function(e) {
+                console.log("FORM SUBMIT EVENT FIRED!");
+                console.log("Service type value:", serviceType ? serviceType.value : 'NOT FOUND');
+                
+                // Check if housing form is visible
+                const housingForm = document.getElementById('housingForm');
+                if (housingForm) {
+                    console.log("Housing form display:", housingForm.style.display);
+                }
+                
+                // Log all form data
+                const formData = new FormData(this);
+                console.log("Form data being submitted:");
+                for (let [key, value] of formData.entries()) {
+                    console.log(`  ${key}: ${value}`);
+                }
+            });
+        }
+        
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+                console.log("SUBMIT BUTTON CLICKED!");
+            });
+        }
+    });
+    </script>
     <script>
     // Toggle user dropdown
     function toggleDropdown() {

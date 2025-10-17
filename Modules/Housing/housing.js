@@ -506,22 +506,16 @@ function deletePost(serviceId) {
 
 // ====== Post Housing ======
 function redirectToPostService() {
-    window.location.href = '../../Modules/Jobs/post_job.php';
+    window.location.href = '../../Post Service Page/post_service.php';
 }
-function openPostForm() { document.getElementById("postModal")?.classList.remove("hidden"); }
+function openPostForm() { 
+    // Redirect to the proper Post Service Page instead of showing a modal
+    redirectToPostService();
+}
 function closePostForm() { document.getElementById("postModal")?.classList.add("hidden"); }
 
-document.getElementById("postHousingForm")?.addEventListener("submit", e => {
-    e.preventDefault();
-    fetch("../../backend/post_housing.php", {
-        method: "POST",
-        body: new FormData(e.target)
-    }).then(r => r.text()).then(msg => {
-        alert(msg);
-        closePostForm();
-        fetchHousing();
-    });
-});
+// Remove the old form submission handler since we're redirecting to Post Service Page
+// The housing posting functionality is now handled by the Post Service Page
 
 // ... (rest of your code for expenses, stats, dropdown, etc. remains unchanged)
 

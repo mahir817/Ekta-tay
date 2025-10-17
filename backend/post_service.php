@@ -87,6 +87,39 @@ function ensurePostServiceSchema(PDO $pdo): void {
             PRIMARY KEY (id),
             UNIQUE KEY uniq_food_service_id (service_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+        // Housing table - match the existing database structure
+        $pdo->exec("CREATE TABLE IF NOT EXISTS housing (
+            housing_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            service_id INT UNSIGNED NOT NULL,
+            property_type ENUM('apartment','room','commercial','mixed') NOT NULL DEFAULT 'apartment',
+            size_sqft INT NULL,
+            floor_no VARCHAR(20) NULL,
+            total_floors INT NULL,
+            furnished_status ENUM('furnished','semi-furnished','unfurnished') NOT NULL DEFAULT 'unfurnished',
+            parking_spaces INT NOT NULL DEFAULT 0,
+            bedrooms INT NOT NULL DEFAULT 0,
+            bathrooms INT NOT NULL DEFAULT 0,
+            balconies INT NOT NULL DEFAULT 0,
+            rent DECIMAL(12,2) NOT NULL DEFAULT 0,
+            service_charge DECIMAL(12,2) NOT NULL DEFAULT 0,
+            advance_deposit DECIMAL(12,2) NOT NULL DEFAULT 0,
+            available_from DATE NULL,
+            available_for ENUM('family','bachelor','any') NOT NULL DEFAULT 'any',
+            negotiable TINYINT(1) NOT NULL DEFAULT 0,
+            property_condition VARCHAR(255) NOT NULL DEFAULT 'N/A',
+            verification_doc VARCHAR(100) NULL,
+            verification_status ENUM('pending','verified','rejected') NOT NULL DEFAULT 'pending',
+            khotiyan VARCHAR(100) NULL,
+            status ENUM('available','pending','occupied') NOT NULL DEFAULT 'available',
+            furnished ENUM('furnished','unfurnished') NOT NULL DEFAULT 'unfurnished',
+            availability ENUM('available','pending','occupied') NOT NULL DEFAULT 'available',
+            location VARCHAR(255) NULL,
+            coordinates VARCHAR(100) NULL,
+            generalized_location VARCHAR(50) NOT NULL DEFAULT '',
+            PRIMARY KEY (housing_id),
+            KEY service_id (service_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     } catch (Throwable $e) {
         // noop
     }
@@ -156,6 +189,39 @@ try {
             $_POST['available_date'] ?? null,
             $price,
             $description,
+        ]);
+    } elseif ($type === 'housing') {
+        $hStmt = $pdo->prepare("INSERT INTO housing (
+            service_id, property_type, size_sqft, floor_no, total_floors,
+            furnished_status, parking_spaces, bedrooms, bathrooms, balconies,
+            rent, service_charge, advance_deposit, available_from, available_for,
+            negotiable, property_condition, status, furnished, availability,
+            location, coordinates, generalized_location
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        $hStmt->execute([
+            $serviceId,
+            $_POST['property_type'] ?? 'apartment',
+            isset($_POST['size_sqft']) && $_POST['size_sqft'] !== '' ? (int)$_POST['size_sqft'] : null,
+            $_POST['floor_no'] ?? null,
+            isset($_POST['total_floors']) && $_POST['total_floors'] !== '' ? (int)$_POST['total_floors'] : null,
+            $_POST['furnished_status'] ?? 'unfurnished',
+            isset($_POST['parking_spaces']) && $_POST['parking_spaces'] !== '' ? (int)$_POST['parking_spaces'] : 0,
+            isset($_POST['bedrooms']) && $_POST['bedrooms'] !== '' ? (int)$_POST['bedrooms'] : 0,
+            isset($_POST['bathrooms']) && $_POST['bathrooms'] !== '' ? (int)$_POST['bathrooms'] : 0,
+            isset($_POST['balconies']) && $_POST['balconies'] !== '' ? (int)$_POST['balconies'] : 0,
+            isset($_POST['rent']) && $_POST['rent'] !== '' ? (float)$_POST['rent'] : 0,
+            isset($_POST['service_charge']) && $_POST['service_charge'] !== '' ? (float)$_POST['service_charge'] : 0,
+            isset($_POST['advance_deposit']) && $_POST['advance_deposit'] !== '' ? (float)$_POST['advance_deposit'] : 0,
+            $_POST['available_from'] ?? null,
+            $_POST['available_for'] ?? 'any',
+            isset($_POST['negotiable']) && $_POST['negotiable'] == '1' ? 1 : 0,
+            $_POST['property_condition'] ?? 'N/A',
+            'available',
+            $_POST['furnished_status'] ?? 'unfurnished',
+            'available',
+            $location ?: null,
+            $_POST['coordinates'] ?? null,
+            $_POST['generalized_location'] ?? ''
         ]);
     }
 

@@ -455,7 +455,7 @@ if(isset($userHousing) && count($userHousing) > 0){
   <div class="modal-content glass-card">
     <h3>Post New Housing</h3>
     <div style="text-align:center; margin: 24px 0;">
-      <a href="/Post Service Page/post_service.html" class="add-btn" style="font-size:1.1em; padding:10px 24px; text-decoration:none;">Go to Post Service Page</a>
+      <a href="../../Post Service Page/post_service.php" class="add-btn" style="font-size:1.1em; padding:10px 24px; text-decoration:none;">Go to Post Service Page</a>
     </div>
     <button type="button" onclick="closePostForm()" class="add-btn cancel-btn">Cancel</button>
   </div>
