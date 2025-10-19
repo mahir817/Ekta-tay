@@ -200,7 +200,7 @@ foreach ($postingCaps as $cap) {
                 
                 <?php if (in_array('Housing', $availableCapabilities)): ?>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="../Modules/Housing/housing.php" class="nav-link">
                         <i class="nav-icon fas fa-home"></i>
                         Housing
                     </a>
@@ -209,7 +209,7 @@ foreach ($postingCaps as $cap) {
                 
                 <?php if (in_array('Jobs', $availableCapabilities)): ?>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="../Modules/Jobs/jobs.php" class="nav-link">
                         <i class="nav-icon fas fa-briefcase"></i>
                         Jobs
                     </a>
@@ -218,7 +218,7 @@ foreach ($postingCaps as $cap) {
                 
                 <?php if (in_array('Tutors', $availableCapabilities)): ?>
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="../Modules/Jobs/jobs.php?tab=tuition" class="nav-link">
                         <i class="nav-icon fas fa-graduation-cap"></i>
                         Tuition
                     </a>
@@ -345,15 +345,15 @@ foreach ($postingCaps as $cap) {
 
                 <!-- Post Service Card -->
                 <?php if ($canPostService): ?>
-                <div class="stat-card fade-in-up" id="postServiceCard" style="cursor: pointer;" 
+                <div class="stat-card fade-in-up" id="postServiceCard" style="cursor: pointer; background: linear-gradient(135deg, rgba(118,75,162,0.35), rgba(102,126,234,0.25)); border: 1px solid rgba(255,255,255,0.25);" 
                      onclick="window.location.href='../Post Service Page/post_service.php">
                     <div class="stat-header">
-                        <span class="stat-title">Post Service</span>
+                        <span class="stat-title">Create a Post</span>
                         <div class="stat-icon">
                             <i class="fas fa-plus-circle"></i>
                         </div>
                     </div>
-                    <h3 class="stat-value">Create</h3>
+                    <h3 class="stat-value" style="font-size:1.75rem;">Post Service</h3>
                 </div>
                 <?php endif; ?>
             </div>
@@ -396,7 +396,82 @@ foreach ($postingCaps as $cap) {
                     </ul>
                 </div>
 
-                
+                <!-- Quick Actions -->
+                <div class="glass-card fade-in-up">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Actions</h2>
+                        <a href="../Profile page/profile.php" class="card-action">Manage Profile</a>
+                    </div>
+                    <div class="quick-actions-grid">
+                        <?php if (in_array('Housing', $availableCapabilities)): ?>
+                        <div class="quick-action-item" onclick="window.location.href='../Modules/Housing/housing.php'">
+                            <div class="action-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="action-content">
+                                <div class="action-title">Find Housing</div>
+                                <div class="action-subtitle">Browse available rooms</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <?php if (in_array('Jobs', $availableCapabilities)): ?>
+                        <div class="quick-action-item" onclick="window.location.href='../Modules/Jobs/jobs.php'">
+                            <div class="action-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <div class="action-content">
+                                <div class="action-title">Find Jobs</div>
+                                <div class="action-subtitle">Explore opportunities</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($canPostService): ?>
+                        <div class="quick-action-item" onclick="window.location.href='../Post Service Page/post_service.php'">
+                            <div class="action-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <div class="action-content">
+                                <div class="action-title">Post Service</div>
+                                <div class="action-subtitle">Create new listing</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <?php if (in_array('Expenses', $availableCapabilities)): ?>
+                        <div class="quick-action-item" onclick="window.location.href='../Expenses Page/expenses.php'">
+                            <div class="action-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="action-content">
+                                <div class="action-title">Track Expenses</div>
+                                <div class="action-subtitle">Manage your budget</div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <div class="quick-action-item" onclick="window.location.href='../Payment Page/payment.php'">
+                            <div class="action-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="action-content">
+                                <div class="action-title">Make Payment</div>
+                                <div class="action-subtitle">Pay bills & services</div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-action-item" onclick="window.location.href='../Profile page/profile.php'">
+                            <div class="action-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <div class="action-content">
+                                <div class="action-title">Profile Settings</div>
+                                <div class="action-subtitle">Update your info</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Bottom Grid -->

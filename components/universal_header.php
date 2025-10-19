@@ -72,7 +72,7 @@ $currentDir = basename(dirname($_SERVER['PHP_SELF']));
             
             <?php if (in_array('Jobs', $availableCapabilities)): ?>
             <li class="nav-item">
-                <a href="<?php echo $assetPrefix; ?>Modules/Jobs/jobs_listings.php" class="nav-link <?php echo ($currentPage == 'jobs_listings') ? 'active' : ''; ?>">
+                <a href="<?php echo $assetPrefix; ?>Modules/Jobs/jobs.php" class="nav-link <?php echo ($currentPage == 'jobs') ? 'active' : ''; ?>">
                     <i class="nav-icon fas fa-briefcase"></i>
                     Jobs
                 </a>
@@ -81,7 +81,7 @@ $currentDir = basename(dirname($_SERVER['PHP_SELF']));
             
             <?php if (in_array('Tutors', $availableCapabilities)): ?>
             <li class="nav-item">
-                <a href="<?php echo $assetPrefix; ?>Modules/Tuitions/tuitions_listings.php" class="nav-link <?php echo ($currentPage == 'tuitions_listings') ? 'active' : ''; ?>">
+                <a href="<?php echo $assetPrefix; ?>Modules/Jobs/jobs.php?tab=tuition" class="nav-link <?php echo ($currentPage == 'jobs' && isset($_GET['tab']) && $_GET['tab'] === 'tuition') ? 'active' : ''; ?>">
                     <i class="nav-icon fas fa-graduation-cap"></i>
                     Tuition
                 </a>

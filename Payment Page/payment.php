@@ -9,10 +9,37 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Load user for sidebar profile
+// Get user information
 $userStmt = $pdo->prepare("SELECT name, email FROM users WHERE id = ?");
 $userStmt->execute([$user_id]);
-$user = $userStmt->fetch(PDO::FETCH_ASSOC) ?: ['name' => 'User', 'email' => ''];
+$user = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+// Get user capabilities
+$capStmt = $pdo->prepare("
+    SELECT c.capability_name 
+    FROM capabilities c 
+    JOIN user_capabilities uc ON c.id = uc.capability_id 
+    WHERE uc.user_id = ?
+");
+$capStmt->execute([$user_id]);
+$capabilities = $capStmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Capability mapping for display
+$capabilityMap = [
+    'find_room' => 'Housing',
+    'offer_room' => 'Housing',
+    'find_job' => 'Jobs',
+    'post_job' => 'Jobs',
+    'find_tutor' => 'Tutors',
+    'offer_tuition' => 'Tutors',
+    'food_service' => 'Services',
+    'expense_tracking' => 'Expenses'
+];
+
+// Get available capabilities for navigation
+$availableCapabilities = array_unique(array_map(function($cap) use ($capabilityMap) {
+    return $capabilityMap[$cap] ?? ucfirst(str_replace('_', ' ', $cap));
+}, $capabilities));
 
 // Get payment context from URL parameters
 $service_id = $_GET['service_id'] ?? null;
@@ -152,6 +179,7 @@ if (empty($payment_context)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - Ekta-tay</title>
+    <link rel="stylesheet" href="../Dashboard/dashboard.css">
     <link rel="stylesheet" href="payment.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -174,33 +202,50 @@ if (empty($payment_context)) {
                     </a>
                 </li>
                 
+                <?php if (in_array('Housing', $availableCapabilities)): ?>
                 <li class="nav-item">
                     <a href="../Modules/Housing/housing.php" class="nav-link">
-                        <i class="nav-icon fas fa-building"></i>
+                        <i class="nav-icon fas fa-home"></i>
                         Housing
                     </a>
                 </li>
+                <?php endif; ?>
                 
+                <?php if (in_array('Jobs', $availableCapabilities)): ?>
                 <li class="nav-item">
                     <a href="../Modules/Jobs/jobs.php" class="nav-link">
                         <i class="nav-icon fas fa-briefcase"></i>
                         Jobs
                     </a>
                 </li>
+                <?php endif; ?>
                 
+                <?php if (in_array('Tutors', $availableCapabilities)): ?>
                 <li class="nav-item">
-                    <a href="../Post Service Page/post_service.php" class="nav-link">
-                        <i class="nav-icon fas fa-plus-circle"></i>
-                        Post Service
+                    <a href="../Modules/Jobs/jobs.php?tab=tuition" class="nav-link">
+                        <i class="nav-icon fas fa-graduation-cap"></i>
+                        Tuition
                     </a>
                 </li>
+                <?php endif; ?>
                 
+                <?php if (in_array('Services', $availableCapabilities)): ?>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-wrench"></i>
+                        Services
+                    </a>
+                </li>
+                <?php endif; ?>
+                
+                <?php if (in_array('Expenses', $availableCapabilities)): ?>
                 <li class="nav-item">
                     <a href="../Expenses Page/expenses.php" class="nav-link">
                         <i class="nav-icon fas fa-wallet"></i>
                         Expenses
                     </a>
                 </li>
+                <?php endif; ?>
                 
                 <li class="nav-item">
                     <a href="payment.php" class="nav-link active">
@@ -211,15 +256,8 @@ if (empty($payment_context)) {
                 
                 <li class="nav-item">
                     <a href="../Profile page/profile.php" class="nav-link">
-                        <i class="nav-icon fas fa-user"></i>
-                        Profile
-                    </a>
-                </li>
-                
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-question-circle"></i>
-                        Help
+                        <i class="nav-icon fas fa-cog"></i>
+                        Manage
                     </a>
                 </li>
             </ul>
@@ -475,6 +513,7 @@ if (empty($payment_context)) {
         </main>
     </div>
 
+    <script src="../Dashboard/dashboard.js"></script>
     <script src="payment.js"></script>
 </body>
 </html>
