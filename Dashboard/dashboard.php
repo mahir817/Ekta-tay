@@ -244,6 +244,13 @@ foreach ($postingCaps as $cap) {
                 <?php endif; ?>
                 
                 <li class="nav-item">
+                    <a href="../Payment Page/payment.php" class="nav-link">
+                        <i class="nav-icon fas fa-credit-card"></i>
+                        Payment
+                    </a>
+                </li>
+                
+                <li class="nav-item">
                     <a href="../Profile page/profile.php" class="nav-link">
                         <i class="nav-icon fas fa-cog"></i>
                         Manage
@@ -470,37 +477,14 @@ foreach ($postingCaps as $cap) {
 
                 <!-- Quick Payment -->
                 <?php if (in_array('expense_tracking', $capabilities)): ?>
-                <div class="glass-card fade-in-up">
+                <div class="glass-card fade-in-up" style="cursor: pointer;" onclick="window.location.href='../Payment Page/payment.php'">
                     <div class="card-header">
                         <h2 class="card-title">Quick Payment</h2>
+                        <a href="../Payment Page/payment.php" class="card-action">Go to Payments</a>
                     </div>
-                    <form class="payment-form">
-                        <div class="form-group">
-                            <label class="form-label">Amount</label>
-                            <input type="text" class="form-input" placeholder="Enter amount">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Option</label>
-                            <div class="radio-group">
-                                <div class="radio-item">
-                                    <div class="radio-input checked"></div>
-                                    <span class="radio-label">Wallet</span>
-                                </div>
-                                <div class="radio-item">
-                                    <div class="radio-input"></div>
-                                    <span class="radio-label">Bank</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Payment and notes</label>
-                            <input type="text" class="form-input" placeholder="Payment and notes">
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Proceed</button>
-                    </form>
+                    <div style="padding: 1rem; color: rgba(255,255,255,0.8);">
+                        Click to proceed to the Payment page and complete a payment.
+                    </div>
                 </div>
                 <?php endif; ?>
             </div>

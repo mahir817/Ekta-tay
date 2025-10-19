@@ -199,6 +199,9 @@ function handleNavigation(linkText) {
         case 'Expenses':
             window.location.href = '../Expenses Page/expenses.php';
             break;
+        case 'Payment':
+            window.location.href = '../Payment Page/payment.php';
+            break;
         case 'Manage':
             window.location.href = '../Profile page/profile.php';
             break;

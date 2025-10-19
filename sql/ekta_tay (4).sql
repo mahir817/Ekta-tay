@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2025 at 03:23 PM
+-- Generation Time: Oct 19, 2025 at 04:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -74,8 +74,18 @@ CREATE TABLE `expenses` (
   `amount` decimal(10,2) DEFAULT NULL,
   `due_date` date DEFAULT NULL,
   `status` enum('unpaid','paid') DEFAULT 'unpaid',
+  `transaction_id` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `expenses`
+--
+
+INSERT INTO `expenses` (`id`, `housing_id`, `user_id`, `name`, `amount`, `due_date`, `status`, `transaction_id`, `created_at`) VALUES
+(2, NULL, 2, 'Food bills of October', 2000.00, '2025-10-31', 'unpaid', NULL, '2025-10-17 14:21:59'),
+(3, NULL, 2, 'Rent of October', 5000.00, '2025-10-31', 'unpaid', NULL, '2025-10-17 14:22:50'),
+(4, NULL, 2, 'UIU Bus fees', 4000.00, '2025-10-30', 'unpaid', NULL, '2025-10-17 14:23:40');
 
 -- --------------------------------------------------------
 
@@ -143,14 +153,15 @@ CREATE TABLE `housing` (
 --
 
 INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`, `floor_no`, `total_floors`, `furnished_status`, `parking_spaces`, `bedrooms`, `bathrooms`, `balconies`, `rent`, `service_charge`, `advance_deposit`, `available_from`, `available_for`, `negotiable`, `property_condition`, `verification_doc`, `verification_status`, `khotiyan`, `status`, `furnished`, `availability`, `location`, `coordinates`, `generalized_location`) VALUES
-(1, 1, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
+(1, 1, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'occupied', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
 (2, 2, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
 (3, 4, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
 (4, 5, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
 (5, 7, 'apartment', 950, '3rd', 6, 'furnished', 1, 2, 2, 2, 32000.00, 2000.00, 64000.00, '2025-10-10', 'family', 1, 'Well maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'occupied', 'Bashundhara R/A, Block D, Road 3, Dhaka', '23.8151,90.4265', 'Dhaka East'),
 (6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'occupied', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
 (7, 9, 'apartment', 1050, '4th', 6, 'semi-furnished', 1, 3, 2, 2, 28000.00, 1500.00, 56000.00, '2025-10-15', 'family', 1, 'Clean and well-maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', NULL, NULL, NULL),
-(9, 10, 'apartment', 1800, '5th', 10, 'furnished', 2, 3, 3, 3, 85000.00, 3000.00, 170000.00, '2025-11-01', 'family', 1, 'Premium condition, fully furnished with lake view', NULL, 'verified', NULL, 'available', 'furnished', 'available', 'Gulshan 1, Dhaka', '23.7936,90.4154', 'Dhaka North');
+(9, 10, 'apartment', 1800, '5th', 10, 'furnished', 2, 3, 3, 3, 85000.00, 3000.00, 170000.00, '2025-11-01', 'family', 1, 'Premium condition, fully furnished with lake view', NULL, 'verified', NULL, 'available', 'furnished', 'available', 'Gulshan 1, Dhaka', '23.7936,90.4154', 'Dhaka North'),
+(12, 13, 'room', 200, '9', 10, 'semi-furnished', 1, 3, 2, 2, 5000.00, 200.00, 5000.00, '2025-10-18', 'bachelor', 0, 'N/A', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Shewrapara, Mirpur', '23.7918626,90.3683716', 'Dhaka North');
 
 -- --------------------------------------------------------
 
@@ -166,18 +177,24 @@ CREATE TABLE `housing_applications` (
   `status` enum('pending','shortlisted','accepted','rejected','withdrawn') DEFAULT 'pending',
   `message` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `deposit_transaction_id` int(10) UNSIGNED DEFAULT NULL COMMENT 'Transaction ID for deposit payment',
+  `deposit_paid` tinyint(1) DEFAULT 0,
+  `deposit_paid_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `housing_applications`
 --
 
-INSERT INTO `housing_applications` (`application_id`, `housing_id`, `owner_id`, `applicant_id`, `status`, `message`, `created_at`, `updated_at`) VALUES
-(4, 7, 17, 2, 'withdrawn', 'fuck you', '2025-10-10 18:52:43', '2025-10-10 18:55:42'),
-(5, 5, 19, 2, 'accepted', 'fucascascx', '2025-10-10 18:56:11', '2025-10-10 18:57:21'),
-(6, 9, 19, 2, 'rejected', 'Application submitted', '2025-10-15 16:56:44', '2025-10-15 17:01:06'),
-(7, 6, 20, 19, 'accepted', 'sadcsd', '2025-10-15 17:02:53', '2025-10-15 17:05:57');
+INSERT INTO `housing_applications` (`application_id`, `housing_id`, `owner_id`, `applicant_id`, `status`, `message`, `created_at`, `updated_at`, `deposit_transaction_id`, `deposit_paid`, `deposit_paid_at`) VALUES
+(4, 7, 17, 2, 'withdrawn', 'fuck you', '2025-10-10 18:52:43', '2025-10-10 18:55:42', NULL, 0, NULL),
+(5, 5, 19, 2, 'accepted', 'fucascascx', '2025-10-10 18:56:11', '2025-10-10 18:57:21', NULL, 0, NULL),
+(6, 9, 19, 2, 'rejected', 'Application submitted', '2025-10-15 16:56:44', '2025-10-15 17:01:06', NULL, 0, NULL),
+(7, 6, 20, 19, 'accepted', 'sadcsd', '2025-10-15 17:02:53', '2025-10-15 17:05:57', NULL, 0, NULL),
+(8, 4, 20, 2, 'pending', 'xzc', '2025-10-17 14:31:20', '2025-10-17 14:31:20', NULL, 0, NULL),
+(9, 1, 19, 2, 'accepted', 'zxc', '2025-10-17 14:49:23', '2025-10-19 06:04:59', NULL, 0, NULL),
+(10, 2, 20, 2, 'pending', 'fvcfdf', '2025-10-19 06:01:54', '2025-10-19 06:01:54', NULL, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -228,7 +245,8 @@ CREATE TABLE `housing_tenants` (
 
 INSERT INTO `housing_tenants` (`tenant_id`, `housing_id`, `owner_id`, `user_id`, `start_date`, `end_date`, `active`, `status`, `created_at`) VALUES
 (2, 5, 19, 2, '2025-10-10', NULL, 1, 'active', '2025-10-10 18:57:21'),
-(20, 6, 20, 19, '2025-10-15', NULL, 1, 'active', '2025-10-15 17:05:57');
+(20, 6, 20, 19, '2025-10-15', NULL, 1, 'active', '2025-10-15 17:05:57'),
+(21, 1, 19, 2, '2025-10-19', NULL, 1, 'active', '2025-10-19 06:04:59');
 
 -- --------------------------------------------------------
 
@@ -400,6 +418,8 @@ CREATE TABLE `orders` (
   `user_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
   `status` enum('pending','confirmed','completed','cancelled') DEFAULT 'pending',
+  `transaction_id` int(10) UNSIGNED DEFAULT NULL,
+  `payment_status` enum('pending','paid','refunded') DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -423,6 +443,65 @@ CREATE TABLE `payment_history` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `payment_recipients`
+--
+
+CREATE TABLE `payment_recipients` (
+  `recipient_id` int(10) UNSIGNED NOT NULL,
+  `transaction_id` int(10) UNSIGNED NOT NULL,
+  `recipient_user_id` int(11) NOT NULL COMMENT 'User receiving the payment',
+  `amount` decimal(10,2) NOT NULL,
+  `status` enum('pending','transferred','held','refunded') DEFAULT 'pending',
+  `transfer_date` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `refunds`
+--
+
+CREATE TABLE `refunds` (
+  `refund_id` int(10) UNSIGNED NOT NULL,
+  `transaction_id` int(10) UNSIGNED NOT NULL,
+  `refund_amount` decimal(10,2) NOT NULL,
+  `refund_reason` text DEFAULT NULL,
+  `refund_status` enum('requested','processing','completed','rejected') DEFAULT 'requested',
+  `requested_by` int(11) NOT NULL,
+  `processed_by` int(11) DEFAULT NULL,
+  `requested_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `processed_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rental_payments`
+--
+
+CREATE TABLE `rental_payments` (
+  `payment_id` int(10) UNSIGNED NOT NULL,
+  `tenant_id` int(11) NOT NULL,
+  `housing_id` int(11) NOT NULL,
+  `owner_id` int(11) NOT NULL,
+  `transaction_id` int(10) UNSIGNED DEFAULT NULL,
+  `payment_month` varchar(7) NOT NULL COMMENT 'YYYY-MM format',
+  `rent_amount` decimal(10,2) NOT NULL,
+  `service_charge` decimal(10,2) DEFAULT 0.00,
+  `other_charges` decimal(10,2) DEFAULT 0.00,
+  `total_amount` decimal(10,2) NOT NULL,
+  `due_date` date NOT NULL,
+  `paid_date` datetime DEFAULT NULL,
+  `status` enum('pending','paid','overdue','waived') DEFAULT 'pending',
+  `late_fee` decimal(10,2) DEFAULT 0.00,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `rent_split`
 --
 
@@ -432,6 +511,24 @@ CREATE TABLE `rent_split` (
   `roommate_id` int(11) DEFAULT NULL,
   `share_amount` decimal(10,2) DEFAULT NULL,
   `status` enum('unpaid','paid') DEFAULT 'unpaid'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `saved_payment_methods`
+--
+
+CREATE TABLE `saved_payment_methods` (
+  `method_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `method_type` enum('card','bkash','nagad','rocket') NOT NULL,
+  `card_last_four` varchar(4) DEFAULT NULL,
+  `card_brand` varchar(20) DEFAULT NULL,
+  `mobile_number` varchar(15) DEFAULT NULL,
+  `is_default` tinyint(1) DEFAULT 0,
+  `is_active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -463,7 +560,8 @@ INSERT INTO `services` (`service_id`, `user_id`, `title`, `description`, `type`,
 (7, 19, '2 BHK Apartment for Rent in Bashundhara R/A', 'Spacious 2-bedroom furnished apartment located in a quiet area near NSU. Includes modern kitchen, lift, generator backup, and 24/7 security.', 'housing', 32000.00, 'Bashundhara, Dhaka East', '2025-10-04 14:11:22'),
 (8, 20, 'Single Room for Bachelor in Mirpur 10', 'Affordable single room available for bachelor. Close to bus stop and market. Includes water, gas, and WiFi.', 'housing', 8500.00, 'Mirpur 10, Dhaka North', '2025-10-04 14:11:22'),
 (9, 17, 'Modern Flat for Rent in Uttara Sector 7', 'A 3-bedroom, 2-bathroom apartment with lift, generator, and parking. Ideal for small families or working professionals.', 'housing', 28000.00, 'Uttara, Dhaka North', '2025-10-04 15:07:04'),
-(10, 19, 'Luxury Apartment in Gulshan 1', 'Fully furnished 3BHK with lake view, 24/7 security, and modern facilities.', 'housing', 85000.00, 'Gulshan 1, Dhaka North', '2025-10-13 14:00:31');
+(10, 19, 'Luxury Apartment in Gulshan 1', 'Fully furnished 3BHK with lake view, 24/7 security, and modern facilities.', 'housing', 85000.00, 'Gulshan 1, Dhaka North', '2025-10-13 14:00:31'),
+(13, 2, 'Single Room Available for Bachelors', 'semi furnished room', 'housing', 5000.00, 'Shewrapara, Mirpur', '2025-10-17 14:11:34');
 
 -- --------------------------------------------------------
 
@@ -492,7 +590,37 @@ CREATE TABLE `shared_expense_shares` (
   `shared_expense_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `share_amount` decimal(10,2) NOT NULL,
-  `status` enum('paid','unpaid','pending') NOT NULL DEFAULT 'unpaid'
+  `status` enum('paid','unpaid','pending') NOT NULL DEFAULT 'unpaid',
+  `transaction_id` int(10) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transactions`
+--
+
+CREATE TABLE `transactions` (
+  `transaction_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `transaction_type` enum('housing_rent','housing_deposit','job_application_fee','tuition_payment','service_fee','expense_payment','shared_expense_payment','food_order','general_order') NOT NULL,
+  `reference_id` int(11) DEFAULT NULL COMMENT 'ID of related entity (expense_id, service_id, etc.)',
+  `reference_type` varchar(50) DEFAULT NULL COMMENT 'Type of reference (expense, housing, job, etc.)',
+  `amount` decimal(10,2) NOT NULL,
+  `service_charge` decimal(10,2) DEFAULT 0.00,
+  `processing_fee` decimal(10,2) DEFAULT 0.00,
+  `total_amount` decimal(10,2) NOT NULL,
+  `payment_method` enum('card','bkash','nagad','rocket','bank_transfer') NOT NULL,
+  `payment_status` enum('pending','processing','completed','failed','refunded') NOT NULL DEFAULT 'pending',
+  `transaction_ref` varchar(100) DEFAULT NULL COMMENT 'External payment gateway reference',
+  `card_last_four` varchar(4) DEFAULT NULL,
+  `mobile_number` varchar(15) DEFAULT NULL,
+  `billing_address` text DEFAULT NULL,
+  `billing_city` varchar(100) DEFAULT NULL,
+  `billing_postal_code` varchar(20) DEFAULT NULL,
+  `payment_date` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -527,6 +655,12 @@ INSERT INTO `tuitions` (`tuition_id`, `service_id`, `subject`, `class_level`, `t
 (3, 25, 'biology', 'class-9-10', 'online', '1', '4', '', 7, 'asdfd', 546.00, 'active', '2025-10-15 16:25:02'),
 (4, 28, 'chemistry', 'class-6-8', 'home', '2-3', '4', '', 8, 'sfdg', 456.00, 'active', '2025-10-15 17:55:44'),
 (5, 29, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:01:46'),
+(6, 30, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:02:01'),
+(1, 23, 'chemistry', 'class-6-8', 'online', '1', '4', '', 5, 'df', 3546.00, 'active', '2025-10-15 16:09:11'),
+(2, 24, 'biology', 'class-9-10', 'online', '1', '4', '', 6, 'sfdgf', 576.00, 'active', '2025-10-15 16:11:33'),
+(3, 25, 'biology', 'class-9-10', 'online', '1', '4', '', 7, 'asdfd', 546.00, 'active', '2025-10-15 16:25:02'),
+(4, 28, 'chemistry', 'class-6-8', 'home', '2-3', '4', '', 8, 'sfdg', 456.00, 'active', '2025-10-15 17:55:44'),
+(5, 29, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:01:46'),
 (6, 30, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:02:01');
 
 -- --------------------------------------------------------
@@ -544,6 +678,28 @@ CREATE TABLE `tuition_applications` (
   `message` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tuition_payments`
+--
+
+CREATE TABLE `tuition_payments` (
+  `payment_id` int(10) UNSIGNED NOT NULL,
+  `tuition_id` int(11) DEFAULT NULL,
+  `student_id` int(11) NOT NULL,
+  `tutor_id` int(11) NOT NULL,
+  `transaction_id` int(10) UNSIGNED DEFAULT NULL,
+  `session_id` int(11) DEFAULT NULL COMMENT 'Link to specific session if applicable',
+  `hours` decimal(4,2) NOT NULL DEFAULT 1.00,
+  `hourly_rate` decimal(10,2) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `payment_date` datetime DEFAULT NULL,
+  `status` enum('pending','paid','cancelled') DEFAULT 'pending',
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -637,6 +793,41 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `created_at`, `phone`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `user_activities`
+--
+
+CREATE TABLE `user_activities` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `activity_type` enum('housing_post','job_post','tuition_post','food_post','housing_application','job_application','expense_added','profile_update','login','logout') NOT NULL,
+  `activity_title` varchar(255) NOT NULL,
+  `activity_description` text DEFAULT NULL,
+  `related_id` int(11) DEFAULT NULL COMMENT 'ID of related service, application, or expense',
+  `icon` varchar(10) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `user_activities`
+--
+
+INSERT INTO `user_activities` (`id`, `user_id`, `activity_type`, `activity_title`, `activity_description`, `related_id`, `icon`, `created_at`) VALUES
+(1, 1, 'housing_post', 'Posted new housing', 'Posted a 2BHK apartment in Dhaka North', 1, '🏠', '2025-10-17 12:27:42'),
+(2, 1, 'expense_added', 'Added new expense', 'Added rent payment of ৳25,000', 1, '💳', '2025-10-17 13:27:42'),
+(3, 1, 'job_application', 'Applied for job', 'Applied for Software Developer position', 1, '💼', '2025-10-17 11:27:42'),
+(4, 1, 'profile_update', 'Updated profile', 'Updated contact information', NULL, '👤', '2025-10-17 09:27:42'),
+(5, 1, 'login', 'Logged in', 'Logged into the system', NULL, '🔐', '2025-10-17 08:27:42'),
+(6, 2, 'housing_application', 'Applied for housing', 'Applied to: Beautiful 2BHK apartment', 1, '????', '2025-10-17 13:43:25'),
+(7, 2, 'expense_added', 'Added new expense', 'Added: Monthly groceries - ৳3,500', 2, '????', '2025-10-17 12:43:25'),
+(8, 2, 'housing_post', 'Posted new housing', 'Posted: Cozy studio apartment', 3, '????', '2025-10-17 11:43:25'),
+(9, 2, 'profile_update', 'Updated profile', 'Updated contact information', NULL, '????', '2025-10-17 10:43:25'),
+(10, 2, 'login', 'Logged in', 'Logged into the system', NULL, '????', '2025-10-17 09:43:25'),
+(11, 2, 'housing_application', 'Applied for housing', 'Applied to: 2 BHK Apartment for Rent in Bashundhara R/A', 9, '????', '2025-10-17 14:49:23'),
+(12, 2, 'housing_application', 'Applied for housing', 'Applied to: Single Room for Bachelor in Mirpur 10', 10, '????', '2025-10-19 06:01:54');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user_capabilities`
 --
 
@@ -713,6 +904,24 @@ INSERT INTO `user_capabilities` (`user_id`, `capability_id`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `user_wallets`
+--
+
+CREATE TABLE `user_wallets` (
+  `wallet_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `balance` decimal(10,2) DEFAULT 0.00,
+  `total_earned` decimal(10,2) DEFAULT 0.00,
+  `total_spent` decimal(10,2) DEFAULT 0.00,
+  `pending_balance` decimal(10,2) DEFAULT 0.00 COMMENT 'Held amount pending transfer',
+  `last_transaction_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `v_expense_status_summary`
 -- (See below for the actual view)
 --
@@ -722,6 +931,24 @@ CREATE TABLE `v_expense_status_summary` (
 ,`paid_total` decimal(32,2)
 ,`unpaid_total` decimal(32,2)
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wallet_transactions`
+--
+
+CREATE TABLE `wallet_transactions` (
+  `wallet_txn_id` int(10) UNSIGNED NOT NULL,
+  `wallet_id` int(10) UNSIGNED NOT NULL,
+  `transaction_id` int(10) UNSIGNED DEFAULT NULL,
+  `transaction_type` enum('credit','debit','refund','withdrawal','deposit') NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `balance_before` decimal(10,2) NOT NULL,
+  `balance_after` decimal(10,2) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -756,7 +983,8 @@ ALTER TABLE `capabilities`
 ALTER TABLE `expenses`
   ADD PRIMARY KEY (`id`),
   ADD KEY `housing_id` (`housing_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `idx_transaction` (`transaction_id`);
 
 --
 -- Indexes for table `food_services`
@@ -780,7 +1008,8 @@ ALTER TABLE `housing_applications`
   ADD KEY `housing_id` (`housing_id`),
   ADD KEY `idx_housing_applications_status` (`status`),
   ADD KEY `idx_housing_applications_owner` (`owner_id`),
-  ADD KEY `idx_housing_applications_applicant` (`applicant_id`);
+  ADD KEY `idx_housing_applications_applicant` (`applicant_id`),
+  ADD KEY `idx_deposit_transaction` (`deposit_transaction_id`);
 
 --
 -- Indexes for table `housing_images`
@@ -883,7 +1112,36 @@ ALTER TABLE `mentorship_requests`
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`order_id`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `service_id` (`service_id`);
+  ADD KEY `service_id` (`service_id`),
+  ADD KEY `idx_transaction` (`transaction_id`);
+
+--
+-- Indexes for table `payment_recipients`
+--
+ALTER TABLE `payment_recipients`
+  ADD PRIMARY KEY (`recipient_id`),
+  ADD KEY `idx_transaction` (`transaction_id`),
+  ADD KEY `idx_recipient_user` (`recipient_user_id`);
+
+--
+-- Indexes for table `refunds`
+--
+ALTER TABLE `refunds`
+  ADD PRIMARY KEY (`refund_id`),
+  ADD KEY `idx_transaction` (`transaction_id`),
+  ADD KEY `requested_by` (`requested_by`);
+
+--
+-- Indexes for table `rental_payments`
+--
+ALTER TABLE `rental_payments`
+  ADD PRIMARY KEY (`payment_id`),
+  ADD KEY `idx_tenant` (`tenant_id`),
+  ADD KEY `idx_housing` (`housing_id`),
+  ADD KEY `idx_owner` (`owner_id`),
+  ADD KEY `idx_month` (`payment_month`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_transaction` (`transaction_id`);
 
 --
 -- Indexes for table `rent_split`
@@ -894,12 +1152,47 @@ ALTER TABLE `rent_split`
   ADD KEY `roommate_id` (`roommate_id`);
 
 --
+-- Indexes for table `saved_payment_methods`
+--
+ALTER TABLE `saved_payment_methods`
+  ADD PRIMARY KEY (`method_id`),
+  ADD KEY `idx_user` (`user_id`);
+
+--
 -- Indexes for table `services`
 --
 ALTER TABLE `services`
   ADD PRIMARY KEY (`service_id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `idx_services_type` (`type`);
+
+--
+-- Indexes for table `shared_expense_shares`
+--
+ALTER TABLE `shared_expense_shares`
+  ADD KEY `idx_transaction` (`transaction_id`);
+
+--
+-- Indexes for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD PRIMARY KEY (`transaction_id`),
+  ADD UNIQUE KEY `transaction_ref` (`transaction_ref`),
+  ADD KEY `idx_user_id` (`user_id`),
+  ADD KEY `idx_status` (`payment_status`),
+  ADD KEY `idx_type` (`transaction_type`),
+  ADD KEY `idx_reference` (`reference_id`,`reference_type`),
+  ADD KEY `idx_transaction_ref` (`transaction_ref`);
+
+--
+-- Indexes for table `tuition_payments`
+--
+ALTER TABLE `tuition_payments`
+  ADD PRIMARY KEY (`payment_id`),
+  ADD KEY `idx_tuition` (`tuition_id`),
+  ADD KEY `idx_student` (`student_id`),
+  ADD KEY `idx_tutor` (`tutor_id`),
+  ADD KEY `idx_transaction` (`transaction_id`);
 
 --
 -- Indexes for table `tuition_sessions`
@@ -917,11 +1210,36 @@ ALTER TABLE `users`
   ADD KEY `idx_users_generalized_location` (`generalized_location`);
 
 --
+-- Indexes for table `user_activities`
+--
+ALTER TABLE `user_activities`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `activity_type` (`activity_type`),
+  ADD KEY `created_at` (`created_at`);
+
+--
 -- Indexes for table `user_capabilities`
 --
 ALTER TABLE `user_capabilities`
   ADD PRIMARY KEY (`user_id`,`capability_id`),
   ADD KEY `capability_id` (`capability_id`);
+
+--
+-- Indexes for table `user_wallets`
+--
+ALTER TABLE `user_wallets`
+  ADD PRIMARY KEY (`wallet_id`),
+  ADD UNIQUE KEY `user_id` (`user_id`),
+  ADD KEY `idx_user` (`user_id`);
+
+--
+-- Indexes for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  ADD PRIMARY KEY (`wallet_txn_id`),
+  ADD KEY `idx_wallet` (`wallet_id`),
+  ADD KEY `idx_transaction` (`transaction_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -943,7 +1261,7 @@ ALTER TABLE `capabilities`
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `food_services`
@@ -955,13 +1273,13 @@ ALTER TABLE `food_services`
 -- AUTO_INCREMENT for table `housing`
 --
 ALTER TABLE `housing`
-  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `housing_applications`
 --
 ALTER TABLE `housing_applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `housing_images`
@@ -973,7 +1291,7 @@ ALTER TABLE `housing_images`
 -- AUTO_INCREMENT for table `housing_tenants`
 --
 ALTER TABLE `housing_tenants`
-  MODIFY `tenant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `tenant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `housing_terms`
@@ -1042,16 +1360,52 @@ ALTER TABLE `orders`
   MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `payment_recipients`
+--
+ALTER TABLE `payment_recipients`
+  MODIFY `recipient_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `refunds`
+--
+ALTER TABLE `refunds`
+  MODIFY `refund_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `rental_payments`
+--
+ALTER TABLE `rental_payments`
+  MODIFY `payment_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `rent_split`
 --
 ALTER TABLE `rent_split`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `saved_payment_methods`
+--
+ALTER TABLE `saved_payment_methods`
+  MODIFY `method_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `transactions`
+--
+ALTER TABLE `transactions`
+  MODIFY `transaction_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `tuition_payments`
+--
+ALTER TABLE `tuition_payments`
+  MODIFY `payment_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tuition_sessions`
@@ -1064,6 +1418,24 @@ ALTER TABLE `tuition_sessions`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT for table `user_activities`
+--
+ALTER TABLE `user_activities`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `user_wallets`
+--
+ALTER TABLE `user_wallets`
+  MODIFY `wallet_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  MODIFY `wallet_txn_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -1182,11 +1554,40 @@ ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `payment_recipients`
+--
+ALTER TABLE `payment_recipients`
+  ADD CONSTRAINT `payment_recipients_ibfk_1` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `payment_recipients_ibfk_2` FOREIGN KEY (`recipient_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `refunds`
+--
+ALTER TABLE `refunds`
+  ADD CONSTRAINT `refunds_ibfk_1` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `refunds_ibfk_2` FOREIGN KEY (`requested_by`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `rental_payments`
+--
+ALTER TABLE `rental_payments`
+  ADD CONSTRAINT `rental_payments_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `rental_payments_ibfk_2` FOREIGN KEY (`housing_id`) REFERENCES `housing` (`housing_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `rental_payments_ibfk_3` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `rental_payments_ibfk_4` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `rent_split`
 --
 ALTER TABLE `rent_split`
   ADD CONSTRAINT `rent_split_ibfk_1` FOREIGN KEY (`housing_id`) REFERENCES `housing` (`housing_id`),
   ADD CONSTRAINT `rent_split_ibfk_2` FOREIGN KEY (`roommate_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `saved_payment_methods`
+--
+ALTER TABLE `saved_payment_methods`
+  ADD CONSTRAINT `saved_payment_methods_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `services`
@@ -1195,10 +1596,30 @@ ALTER TABLE `services`
   ADD CONSTRAINT `services_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `tuition_payments`
+--
+ALTER TABLE `tuition_payments`
+  ADD CONSTRAINT `tuition_payments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tuition_payments_ibfk_2` FOREIGN KEY (`tutor_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tuition_payments_ibfk_3` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`) ON DELETE SET NULL;
+
+--
 -- Constraints for table `tuition_sessions`
 --
 ALTER TABLE `tuition_sessions`
   ADD CONSTRAINT `tuition_sessions_ibfk_1` FOREIGN KEY (`hire_id`) REFERENCES `job_hires` (`hire_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_activities`
+--
+ALTER TABLE `user_activities`
+  ADD CONSTRAINT `user_activities_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `user_capabilities`
@@ -1206,6 +1627,19 @@ ALTER TABLE `tuition_sessions`
 ALTER TABLE `user_capabilities`
   ADD CONSTRAINT `user_capabilities_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `user_capabilities_ibfk_2` FOREIGN KEY (`capability_id`) REFERENCES `capabilities` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_wallets`
+--
+ALTER TABLE `user_wallets`
+  ADD CONSTRAINT `user_wallets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `wallet_transactions`
+--
+ALTER TABLE `wallet_transactions`
+  ADD CONSTRAINT `wallet_transactions_ibfk_1` FOREIGN KEY (`wallet_id`) REFERENCES `user_wallets` (`wallet_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `wallet_transactions_ibfk_2` FOREIGN KEY (`transaction_id`) REFERENCES `transactions` (`transaction_id`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

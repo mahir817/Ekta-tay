@@ -105,6 +105,13 @@ $currentDir = basename(dirname($_SERVER['PHP_SELF']));
             </li>
             
             <li class="nav-item">
+                <a href="<?php echo $assetPrefix; ?>Payment Page/payment.php" class="nav-link <?php echo ($currentDir == 'Payment Page' && $currentPage == 'payment') ? 'active' : ''; ?>">
+                    <i class="nav-icon fas fa-credit-card"></i>
+                    Payment
+                </a>
+            </li>
+            
+            <li class="nav-item">
                 <a href="<?php echo $assetPrefix; ?>Post Service Page/post_service.php" class="nav-link <?php echo ($currentDir == 'Post Service Page' && $currentPage == 'post_service') ? 'active' : ''; ?>">
                     <i class="nav-icon fas fa-plus-circle"></i>
                     Post Service
