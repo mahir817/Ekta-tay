@@ -396,20 +396,7 @@ foreach ($postingCaps as $cap) {
                     </ul>
                 </div>
 
-                <!-- Community Chart -->
-                <div class="glass-card fade-in-up">
-                    <div class="card-header">
-                        <h2 class="card-title">Community</h2>
-                        <select class="card-action" style="background: transparent; border: none; color: white;">
-                            <option>All</option>
-                        </select>
-                    </div>
-                    <div class="chart-container">
-                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: rgba(255,255,255,0.6);">
-                            <i class="fas fa-chart-line" style="font-size: 3rem;"></i>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
 
             <!-- Bottom Grid -->
@@ -539,7 +526,7 @@ foreach ($postingCaps as $cap) {
                 data.activities.forEach(activity => {
                     html += `
                         <li class="activity-item" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div class="activity-icon">${activity.icon}</div>
+                            <div class="activity-icon">${activity.icon && activity.icon !== '????' ? activity.icon : '📝'}</div>
                             <div class="activity-content">
                                 <div class="activity-title">${activity.title}</div>
                                 ${activity.description ? `<div class="activity-description" style="font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 2px;">${activity.description}</div>` : ''}
@@ -551,7 +538,26 @@ foreach ($postingCaps as $cap) {
                 html += '</ul>';
                 list.innerHTML = html;
             } else {
-                list.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); padding: 20px;">No activities found</p>';
+                const currentActivities = <?php echo json_encode($activities); ?>;
+                if (currentActivities && currentActivities.length > 0) {
+                    let html = '<ul class="activity-list" style="max-height: 400px; overflow-y: auto;">';
+                    currentActivities.forEach(activity => {
+                        html += `
+                            <li class="activity-item" style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <div class="activity-icon">${activity.icon && activity.icon !== '????' ? activity.icon : '📝'}</div>
+                                <div class="activity-content">
+                                    <div class="activity-title">${activity.title}</div>
+                                    ${activity.description ? `<div class="activity-description" style="font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 2px;">${activity.description}</div>` : ''}
+                                    <div class="activity-time">${activity.time}</div>
+                                </div>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    list.innerHTML = html;
+                } else {
+                    list.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); padding: 20px;">No activities found</p>';
+                }
             }
             
             list.style.display = 'block';

@@ -396,23 +396,7 @@ if (isset($_SESSION['user_id'])) {
         </div>
       </div>
 
-      <!-- Split Rent -->
-      <div class="card split-card">
-        <h3>Split Rent</h3>
-        <div class="split-form">
-          <input type="number" id="totalRent" placeholder="Total monthly rent (BDT)">
-          <input type="number" id="numRoommates" placeholder="Number of roommates">
-          <button class="add-btn split-calc-btn" onclick="calculateSplit()">Calculate</button>
-        
-        </div>
-          
-        <div id="roommatesContainer"></div>
-        <div style="margin-top:10px;">
-          
-          <button class="add-btn" id="addToExpensesBtn" onclick="addRoommatesToExpenses()">Add to Expenses</button>
-        </div>
-        <div id="splitResult" class="split-result"></div>
-      </div>
+      
 
       <!-- Expenses Analysis -->
       <div class="card">
@@ -435,15 +419,6 @@ if (isset($_SESSION['user_id'])) {
 
     <div class="subsection">
       <h3 style="margin-bottom:10px;">My Housing Posts</h3>
-      <!-- Debug info -->
-      <div style="background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 12px;">
-        <strong>Debug Info:</strong><br>
-        Session User ID: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'NOT SET'; ?><br>
-        User Housing Count: <?php echo count($userHousing); ?><br>
-        <?php if (isset($_SESSION['user_id'])): ?>
-          <a href="../../backend/debug_housing_posts.php" target="_blank" style="color: #4ade80;">View Detailed Debug</a>
-        <?php endif; ?>
-      </div>
       <div id="myHousingList" class="card-grid">
         <?php
 if(isset($userHousing) && count($userHousing) > 0){

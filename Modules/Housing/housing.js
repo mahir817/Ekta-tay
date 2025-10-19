@@ -1094,11 +1094,12 @@ function debugNearbyHousing() {
             console.log('All housing locations:', data.all_housing_locations);
             console.log('=== END DEBUG ===');
             
-            alert(`Debug Info:
-User Location: ${data.user_generalized_location || 'Not set'}
-Total Housing: ${data.total_housing_posts}
-Nearby Housing: ${data.nearby_count}
-Check console for detailed info.`);
+            // Replace alert with popup card
+            if (typeof showPopupCard === 'function') {
+                showPopupCard(`User Location: ${data.user_generalized_location || 'Not set'}<br>Total Housing: ${data.total_housing_posts}<br>Nearby Housing: ${data.nearby_count}<br>Check console for detailed info.`, 'Nearby Housing Debug');
+            } else {
+                console.log('DEBUG POPUP:', data);
+            }
         })
         .catch(error => {
             console.error('Debug error:', error);

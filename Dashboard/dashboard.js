@@ -125,7 +125,7 @@ function setupFormInteractions() {
     if (paymentForm) {
         paymentForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            handlePaymentSubmission();
+            showPopupCard('This quick payment form has been replaced. Use the Payment page.');
         });
     }
 }
@@ -307,6 +307,30 @@ function showNotification(message, type = 'info') {
             notification.remove();
         }, 300);
     }, 3000);
+}
+
+// Simple popup card utility to replace native alerts
+function showPopupCard(message, title = 'Notice') {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;backdrop-filter:blur(4px);background:rgba(0,0,0,0.4);z-index:2000;display:flex;align-items:center;justify-content:center;';
+    const card = document.createElement('div');
+    card.style.cssText = 'min-width:300px;max-width:480px;padding:20px;border-radius:12px;background:linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08));border:1px solid rgba(255,255,255,0.18);color:#fff;font-family:Poppins, sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.3);';
+    card.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <h3 style="margin:0;font-weight:600;">${title}</h3>
+            <button style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">&times;</button>
+        </div>
+        <div style="opacity:0.9;line-height:1.6;">${message}</div>
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+            <button style="padding:8px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);color:#fff;cursor:pointer;">OK</button>
+        </div>
+    `;
+    const [closeBtn, okBtn] = card.querySelectorAll('button');
+    const close = () => overlay.remove();
+    closeBtn.onclick = close;
+    okBtn.onclick = close;
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
 }
 
 // Utility functions
