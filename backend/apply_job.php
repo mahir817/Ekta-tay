@@ -25,9 +25,16 @@ try {
     $phone = trim($_POST['phone'] ?? '');
     $email = trim($_POST['email'] ?? '');
 
-    // Verify service exists and is a job or tuition
-    $sql = "SELECT s.type FROM services s 
-            INNER JOIN jobs j ON s.service_id = j.service_id 
+    // Verify service exists and is a job or tuition, and check if it's available
+    $sql = "SELECT s.type, s.user_id,
+                   CASE 
+                       WHEN s.type = 'job' THEN j.status
+                       WHEN s.type = 'tuition' THEN COALESCE(t.status, 'active')
+                       ELSE 'inactive'
+                   END as status
+            FROM services s 
+            LEFT JOIN jobs j ON s.service_id = j.service_id AND s.type = 'job'
+            LEFT JOIN tuitions t ON s.service_id = t.service_id AND s.type = 'tuition'
             WHERE s.service_id = ? AND s.type IN ('job', 'tuition')";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$service_id]);
@@ -35,6 +42,18 @@ try {
     
     if (!$service) {
         echo json_encode(['success' => false, 'message' => 'Service not found or not available for applications']);
+        exit;
+    }
+    
+    // Check if user is trying to apply to their own post
+    if ($service['user_id'] == $user_id) {
+        echo json_encode(['success' => false, 'message' => 'You cannot apply to your own job posting']);
+        exit;
+    }
+    
+    // Check if service is active/available
+    if ($service['status'] === 'closed' || $service['status'] === 'inactive') {
+        echo json_encode(['success' => false, 'message' => 'This position is no longer accepting applications']);
         exit;
     }
 

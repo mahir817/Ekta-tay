@@ -340,9 +340,16 @@ body::before {
 /* Content Grid */
 .content-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin-top: 2rem;
+}
+
+/* Right column for smaller cards */
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 /* Fill visual gap when fewer cards present */
@@ -671,6 +678,10 @@ body::before {
 
     .content-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .right-column {
+        flex-direction: column;
     }
 }
 

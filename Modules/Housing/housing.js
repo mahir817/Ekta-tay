@@ -95,17 +95,10 @@ function displayHousingData(data) {
         const verificationBadge = h.verification_status === 'verified' && h.khotiyan ?
             `<span class="verification-badge">✅ Verified (${h.khotiyan})</span>` : '';
 
-        const propertyDetails = `
-            <div class="property-details">
-                <span class="detail-item">${h.bedrooms} Bed${h.bedrooms > 1 ? 's' : ''}</span>
-                <span class="detail-item">${h.bathrooms} Bath${h.bathrooms > 1 ? 's' : ''}</span>
-                ${h.size_sqft ? `<span class="detail-item">${h.size_sqft} sqft</span>` : ''}
-                <span class="detail-item">${h.furnished_status}</span>
-        `;
-
         const availabilityInfo = h.available_from ?
             `<p class="availability">Available from: ${new Date(h.available_from).toLocaleDateString()}</p>` : '';
 
+        // Note: Removed negotiable text as requested, but kept all other elements
         list.innerHTML += `
             <div class="card housing-card">
                 <div class="card-header">
@@ -116,11 +109,13 @@ function displayHousingData(data) {
                     <p class="location"><i class="fas fa-map-marker-alt"></i> ${h.location}</p>
                     <div class="property-details">
                         <span class="property-type">${h.property_type}</span>
-                        <span class="bedrooms">${h.bedrooms} bed${h.bedrooms > 1 ? 's' : ''}</span>
-                        <span class="bathrooms">${h.bathrooms} bath${h.bathrooms > 1 ? 's' : ''}</span>
+                        <span class="bedrooms">${h.bedrooms} bed</span>
+                        <span class="bathrooms">${h.bathrooms} bath</span>
                     </div>
                     <p class="description">${h.description}</p>
                     ${availabilityInfo}
+                    ${verificationBadge}
+                    ${h.coordinates ? `<p class="coordinates"><i class="fas fa-map-pin"></i> ${h.coordinates}</p>` : ''}
                     <div class="card-footer">
                         <div class="card-actions">
                             <button class="details-btn" onclick="viewHousingDetails(${h.id})">

@@ -56,9 +56,9 @@ try {
 
     // Redirect based on capabilities
     if ($capabilityCount == 0) {
-        $redirect = "http://localhost:8080/Ekta-Tay/Capability%20Setup/setup.html";
+        $redirect = "../Capability Setup/setup.html";
     } else {
-        $redirect = "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php";
+        $redirect = "../Dashboard/dashboard.php";
     }
 
     echo json_encode(["success"=>true,"redirect_url"=>$redirect]);

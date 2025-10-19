@@ -458,67 +458,73 @@ foreach ($postingCaps as $cap) {
                     </ul>
                 </div>
 
-                <!-- Expense Tracking -->
-                <?php if (in_array('expense_tracking', $capabilities)): ?>
-                <div class="glass-card fade-in-up" id="expenseTrackingCard" style="cursor: pointer;" onclick="window.location.href='../Expenses Page/expenses.php'">
-                    <div class="card-header">
-                        <h2 class="card-title">Expense Tracking</h2>
-                        <a href="../Expenses Page/expenses.php" class="card-action">View Details</a>
-                    </div>
-                    <div class="expense-chart">
-                        <div class="chart-circle">
-                            <div class="chart-center">
-                                <?php 
-                                $totalExpenses = 0;
-                                if ($expenseData) {
-                                    foreach ($expenseData as $expense) {
-                                        $totalExpenses += $expense['total'];
+                <!-- Right Column for smaller cards -->
+                <div class="right-column">
+                    <!-- Expense Tracking -->
+                    <?php if (in_array('expense_tracking', $capabilities)): ?>
+                    <div class="glass-card fade-in-up" id="expenseTrackingCard" style="cursor: pointer;" onclick="window.location.href='../Expenses Page/expenses.php'">
+                        <div class="card-header">
+                            <h2 class="card-title">Expense Tracking</h2>
+                            <a href="../Expenses Page/expenses.php" class="card-action">View Details</a>
+                        </div>
+                        <div class="expense-chart">
+                            <div class="chart-circle" style="width: 120px; height: 120px;">
+                                <div class="chart-center">
+                                    <?php 
+                                    $totalExpenses = 0;
+                                    if ($expenseData) {
+                                        foreach ($expenseData as $expense) {
+                                            $totalExpenses += $expense['total'];
+                                        }
                                     }
-                                }
-                                ?>
-                                <div class="chart-total">৳<?php echo number_format($totalExpenses, 0); ?></div>
-                                <div class="chart-label">Total Expenses</div>
+                                    ?>
+                                    <div class="chart-total" style="font-size: 1.2rem;">৳<?php echo number_format($totalExpenses, 0); ?></div>
+                                    <div class="chart-label" style="font-size: 0.8rem;">Total Expenses</div>
+                                </div>
+                            </div>
+                            <div class="expense-legend" style="margin-top: 1rem;">
+                                <?php if ($expenseData): ?>
+                                    <?php 
+                                    $colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'];
+                                    $colorIndex = 0;
+                                    $displayCount = 0;
+                                    foreach ($expenseData as $expense): 
+                                        if ($displayCount >= 3) break; // Show only top 3 categories
+                                    ?>
+                                    <div class="legend-item" style="font-size: 0.85rem;">
+                                        <div class="legend-dot" style="background: <?php echo $colors[$colorIndex % count($colors)]; ?>; width: 8px; height: 8px;"></div>
+                                        <span class="legend-text"><?php echo $expense['category']; ?></span>
+                                        <span class="legend-amount">৳<?php echo number_format($expense['total'], 0); ?></span>
+                                    </div>
+                                    <?php 
+                                    $colorIndex++;
+                                    $displayCount++;
+                                    endforeach; ?>
+                                <?php else: ?>
+                                    <div class="legend-item" style="font-size: 0.85rem;">
+                                        <div class="legend-dot" style="background: #667eea; width: 8px; height: 8px;"></div>
+                                        <span class="legend-text">No expenses yet</span>
+                                        <span class="legend-amount">৳0</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        <div class="expense-legend">
-                            <?php if ($expenseData): ?>
-                                <?php 
-                                $colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe'];
-                                $colorIndex = 0;
-                                foreach ($expenseData as $expense): 
-                                ?>
-                                <div class="legend-item">
-                                    <div class="legend-dot" style="background: <?php echo $colors[$colorIndex % count($colors)]; ?>;"></div>
-                                    <span class="legend-text"><?php echo $expense['category']; ?></span>
-                                    <span class="legend-amount">৳<?php echo number_format($expense['total'], 0); ?></span>
-                                </div>
-                                <?php 
-                                $colorIndex++;
-                                endforeach; ?>
-                            <?php else: ?>
-                                <div class="legend-item">
-                                    <div class="legend-dot" style="background: #667eea;"></div>
-                                    <span class="legend-text">No expenses yet</span>
-                                    <span class="legend-amount">৳0</span>
-                                </div>
-                            <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
+                    
+                    <!-- Quick Payment -->
+                    <?php if (in_array('expense_tracking', $capabilities)): ?>
+                    <div class="glass-card fade-in-up" style="cursor: pointer;" onclick="window.location.href='../Payment Page/payment.php'">
+                        <div class="card-header">
+                            <h2 class="card-title">Quick Payment</h2>
+                            <a href="../Payment Page/payment.php" class="card-action">Go to Payments</a>
+                        </div>
+                        <div style="padding: 1rem; color: rgba(255,255,255,0.8); font-size: 0.9rem;">
+                            Click to proceed to the Payment page and complete a payment.
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
-                
-                <!-- Quick Payment -->
-                <?php if (in_array('expense_tracking', $capabilities)): ?>
-                <div class="glass-card fade-in-up" style="cursor: pointer;" onclick="window.location.href='../Payment Page/payment.php'">
-                    <div class="card-header">
-                        <h2 class="card-title">Quick Payment</h2>
-                        <a href="../Payment Page/payment.php" class="card-action">Go to Payments</a>
-                    </div>
-                    <div style="padding: 1rem; color: rgba(255,255,255,0.8);">
-                        Click to proceed to the Payment page and complete a payment.
-                    </div>
-                </div>
-                <?php endif; ?>
             </div>
 
         </main>

@@ -37,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function () {
             submitButton.disabled = true;
             submitButton.textContent = "Logging in...";
 
-            // Send login request to PHP backend (port 8080)
-            fetch('http://localhost:8080/Ekta-Tay/backend/login.php', {
+            // Send login request to PHP backend
+            fetch('../backend/login.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email, password: password })
@@ -49,9 +49,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     submitButton.textContent = "LOGIN";
 
                     if (data.success) {
-                        alert("Login successful!");
                         // Redirect to dashboard
-                        window.location.href = data.redirect_url || "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php";
+                        window.location.href = data.redirect_url || "../Dashboard/dashboard.php";
                     } else {
                         alert("Login failed: " + data.message);
                     }

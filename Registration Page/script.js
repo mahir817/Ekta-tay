@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         // Send to backend
-        fetch('http://localhost:8080/Ekta-Tay/backend/register.php', {
+        fetch('../backend/register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -194,8 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 submitButton.disabled = false;
 
                 if (data.success) {
-                    alert("Registration successful!");
-                    window.location.href = data.redirect_url || "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.html";
+                    window.location.href = data.redirect_url || "../Dashboard/dashboard.php";
                 } else {
                     alert("Registration failed: " + data.message);
                 }

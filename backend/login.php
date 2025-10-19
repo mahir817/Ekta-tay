@@ -64,7 +64,7 @@ try {
 
     echo json_encode([
         "success" => true,
-        "redirect_url" => "http://localhost:8080/Ekta-Tay/Dashboard/dashboard.php"
+        "redirect_url" => "../Dashboard/dashboard.php"
     ]);
 
 } catch(PDOException $e) {

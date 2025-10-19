@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <?php if (in_array('Jobs', $availableCapabilities)): ?>
                 <li class="nav-item">
-                    <a href="../Modules/Jobs/jobs_listings.php" class="nav-link">
+                    <a href="../Modules/Jobs/jobs.php" class="nav-link">
                         <i class="nav-icon fas fa-briefcase"></i>
                         Jobs
                     </a>
@@ -465,7 +465,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <?php if (in_array('Tutors', $availableCapabilities)): ?>
                 <li class="nav-item">
-                    <a href="../Modules/Tuitions/tuitions_listings.php" class="nav-link">
+                    <a href="../Modules/Jobs/jobs.php?tab=tuition" class="nav-link">
                         <i class="nav-icon fas fa-graduation-cap"></i>
                         Tuition
                     </a>
@@ -670,17 +670,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div style="margin-top: 20px; display:flex; gap:10px;">
                         <a href="../Dashboard/dashboard.php" class="btn" style="text-decoration:none; padding:10px 14px; background:#4CAF50; color:#fff; border-radius:8px;">Return to Dashboard</a>
                         <a href="post_service.php" class="btn" style="text-decoration:none; padding:10px 14px; background:#3f51b5; color:#fff; border-radius:8px;">Post Another</a>
-                        <a href="../Modules/Services/service_details.php?id=<?php echo (int)$postedServiceId; ?>" class="btn" style="text-decoration:none; padding:10px 14px; background:#009688; color:#fff; border-radius:8px;">View Details</a>
-                        <?php
-                        $listUrl = '';
-                        if ($postedSummary['type'] === 'housing') { $listUrl = '../Modules/Housing/housing.php'; }
-                        if ($postedSummary['type'] === 'job') { $listUrl = '../Modules/Jobs/jobs_listings.php'; }
-                        if ($postedSummary['type'] === 'food') { $listUrl = '../Modules/Services/services_listings.php'; }
-                        if ($postedSummary['type'] === 'tuition') { $listUrl = '../Modules/Jobs/jobs_listings.php?tab=tuition'; }
-                        if ($listUrl) {
-                            echo '<a href="' . htmlspecialchars($listUrl) . '" class="btn" style="text-decoration:none; padding:10px 14px; background:#ff9800; color:#fff; border-radius:8px;">View in Listings</a>'; 
-                        }
-                        ?>
                     </div>
                 </div>
 <?php else: ?>

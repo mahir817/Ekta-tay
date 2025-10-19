@@ -58,8 +58,10 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
         <nav class="sidebar">
             <div class="sidebar-header">
                 <div class="logo">
-                    <img src="../images/logo.png" alt="Ektate Logo" class="logo-img" />
-                    <div class="logo-text">Ekta-tay</div>
+                    <a href="../Dashboard/dashboard.php" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                        <img src="../images/logo.png" alt="Ektate Logo" class="logo-img" />
+                        <div class="logo-text">Ekta-tay</div>
+                    </a>
                 </div>
             </div>
             

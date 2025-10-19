@@ -7,7 +7,7 @@ header('Content-Type: application/json');
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode([]);
+    echo json_encode(['error' => 'User not logged in']);
     exit;
 }
 
@@ -16,21 +16,21 @@ $user_id = $_SESSION['user_id'];
 try {
     // Get user's job and tuition posts using unified schema
     $sql = "SELECT s.*, 
-                   COALESCE(j.job_type, NULL) AS job_type,
-                   COALESCE(j.company, NULL) AS company,
-                   COALESCE(j.experience_level, NULL) AS experience_level,
-                   COALESCE(j.work_type, NULL) AS work_type,
-                   t.subject AS subject,
-                   t.class_level AS class_level,
-                   t.tuition_type AS tuition_type,
-                   t.student_count AS student_count,
-                   t.schedule AS schedule,
-                   t.gender_preference AS gender_preference,
-                   (SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id) as application_count,
-                   (SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id AND ja.status = 'accepted') as hired_count
+                   j.job_type,
+                   j.company,
+                   j.experience_level,
+                   j.work_type,
+                   t.subject,
+                   t.class_level,
+                   t.tuition_type,
+                   t.student_count,
+                   t.schedule,
+                   t.gender_preference,
+                   COALESCE((SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id), 0) as application_count,
+                   COALESCE((SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id AND ja.status = 'accepted'), 0) as hired_count
             FROM services s 
-            LEFT JOIN jobs j ON s.type = 'job' AND s.service_id = j.service_id
-            LEFT JOIN tuitions t ON s.type = 'tuition' AND s.service_id = t.service_id
+            LEFT JOIN jobs j ON s.service_id = j.service_id AND s.type = 'job'
+            LEFT JOIN tuitions t ON s.service_id = t.service_id AND s.type = 'tuition'
             WHERE s.user_id = ? AND s.type IN ('job', 'tuition')
             ORDER BY s.created_at DESC";
     
@@ -50,7 +50,7 @@ try {
             'type' => $post['type'],
             'status' => $post['status'],
             'created_at' => $post['created_at'],
-            'application_count' => $post['application_count'],
+            'applications' => $post['application_count'],
             'hired_count' => $post['hired_count']
         ];
 

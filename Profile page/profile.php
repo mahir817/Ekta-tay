@@ -52,21 +52,15 @@ $user = $userStmt->fetch(PDO::FETCH_ASSOC);
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200">
+                        <a href="../Modules/Jobs/jobs.php" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200">
                             <i class="fas fa-briefcase mr-3"></i>
                             Jobs
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200">
+                        <a href="../Modules/Jobs/jobs.php?tab=tuition" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200">
                             <i class="fas fa-graduation-cap mr-3"></i>
                             Tuition
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center px-4 py-3 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200">
-                            <i class="fas fa-utensils mr-3"></i>
-                            Food
                         </a>
                     </li>
                     <li>

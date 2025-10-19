@@ -7,11 +7,12 @@ header('Content-Type: application/json');
 
 try {
     // Build the query with filters using unified jobs table
-    $sql = "SELECT s.*, j.*, u.name, u.email, u.phone
+    $sql = "SELECT s.*, j.*, t.*, u.name, u.email, u.phone
             FROM services s 
-            INNER JOIN jobs j ON s.service_id = j.service_id 
+            LEFT JOIN jobs j ON s.service_id = j.service_id AND s.type = 'job'
+            LEFT JOIN tuitions t ON s.service_id = t.service_id AND s.type = 'tuition'
             INNER JOIN users u ON s.user_id = u.id 
-            WHERE s.type IN ('job', 'tuition') AND j.status = 'active'";
+            WHERE s.type IN ('job', 'tuition')";
     
     $params = [];
 
@@ -72,22 +73,22 @@ try {
 
     // Tuition-specific filters
     if (isset($_GET['subject']) && !empty($_GET['subject'])) {
-        $sql .= " AND j.subject = ?";
+        $sql .= " AND t.subject = ?";
         $params[] = trim($_GET['subject']);
     }
 
     if (isset($_GET['class_level']) && !empty($_GET['class_level'])) {
-        $sql .= " AND j.class_level = ?";
+        $sql .= " AND t.class_level = ?";
         $params[] = trim($_GET['class_level']);
     }
 
     if (isset($_GET['tuition_type']) && !empty($_GET['tuition_type'])) {
-        $sql .= " AND j.tuition_type = ?";
+        $sql .= " AND t.tuition_type = ?";
         $params[] = trim($_GET['tuition_type']);
     }
 
     if (isset($_GET['gender_preference']) && !empty($_GET['gender_preference'])) {
-        $sql .= " AND j.gender_preference = ?";
+        $sql .= " AND t.gender_preference = ?";
         $params[] = trim($_GET['gender_preference']);
     }
 
@@ -121,17 +122,17 @@ try {
 
         // Add type-specific fields based on service type
         if ($row['type'] === 'job') {
-            $formatted_item['job_type'] = $row['job_type'];
-            $formatted_item['company'] = $row['company'];
-            $formatted_item['experience'] = $row['experience_level'];
-            $formatted_item['work_type'] = $row['work_type'];
+            $formatted_item['job_type'] = $row['job_type'] ?? null;
+            $formatted_item['company'] = $row['company'] ?? null;
+            $formatted_item['experience'] = $row['experience_level'] ?? null;
+            $formatted_item['work_type'] = $row['work_type'] ?? null;
         } elseif ($row['type'] === 'tuition') {
-            $formatted_item['subject'] = $row['subject'];
-            $formatted_item['class_level'] = $row['class_level'];
-            $formatted_item['tuition_type'] = $row['tuition_type'];
-            $formatted_item['student_count'] = $row['student_count'];
-            $formatted_item['schedule'] = $row['schedule'];
-            $formatted_item['gender_preference'] = $row['gender_preference'];
+            $formatted_item['subject'] = $row['subject'] ?? null;
+            $formatted_item['class_level'] = $row['class_level'] ?? null;
+            $formatted_item['tuition_type'] = $row['tuition_type'] ?? null;
+            $formatted_item['student_count'] = $row['student_count'] ?? null;
+            $formatted_item['schedule'] = $row['schedule'] ?? null;
+            $formatted_item['gender_preference'] = $row['gender_preference'] ?? null;
         }
 
         $formatted_results[] = $formatted_item;

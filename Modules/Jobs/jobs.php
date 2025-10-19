@@ -123,6 +123,13 @@ $availableCapabilities = array_unique($availableCapabilities);
             <?php endif; ?>
             
             <li class="nav-item">
+                <a href="../../Post Service Page/post_service.php" class="nav-link">
+                    <i class="nav-icon fas fa-plus-circle"></i>
+                    Post Service
+                </a>
+            </li>
+            
+            <li class="nav-item">
                 <a href="../../Payment Page/payment.php" class="nav-link">
                     <i class="nav-icon fas fa-credit-card"></i>
                     Payment
