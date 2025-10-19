@@ -406,9 +406,16 @@ if (empty($payment_context)) {
                                 <div class="divider"></div>
                             <?php endif; ?>
 
+                            <?php if (empty($payment_context['reference_id'])): ?>
+                            <div class="form-group" style="margin-bottom: 12px;">
+                                <label for="customAmount">Amount</label>
+                                <input type="number" id="customAmount" min="0" step="0.01" value="<?php echo htmlspecialchars((string)($payment_context['amount'] ?? 0)); ?>" placeholder="Enter amount">
+                            </div>
+                            <?php endif; ?>
+
                             <div class="summary-row">
                                 <span>Subtotal</span>
-                                <span class="amount" id="subtotal">৳<?php echo number_format($payment_context['amount'], 2); ?></span>
+                                <span class="amount" id="subtotal">৳<?php echo number_format((float)($payment_context['amount'] ?? 0), 2); ?></span>
                             </div>
                             <div class="summary-row">
                                 <span>Service Fee</span>

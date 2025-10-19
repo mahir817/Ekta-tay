@@ -367,11 +367,7 @@ function createMyPostCard(post) {
 
 // ====== Modal Functions ======
 function openPostForm() {
-  document.getElementById("postModal")?.classList.remove("hidden");
-  // Reset form and show/hide conditional fields
-  const form = document.getElementById("postJobForm");
-  if (form) form.reset();
-  toggleConditionalFields();
+  window.location.href = "../../Post Service Page/post_service.php";
 }
 
 function closePostForm() {
@@ -379,7 +375,7 @@ function closePostForm() {
 }
 
 function openTuitionPostForm() {
-  document.getElementById("tuitionPostModal")?.classList.remove("hidden");
+  window.location.href = "../../Post Service Page/post_service.php";
 }
 
 function closeTuitionPostForm() {

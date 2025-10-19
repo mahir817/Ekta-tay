@@ -15,11 +15,22 @@ $user_id = $_SESSION['user_id'];
 
 try {
     // Get user's job and tuition posts using unified schema
-    $sql = "SELECT s.*, j.*,
-            (SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id) as application_count,
-            (SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id AND ja.status = 'accepted') as hired_count
+    $sql = "SELECT s.*, 
+                   COALESCE(j.job_type, NULL) AS job_type,
+                   COALESCE(j.company, NULL) AS company,
+                   COALESCE(j.experience_level, NULL) AS experience_level,
+                   COALESCE(j.work_type, NULL) AS work_type,
+                   t.subject AS subject,
+                   t.class_level AS class_level,
+                   t.tuition_type AS tuition_type,
+                   t.student_count AS student_count,
+                   t.schedule AS schedule,
+                   t.gender_preference AS gender_preference,
+                   (SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id) as application_count,
+                   (SELECT COUNT(*) FROM job_applications ja WHERE ja.service_id = s.service_id AND ja.status = 'accepted') as hired_count
             FROM services s 
-            INNER JOIN jobs j ON s.service_id = j.service_id
+            LEFT JOIN jobs j ON s.type = 'job' AND s.service_id = j.service_id
+            LEFT JOIN tuitions t ON s.type = 'tuition' AND s.service_id = t.service_id
             WHERE s.user_id = ? AND s.type IN ('job', 'tuition')
             ORDER BY s.created_at DESC";
     

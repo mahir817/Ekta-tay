@@ -320,7 +320,7 @@ foreach ($postingCaps as $cap) {
                 <?php endif; ?>
 
                 <?php if (in_array('Tutors', $availableCapabilities)): ?>
-                <div class="stat-card fade-in-up">
+                <div class="stat-card fade-in-up" style="cursor: pointer;" onclick="window.location.href='../Modules/Jobs/jobs.php?tab=tuition'">
                     <div class="stat-header">
                         <span class="stat-title">Tutors</span>
                         <div class="stat-icon">
@@ -380,7 +380,7 @@ foreach ($postingCaps as $cap) {
                         <?php else: ?>
                         <?php foreach ($activities as $activity): ?>
                         <li class="activity-item">
-                            <div class="activity-icon"><?php echo htmlspecialchars($activity['icon']); ?></div>
+                                <div class="activity-icon"><?php echo htmlspecialchars((!empty($activity['icon']) && $activity['icon'] !== '????') ? $activity['icon'] : '📝'); ?></div>
                             <div class="activity-content">
                                 <div class="activity-title"><?php echo htmlspecialchars($activity['title']); ?></div>
                                 <?php if (!empty($activity['description'])): ?>

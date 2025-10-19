@@ -79,15 +79,25 @@ function ensurePostServiceSchema(PDO $pdo): void {
             company VARCHAR(150) NULL,
             experience_level ENUM('entry','junior','mid','senior') NULL,
             work_type ENUM('onsite','remote','hybrid') NULL,
-            salary_min DECIMAL(10,2) NULL,
-            salary_max DECIMAL(10,2) NULL,
-            requirements TEXT NULL,
-            benefits TEXT NULL,
-            application_deadline DATE NULL,
             status ENUM('active','closed') NOT NULL DEFAULT 'active',
             PRIMARY KEY (id),
             UNIQUE KEY uniq_jobs_service_id (service_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+        // Ensure critical job columns exist on older schemas
+        foreach ([
+            ['experience_level', "ADD COLUMN experience_level ENUM('entry','junior','mid','senior') NULL AFTER company"],
+            ['work_type', "ADD COLUMN work_type ENUM('onsite','remote','hybrid') NULL AFTER experience_level"],
+            ['salary_min', "ADD COLUMN salary_min DECIMAL(10,2) NULL AFTER work_type"],
+            ['salary_max', "ADD COLUMN salary_max DECIMAL(10,2) NULL AFTER salary_min"],
+            ['requirements', "ADD COLUMN requirements TEXT NULL AFTER salary_max"],
+            ['benefits', "ADD COLUMN benefits TEXT NULL AFTER requirements"],
+            ['application_deadline', "ADD COLUMN application_deadline DATE NULL AFTER benefits"],
+            ['status', "ADD COLUMN status ENUM('active','closed') NOT NULL DEFAULT 'active' AFTER application_deadline"]
+        ] as $colDef) {
+            $col = $pdo->query("SHOW COLUMNS FROM jobs LIKE '".$colDef[0]."'")->fetch(PDO::FETCH_ASSOC);
+            if (!$col) { $pdo->exec("ALTER TABLE jobs " . $colDef[1]); }
+        }
 
         // tuitions table
         $pdo->exec("CREATE TABLE IF NOT EXISTS tuitions (

@@ -40,10 +40,21 @@ function loadPaymentContext() {
             paymentContext = {
                 type: 'Service Payment',
                 title: 'Payment',
-                amount: 1000,
+                amount: 0,
                 transaction_type: 'service_fee'
             };
         }
+    }
+    // If no reference and a custom amount field exists, sync amount from user input
+    const customAmount = document.getElementById('customAmount');
+    if (customAmount) {
+        const updateAmount = () => {
+            const val = parseFloat(customAmount.value || '0');
+            paymentContext.amount = isNaN(val) ? 0 : val;
+            updateOrderSummary();
+        };
+        customAmount.addEventListener('input', updateAmount);
+        updateAmount();
     }
 }
 
@@ -323,7 +334,7 @@ function getReturnUrl(transactionType) {
 // Order Summary Calculation
 function updateOrderSummary() {
     // Get base amount from context
-    const baseAmount = paymentContext.amount || 1000;
+    const baseAmount = Number(paymentContext.amount || 0);
     
     // Get selected payment method
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value || 'card';
