@@ -178,8 +178,7 @@ if (isset($_SESSION['user_id'])) {
   <!-- Logo Header -->
   <div class="logo-header">
     <a href="../../Dashboard/dashboard.php" class="logo-link">
-      <img src="../../images/logo.png" alt="Ekta-tay Logo" class="logo-img" />
-      <span class="logo-text">Ekta-tay</span>
+      <span class="logo-text">Housing</span>
     </a>
   </div>
 
@@ -315,7 +314,7 @@ if (isset($_SESSION['user_id'])) {
       </div>
     </div>
 
-{{ ... }}
+
     <div class="filters">
       <input type="text" id="searchLocation" placeholder="Search by location..." onkeyup="handleSearch()">
       <select id="rentRange" onchange="handleSearch()">
