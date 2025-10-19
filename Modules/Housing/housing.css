@@ -152,19 +152,20 @@
 }
 
 .logout-item:hover {
-    background: rgba(255, 107, 107, 0.1);
     color: #ff6b6b;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: url('../../images/dashboard2.jpg') no-repeat center center fixed;
+    background-image: url('../../images/dashboard3.jpg');
+    background-attachment: fixed;
     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     min-height: 100vh;
     margin: 0;
     padding: 0;
 }
-
 /* Sidebar Styles */
 .sidebar {
     position: fixed;

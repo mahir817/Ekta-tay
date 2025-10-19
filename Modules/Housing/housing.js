@@ -101,30 +101,27 @@ function displayHousingData(data) {
                 <span class="detail-item">${h.bathrooms} Bath${h.bathrooms > 1 ? 's' : ''}</span>
                 ${h.size_sqft ? `<span class="detail-item">${h.size_sqft} sqft</span>` : ''}
                 <span class="detail-item">${h.furnished_status}</span>
-            </div>
         `;
 
         const availabilityInfo = h.available_from ?
             `<p class="availability">Available from: ${new Date(h.available_from).toLocaleDateString()}</p>` : '';
 
-        const negotiableText = h.negotiable ? '<span class="negotiable">Negotiable</span>' : '';
-
         list.innerHTML += `
             <div class="card housing-card">
                 <div class="card-header">
                     <h3>${h.title}</h3>
-                    ${verificationBadge}
+                    <span class="rent">৳${h.rent}</span>
                 </div>
                 <div class="card-body">
-                    <p class="location">📍 ${h.housing_location || h.location || 'Location not specified'}</p>
-                    ${h.coordinates ? `<p class="coordinates">🗺️ Coordinates: ${h.coordinates}</p>` : ''}
-                    ${h.generalized_location ? `<p class="generalized-location">🏙️ Area: ${h.generalized_location}</p>` : ''}
-                    <p class="rent">Rent: ৳${h.rent}</p>
-                    ${propertyDetails}
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> ${h.location}</p>
+                    <div class="property-details">
+                        <span class="property-type">${h.property_type}</span>
+                        <span class="bedrooms">${h.bedrooms} bed${h.bedrooms > 1 ? 's' : ''}</span>
+                        <span class="bathrooms">${h.bathrooms} bath${h.bathrooms > 1 ? 's' : ''}</span>
+                    </div>
                     <p class="description">${h.description}</p>
                     ${availabilityInfo}
                     <div class="card-footer">
-                        ${negotiableText}
                         <div class="card-actions">
                             <button class="details-btn" onclick="viewHousingDetails(${h.id})">
                                 <i class="fas fa-eye"></i> Details

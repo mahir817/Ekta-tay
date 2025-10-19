@@ -1,6 +1,52 @@
 <?php
-// Gracefully include session guard if available
-@include __DIR__ . "/../../backend/session.php";
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in, if not redirect to login
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../../Login Page/login.html");
+    exit();
+}
+
+require_once "../../backend/db.php";
+
+// Get user information
+$userStmt = $pdo->prepare("SELECT name, email FROM users WHERE id = ?");
+$userStmt->execute([$_SESSION['user_id']]);
+$user = $userStmt->fetch(PDO::FETCH_ASSOC);
+
+// Get user capabilities
+$capStmt = $pdo->prepare("
+    SELECT c.capability_name 
+    FROM capabilities c 
+    JOIN user_capabilities uc ON c.id = uc.capability_id 
+    WHERE uc.user_id = ?
+");
+$capStmt->execute([$_SESSION['user_id']]);
+$capabilities = $capStmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Capability mapping for display
+$capabilityMap = [
+    'find_room' => 'Housing',
+    'offer_room' => 'Housing',
+    'find_job' => 'Jobs',
+    'offer_job' => 'Jobs',
+    'find_tutor' => 'Tutors',
+    'offer_tutoring' => 'Tutors',
+    'find_service' => 'Services',
+    'offer_service' => 'Services',
+    'expense_tracking' => 'Expenses'
+];
+
+$availableCapabilities = [];
+foreach ($capabilities as $cap) {
+    if (isset($capabilityMap[$cap])) {
+        $availableCapabilities[] = $capabilityMap[$cap];
+    }
+}
+$availableCapabilities = array_unique($availableCapabilities);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,11 +54,121 @@
   <meta charset="UTF-8">
   <title>Jobs | Ekta-tay</title>
   <link rel="stylesheet" href="jobs.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="jobs.js" defer></script>
 </head>
 <body>
 
-<div class="jobs-container">
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img src="../../images/logo.png" alt="Ektate Logo" class="logo-img" />
+                <div class="logo-text">Ekta-tay</div>
+            </div>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="../../Dashboard/dashboard.php" class="nav-link">
+                    <i class="nav-icon fas fa-home"></i>
+                    Dashboard
+                </a>
+            </li>
+            
+            <?php if (in_array('Housing', $availableCapabilities)): ?>
+            <li class="nav-item">
+                <a href="../Housing/housing.php" class="nav-link">
+                    <i class="nav-icon fas fa-home"></i>
+                    Housing
+                </a>
+            </li>
+            <?php endif; ?>
+            
+            <?php if (in_array('Jobs', $availableCapabilities)): ?>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="nav-icon fas fa-briefcase"></i>
+                    Jobs
+                </a>
+            </li>
+            <?php endif; ?>
+            
+            <?php if (in_array('Tutors', $availableCapabilities)): ?>
+            <li class="nav-item">
+                <a href="jobs.php?tab=tuition" class="nav-link">
+                    <i class="nav-icon fas fa-graduation-cap"></i>
+                    Tuition
+                </a>
+            </li>
+            <?php endif; ?>
+            
+            <?php if (in_array('Services', $availableCapabilities)): ?>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon fas fa-wrench"></i>
+                    Services
+                </a>
+            </li>
+            <?php endif; ?>
+            
+            <?php if (in_array('Expenses', $availableCapabilities)): ?>
+            <li class="nav-item">
+                <a href="../../Expenses Page/expenses.php" class="nav-link">
+                    <i class="nav-icon fas fa-wallet"></i>
+                    Expenses
+                </a>
+            </li>
+            <?php endif; ?>
+            
+            <li class="nav-item">
+                <a href="../../Payment Page/payment.php" class="nav-link">
+                    <i class="nav-icon fas fa-credit-card"></i>
+                    Payment
+                </a>
+            </li>
+            
+            <li class="nav-item">
+                <a href="../../Profile page/profile.php" class="nav-link">
+                    <i class="nav-icon fas fa-cog"></i>
+                    Manage
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1 class="dashboard-title">Jobs</h1>
+            <div class="user-profile" onclick="toggleDropdown()">
+                <div class="user-avatar">
+                    <?php echo strtoupper(substr($user['name'], 0, 1)); ?>
+                </div>
+                <div class="user-info">
+                    <span class="user-name">
+                    <?php echo htmlspecialchars(explode(' ', $user['name'])[0]); ?>
+                    </span>
+                    <div class="user-dropdown">
+                        <div class="dropdown-menu" id="userDropdown">
+                            <div class="dropdown-item" onclick="window.location.href='../../Profile page/profile.php'">
+                                <i class="fas fa-user"></i>
+                                <span>Profile</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item logout-item" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="jobs-container">
 
   <!-- Top Navigation Tabs -->
   <div class="tabs glass-card">
@@ -341,6 +497,40 @@
     </form>
   </div>
 </div>
+
+        </div>
+    </main>
+</div>
+
+<script>
+// Dropdown functionality
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('show');
+}
+
+function closeDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.remove('show');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const userProfile = document.querySelector('.user-profile');
+    const dropdown = document.getElementById('userDropdown');
+    
+    if (!userProfile.contains(event.target)) {
+        closeDropdown();
+    }
+});
+
+// Logout function
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        window.location.href = '../../backend/logout.php';
+    }
+}
+</script>
 
 </body>
 </html>

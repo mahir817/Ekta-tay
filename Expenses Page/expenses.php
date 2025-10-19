@@ -151,10 +151,6 @@ $availableCapabilities = array_unique(array_map(function($cap) use ($capabilityM
                                     <i class="fas fa-user"></i>
                                     <span>Profile</span>
                                 </div>
-                                <div class="dropdown-item">
-                                    <i class="fas fa-cog"></i>
-                                    <span>Settings</span>
-                                </div>
                                 <div class="dropdown-divider"></div>
                                 <div class="dropdown-item logout-item" onclick="logout()">
                                     <i class="fas fa-sign-out-alt"></i>

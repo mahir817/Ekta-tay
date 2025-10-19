@@ -83,30 +83,23 @@ if (isset($_SESSION['user_id'])) {
       </li>
       
       <li class="nav-item">
-        <a href="#" class="nav-link active">
-          <i class="nav-icon fas fa-home"></i>
-          Housing
-        </a>
-      </li>
-      
-      <li class="nav-item">
-        <a href="#" class="nav-link">
+        <a href="../Jobs/jobs.php" class="nav-link">
           <i class="nav-icon fas fa-briefcase"></i>
           Jobs
         </a>
       </li>
       
       <li class="nav-item">
-        <a href="#" class="nav-link">
+        <a href="../Jobs/jobs.php?tab=tuition" class="nav-link">
           <i class="nav-icon fas fa-graduation-cap"></i>
           Tuition
         </a>
       </li>
       
       <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="nav-icon fas fa-wrench"></i>
-          Services
+        <a href="#" class="nav-link active">
+          <i class="nav-icon fas fa-home"></i>
+          Housing
         </a>
       </li>
       
@@ -131,12 +124,7 @@ if (isset($_SESSION['user_id'])) {
         </a>
       </li>
       
-      <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="nav-icon fas fa-question-circle"></i>
-          Help
-        </a>
-      </li>
+      
     </ul>
     
     <!-- User Profile at bottom of sidebar -->
@@ -171,10 +159,6 @@ if (isset($_SESSION['user_id'])) {
               <div class="dropdown-item" onclick="window.location.href='../../Profile page/profile.php'">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>
-              </div>
-              <div class="dropdown-item">
-                <i class="fas fa-cog"></i>
-                <span>Settings</span>
               </div>
               <div class="dropdown-divider"></div>
               <div class="dropdown-item logout-item" onclick="logout()">
@@ -324,21 +308,14 @@ if (isset($_SESSION['user_id'])) {
           <div class="nearby-stats">
             <div class="mini-stat">
               <span class="mini-stat-value" id="nearbyNew">3</span>
-              <span class="mini-stat-label">New Today</span>
-            </div>
-            <div class="mini-stat">
-              <span class="mini-stat-value" id="nearbyAffordable">12</span>
-              <span class="mini-stat-label">In Budget</span>
-            </div>
-            <div class="mini-stat">
-              <span class="mini-stat-value" id="nearbyPremium">9</span>
-              <span class="mini-stat-label">Premium</span>
+              <span class="mini-stat-label">New today</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+{{ ... }}
     <div class="filters">
       <input type="text" id="searchLocation" placeholder="Search by location..." onkeyup="handleSearch()">
       <select id="rentRange" onchange="handleSearch()">
@@ -384,38 +361,6 @@ if (isset($_SESSION['user_id'])) {
       </div>
     </div>
 
-    <div class="info-grid">
-      <!-- My House Info -->
-      <div class="card">
-        <div class="section-header" style="margin:0 0 8px 0;">
-          <h3>House Details</h3>
-          <button class="add-btn" onclick="openEditHouse()">Edit</button>
-        </div>
-        <div id="myHouseInfo">
-          <p>No house linked yet.</p>
-        </div>
-      </div>
-
-      
-
-      <!-- Expenses Analysis -->
-      <div class="card">
-        <div class="section-header" style="margin:0 0 8px 0;">
-          <h3>Expenses</h3>
-          <button class="add-btn" onclick="openExpenseForm()">Add Expense</button>
-        </div>
-        <div class="expense-chart">
-          <div class="chart-circle" id="expenseDonut">
-            <div class="chart-center">
-              <p class="chart-total" id="expenseTotal">৳0</p>
-              <span class="chart-label">This month</span>
-            </div>
-          </div>
-          <div class="expense-legend" id="expenseLegend"></div>
-        </div>
-        <div id="expensesTable" style="margin-top:12px;"></div>
-      </div>
-    </div>
 
     <div class="subsection">
       <h3 style="margin-bottom:10px;">My Housing Posts</h3>

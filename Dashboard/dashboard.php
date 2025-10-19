@@ -142,6 +142,72 @@ if (in_array('expense_tracking', $capabilities)) {
     }
 }
 
+// Get user statistics for the new card
+$userStats = [];
+try {
+    // Get total posts by user
+    $postsStmt = $pdo->prepare("SELECT COUNT(*) FROM services WHERE user_id = ?");
+    $postsStmt->execute([$user_id]);
+    $userStats['total_posts'] = $postsStmt->fetchColumn();
+    
+    // Get total applications by user
+    $applicationsStmt = $pdo->prepare("SELECT COUNT(*) FROM job_applications WHERE user_id = ?");
+    $applicationsStmt->execute([$user_id]);
+    $jobApplications = $applicationsStmt->fetchColumn();
+    
+    // Get housing applications if table exists
+    $housingApplications = 0;
+    try {
+        $housingAppsStmt = $pdo->prepare("SELECT COUNT(*) FROM housing_applications WHERE user_id = ?");
+        $housingAppsStmt->execute([$user_id]);
+        $housingApplications = $housingAppsStmt->fetchColumn();
+    } catch (PDOException $e) {
+        // Housing applications table doesn't exist
+    }
+    
+    $userStats['total_applications'] = $jobApplications + $housingApplications;
+    
+    // Get accepted applications
+    $acceptedJobsStmt = $pdo->prepare("SELECT COUNT(*) FROM job_applications WHERE user_id = ? AND status = 'accepted'");
+    $acceptedJobsStmt->execute([$user_id]);
+    $acceptedJobs = $acceptedJobsStmt->fetchColumn();
+    
+    $acceptedHousing = 0;
+    try {
+        $acceptedHousingStmt = $pdo->prepare("SELECT COUNT(*) FROM housing_applications WHERE user_id = ? AND status = 'accepted'");
+        $acceptedHousingStmt->execute([$user_id]);
+        $acceptedHousing = $acceptedHousingStmt->fetchColumn();
+    } catch (PDOException $e) {
+        // Housing applications table doesn't exist
+    }
+    
+    $userStats['accepted_applications'] = $acceptedJobs + $acceptedHousing;
+    
+    // Get pending applications
+    $pendingJobsStmt = $pdo->prepare("SELECT COUNT(*) FROM job_applications WHERE user_id = ? AND status = 'pending'");
+    $pendingJobsStmt->execute([$user_id]);
+    $pendingJobs = $pendingJobsStmt->fetchColumn();
+    
+    $pendingHousing = 0;
+    try {
+        $pendingHousingStmt = $pdo->prepare("SELECT COUNT(*) FROM housing_applications WHERE user_id = ? AND (status = 'pending' OR status = 'shortlisted')");
+        $pendingHousingStmt->execute([$user_id]);
+        $pendingHousing = $pendingHousingStmt->fetchColumn();
+    } catch (PDOException $e) {
+        // Housing applications table doesn't exist
+    }
+    
+    $userStats['pending_applications'] = $pendingJobs + $pendingHousing;
+    
+} catch (PDOException $e) {
+    $userStats = [
+        'total_posts' => 0,
+        'total_applications' => 0,
+        'accepted_applications' => 0,
+        'pending_applications' => 0
+    ];
+}
+
 // Capability mapping for display
 $capabilityMap = [
     'find_room' => 'Housing',
@@ -278,10 +344,6 @@ foreach ($postingCaps as $cap) {
                                     <i class="fas fa-user"></i>
                                     <span>Profile</span>
                                 </div>
-                                <div class="dropdown-item">
-                                    <i class="fas fa-cog"></i>
-                                    <span>Settings</span>
-                                </div>
                                 <div class="dropdown-divider"></div>
                                 <div class="dropdown-item logout-item" onclick="logout()">
                                     <i class="fas fa-sign-out-alt"></i>
@@ -396,86 +458,6 @@ foreach ($postingCaps as $cap) {
                     </ul>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="glass-card fade-in-up">
-                    <div class="card-header">
-                        <h2 class="card-title">Quick Actions</h2>
-                        <a href="../Profile page/profile.php" class="card-action">Manage Profile</a>
-                    </div>
-                    <div class="quick-actions-grid">
-                        <?php if (in_array('Housing', $availableCapabilities)): ?>
-                        <div class="quick-action-item" onclick="window.location.href='../Modules/Housing/housing.php'">
-                            <div class="action-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <div class="action-content">
-                                <div class="action-title">Find Housing</div>
-                                <div class="action-subtitle">Browse available rooms</div>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <?php if (in_array('Jobs', $availableCapabilities)): ?>
-                        <div class="quick-action-item" onclick="window.location.href='../Modules/Jobs/jobs.php'">
-                            <div class="action-icon">
-                                <i class="fas fa-briefcase"></i>
-                            </div>
-                            <div class="action-content">
-                                <div class="action-title">Find Jobs</div>
-                                <div class="action-subtitle">Explore opportunities</div>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <?php if ($canPostService): ?>
-                        <div class="quick-action-item" onclick="window.location.href='../Post Service Page/post_service.php'">
-                            <div class="action-icon">
-                                <i class="fas fa-plus-circle"></i>
-                            </div>
-                            <div class="action-content">
-                                <div class="action-title">Post Service</div>
-                                <div class="action-subtitle">Create new listing</div>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <?php if (in_array('Expenses', $availableCapabilities)): ?>
-                        <div class="quick-action-item" onclick="window.location.href='../Expenses Page/expenses.php'">
-                            <div class="action-icon">
-                                <i class="fas fa-wallet"></i>
-                            </div>
-                            <div class="action-content">
-                                <div class="action-title">Track Expenses</div>
-                                <div class="action-subtitle">Manage your budget</div>
-                            </div>
-                        </div>
-                        <?php endif; ?>
-                        
-                        <div class="quick-action-item" onclick="window.location.href='../Payment Page/payment.php'">
-                            <div class="action-icon">
-                                <i class="fas fa-credit-card"></i>
-                            </div>
-                            <div class="action-content">
-                                <div class="action-title">Make Payment</div>
-                                <div class="action-subtitle">Pay bills & services</div>
-                            </div>
-                        </div>
-                        
-                        <div class="quick-action-item" onclick="window.location.href='../Profile page/profile.php'">
-                            <div class="action-icon">
-                                <i class="fas fa-user-cog"></i>
-                            </div>
-                            <div class="action-content">
-                                <div class="action-title">Profile Settings</div>
-                                <div class="action-subtitle">Update your info</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Grid -->
-            <div class="content-grid">
                 <!-- Expense Tracking -->
                 <?php if (in_array('expense_tracking', $capabilities)): ?>
                 <div class="glass-card fade-in-up" id="expenseTrackingCard" style="cursor: pointer;" onclick="window.location.href='../Expenses Page/expenses.php'">
@@ -497,18 +479,6 @@ foreach ($postingCaps as $cap) {
                                 <div class="chart-total">৳<?php echo number_format($totalExpenses, 0); ?></div>
                                 <div class="chart-label">Total Expenses</div>
                             </div>
-                            <!-- Animated progress ring -->
-                            <svg class="progress-ring" width="120" height="120">
-                                <circle class="progress-ring-circle" stroke="rgba(255,255,255,0.2)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                                <circle class="progress-ring-progress" stroke="url(#gradient)" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" 
-                                        style="stroke-dasharray: <?php echo 2 * 3.14159 * 52; ?>; stroke-dashoffset: <?php echo 2 * 3.14159 * 52 * (1 - min($totalExpenses / 50000, 1)); ?>;"/>
-                                <defs>
-                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
                         </div>
                         <div class="expense-legend">
                             <?php if ($expenseData): ?>
@@ -536,7 +506,7 @@ foreach ($postingCaps as $cap) {
                     </div>
                 </div>
                 <?php endif; ?>
-
+                
                 <!-- Quick Payment -->
                 <?php if (in_array('expense_tracking', $capabilities)): ?>
                 <div class="glass-card fade-in-up" style="cursor: pointer;" onclick="window.location.href='../Payment Page/payment.php'">
@@ -550,6 +520,7 @@ foreach ($postingCaps as $cap) {
                 </div>
                 <?php endif; ?>
             </div>
+
         </main>
     </div>
 

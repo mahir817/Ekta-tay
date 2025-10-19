@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const housingCard = document.getElementById('housingCard');
     if (housingCard) {
         housingCard.addEventListener('click', function () {
-            window.location.href = 'http://localhost:8080/Ekta-Tay/Modules/housing/housing.php';
+            window.location.href = '../Modules/Housing/housing.php';
         });
     }
     // Redirect Post Service card
     const postServiceCard = document.getElementById('postServiceCard');
     if (postServiceCard) {
         postServiceCard.addEventListener('click', function () {
-            window.location.href = 'http://localhost:8080/Ekta-Tay/Post Service Page/post_service.php';
+            window.location.href = '../Post Service Page/post_service.php';
         });
     }
 });
@@ -35,6 +35,9 @@ function initializeDashboard() {
 
     // Setup user dropdown
     setupUserDropdown();
+
+    // Initialize enhanced statistics
+    initializeEnhancedStats();
 }
 
 function addInteractiveEffects() {
@@ -184,14 +187,13 @@ function handleNavigation(linkText) {
             // Already on dashboard
             break;
         case 'Housing':
-            // Redirect to housing page
-            window.location.href = 'http://localhost:8080/Ekta-Tay/Modules/housing/housing.php';
+            window.location.href = '../Modules/Housing/housing.php';
             break;
         case 'Jobs':
-            showNotification('Jobs module coming soon!', 'info');
+            window.location.href = '../Modules/Jobs/jobs.php';
             break;
         case 'Tuition':
-            showNotification('Tuition module coming soon!', 'info');
+            window.location.href = '../Modules/Jobs/jobs.php?tab=tuition';
             break;
         case 'Services':
             showNotification('Services module coming soon!', 'info');
@@ -372,6 +374,117 @@ function addWelcomeEffect() {
 // Initialize welcome effect
 addWelcomeEffect();
 
+// Enhanced Statistics Functions
+function initializeEnhancedStats() {
+    // Animate stat values with counting effect
+    const statValues = document.querySelectorAll('.stat-item-value');
+    
+    statValues.forEach((element, index) => {
+        const finalValue = element.textContent;
+        
+        // Only animate numeric values
+        if (!isNaN(finalValue) && finalValue !== '') {
+            const targetValue = parseInt(finalValue);
+            element.textContent = '0';
+            
+            // Delay animation based on index for staggered effect
+            setTimeout(() => {
+                animateCounter(element, 0, targetValue, 1000);
+            }, index * 200);
+        }
+    });
+
+    // Add enhanced hover effects for stat items
+    const statItems = document.querySelectorAll('.stat-item');
+    statItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            // Add ripple effect
+            createRippleEffect(this);
+            
+            // Enhance icon animation
+            const icon = this.querySelector('.stat-item-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.15) rotate(10deg)';
+            }
+        });
+
+        item.addEventListener('mouseleave', function() {
+            const icon = this.querySelector('.stat-item-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+            }
+        });
+    });
+}
+
+function animateCounter(element, start, end, duration) {
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue = Math.floor(start + (end - start) * easeOutQuart);
+        
+        element.textContent = currentValue;
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = end; // Ensure final value is exact
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+function createRippleEffect(element) {
+    const ripple = document.createElement('div');
+    ripple.style.cssText = `
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple 0.6s linear;
+        pointer-events: none;
+    `;
+    
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = '50%';
+    ripple.style.top = '50%';
+    ripple.style.transform = 'translate(-50%, -50%) scale(0)';
+    
+    element.appendChild(ripple);
+    
+    // Remove ripple after animation
+    setTimeout(() => {
+        if (ripple.parentNode) {
+            ripple.parentNode.removeChild(ripple);
+        }
+    }, 600);
+}
+
+// Add ripple animation CSS
+const enhancedStyle = document.createElement('style');
+enhancedStyle.textContent = `
+    @keyframes ripple {
+        to {
+            transform: translate(-50%, -50%) scale(2);
+            opacity: 0;
+        }
+    }
+    
+    .stat-item {
+        position: relative;
+        overflow: hidden;
+    }
+`;
+document.head.appendChild(enhancedStyle);
+
 // Add pulse animation CSS
 const style = document.createElement('style');
 style.textContent = `
@@ -414,9 +527,6 @@ function handleDropdownAction(item) {
     switch (itemText) {
         case 'Profile':
             window.location.href = '../Profile page/profile.php';
-            break;
-        case 'Settings':
-            showNotification('Settings page coming soon!', 'info');
             break;
     }
 
