@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 19, 2025 at 04:43 PM
+-- Generation Time: Oct 19, 2025 at 09:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -84,8 +84,9 @@ CREATE TABLE `expenses` (
 
 INSERT INTO `expenses` (`id`, `housing_id`, `user_id`, `name`, `amount`, `due_date`, `status`, `transaction_id`, `created_at`) VALUES
 (2, NULL, 2, 'Food bills of October', 2000.00, '2025-10-31', 'unpaid', NULL, '2025-10-17 14:21:59'),
-(3, NULL, 2, 'Rent of October', 5000.00, '2025-10-31', 'unpaid', NULL, '2025-10-17 14:22:50'),
-(4, NULL, 2, 'UIU Bus fees', 4000.00, '2025-10-30', 'unpaid', NULL, '2025-10-17 14:23:40');
+(3, NULL, 2, 'Rent of October', 5000.00, '2025-10-31', '', NULL, '2025-10-17 14:22:50'),
+(4, NULL, 2, 'UIU Bus fees', 4000.00, '2025-10-30', 'unpaid', NULL, '2025-10-17 14:23:40'),
+(7, NULL, 2, 'Other costs', 1500.00, '2025-10-20', 'paid', NULL, '2025-10-19 19:36:57');
 
 -- --------------------------------------------------------
 
@@ -161,7 +162,8 @@ INSERT INTO `housing` (`housing_id`, `service_id`, `property_type`, `size_sqft`,
 (6, 8, 'room', 200, '2nd', 4, 'semi-furnished', 0, 1, 1, 0, 8500.00, 500.00, 8500.00, '2025-10-05', 'bachelor', 0, 'Good ventilation', NULL, 'pending', NULL, 'available', 'unfurnished', 'occupied', 'Mirpur 10, Road 8, Dhaka', '23.8060,90.3683', 'Dhaka North'),
 (7, 9, 'apartment', 1050, '4th', 6, 'semi-furnished', 1, 3, 2, 2, 28000.00, 1500.00, 56000.00, '2025-10-15', 'family', 1, 'Clean and well-maintained', NULL, 'verified', NULL, 'available', 'unfurnished', 'available', NULL, NULL, NULL),
 (9, 10, 'apartment', 1800, '5th', 10, 'furnished', 2, 3, 3, 3, 85000.00, 3000.00, 170000.00, '2025-11-01', 'family', 1, 'Premium condition, fully furnished with lake view', NULL, 'verified', NULL, 'available', 'furnished', 'available', 'Gulshan 1, Dhaka', '23.7936,90.4154', 'Dhaka North'),
-(12, 13, 'room', 200, '9', 10, 'semi-furnished', 1, 3, 2, 2, 5000.00, 200.00, 5000.00, '2025-10-18', 'bachelor', 0, 'N/A', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Shewrapara, Mirpur', '23.7918626,90.3683716', 'Dhaka North');
+(12, 13, 'room', 200, '9', 10, 'semi-furnished', 1, 3, 2, 2, 5000.00, 200.00, 5000.00, '2025-10-18', 'bachelor', 0, 'N/A', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Shewrapara, Mirpur', '23.7918626,90.3683716', 'Dhaka North'),
+(13, 24, 'apartment', 320, '4', 5, 'semi-furnished', 1, 2, 3, 4, 20000.00, 2500.00, 22222.00, '2025-11-01', 'any', 0, 'g', NULL, 'pending', NULL, 'available', 'unfurnished', 'available', 'Mirpur', '23.3434,4343.223', 'Dhaka North');
 
 -- --------------------------------------------------------
 
@@ -274,6 +276,11 @@ CREATE TABLE `jobs` (
   `company` varchar(100) DEFAULT NULL,
   `experience_level` enum('entry','junior','mid','senior') DEFAULT NULL,
   `work_type` enum('remote','onsite','hybrid') DEFAULT NULL,
+  `salary_min` decimal(10,2) DEFAULT NULL,
+  `salary_max` decimal(10,2) DEFAULT NULL,
+  `requirements` text DEFAULT NULL,
+  `benefits` text DEFAULT NULL,
+  `application_deadline` date DEFAULT NULL,
   `subject` enum('mathematics','physics','chemistry','biology','english','bangla','ict','accounting','economics','business_studies') DEFAULT NULL,
   `class_level` enum('class-1-5','class-6-8','class-9-10','class-11-12','university') DEFAULT NULL,
   `tuition_type` enum('home','online','center','group') DEFAULT NULL,
@@ -284,6 +291,15 @@ CREATE TABLE `jobs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `jobs`
+--
+
+INSERT INTO `jobs` (`job_id`, `service_id`, `job_type`, `company`, `experience_level`, `work_type`, `salary_min`, `salary_max`, `requirements`, `benefits`, `application_deadline`, `subject`, `class_level`, `tuition_type`, `student_count`, `schedule`, `gender_preference`, `status`, `created_at`, `updated_at`) VALUES
+(1, 16, 'full-time', 'sdfsd', 'junior', 'onsite', 1212.00, 3242.00, 'zxcxz', 'zxczx', '2025-10-31', NULL, NULL, NULL, NULL, NULL, NULL, 'active', '2025-10-19 15:49:46', '2025-10-19 15:49:46'),
+(2, 17, 'part-time', 'sadcdsx', 'junior', 'onsite', 2132.00, 323.00, 'scwas', 'wedx', '2025-10-21', NULL, NULL, NULL, NULL, NULL, NULL, 'active', '2025-10-19 19:13:17', '2025-10-19 19:13:17'),
+(3, 23, 'full-time', 'United group', 'junior', 'remote', 100000.00, 20000.00, 'aosdnojans jandsijnas diaunbsdih aihs dih aihs dih aihs d', 'sodnfoj\r\nsndjnsa\r\nlsjdnkjnsd', '2025-10-24', NULL, NULL, NULL, NULL, NULL, NULL, 'active', '2025-10-19 19:24:47', '2025-10-19 19:24:47');
 
 -- --------------------------------------------------------
 
@@ -302,6 +318,15 @@ CREATE TABLE `job_applications` (
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `job_applications`
+--
+
+INSERT INTO `job_applications` (`application_id`, `service_id`, `applicant_id`, `cover_letter`, `phone`, `email`, `status`, `notes`, `created_at`) VALUES
+(1, 22, 19, 'azxcx', '232342342342', 'mahir101748@gmail.com', 'pending', NULL, '2025-10-19 19:34:19'),
+(2, 21, 19, 'sdfcsdc', '232334343434', 'mahir101748@gmail.com', 'pending', NULL, '2025-10-19 19:39:00'),
+(3, 19, 19, 'sdc', '01298239283', 'mahir101748@gmail.com', 'pending', NULL, '2025-10-19 19:41:13');
 
 -- --------------------------------------------------------
 
@@ -561,7 +586,17 @@ INSERT INTO `services` (`service_id`, `user_id`, `title`, `description`, `type`,
 (8, 20, 'Single Room for Bachelor in Mirpur 10', 'Affordable single room available for bachelor. Close to bus stop and market. Includes water, gas, and WiFi.', 'housing', 8500.00, 'Mirpur 10, Dhaka North', '2025-10-04 14:11:22'),
 (9, 17, 'Modern Flat for Rent in Uttara Sector 7', 'A 3-bedroom, 2-bathroom apartment with lift, generator, and parking. Ideal for small families or working professionals.', 'housing', 28000.00, 'Uttara, Dhaka North', '2025-10-04 15:07:04'),
 (10, 19, 'Luxury Apartment in Gulshan 1', 'Fully furnished 3BHK with lake view, 24/7 security, and modern facilities.', 'housing', 85000.00, 'Gulshan 1, Dhaka North', '2025-10-13 14:00:31'),
-(13, 2, 'Single Room Available for Bachelors', 'semi furnished room', 'housing', 5000.00, 'Shewrapara, Mirpur', '2025-10-17 14:11:34');
+(13, 2, 'Single Room Available for Bachelors', 'semi furnished room', 'housing', 5000.00, 'Shewrapara, Mirpur', '2025-10-17 14:11:34'),
+(14, 2, 'ssdcsd', 'sdcsd', 'tuition', 2343.00, 'sdcscd', '2025-10-19 15:36:46'),
+(16, 2, 'asdasd', 'zsdfsd', 'job', 1233.00, 'svcs', '2025-10-19 15:49:46'),
+(17, 2, 'yyyyyyyyy', 'aaaaaaaaaaa', 'job', 1232.00, 'sdcsdc', '2025-10-19 19:13:17'),
+(18, 2, 'qwdsd', 'zxcxc', 'tuition', 1231.00, '121132', '2025-10-19 19:16:54'),
+(19, 2, 'qwdsd', 'zxcxc', 'tuition', 1231.00, '121132', '2025-10-19 19:17:44'),
+(20, 2, 'qwdsd', 'zxcxc', 'tuition', 1231.00, '121132', '2025-10-19 19:17:52'),
+(21, 2, 'qwdsd', 'zxcxc', 'tuition', 1231.00, '121132', '2025-10-19 19:17:57'),
+(22, 2, 'zxc', 'ascxzx', 'tuition', 121.00, '212saxc', '2025-10-19 19:18:45'),
+(23, 2, 'ajdskn aodnoj', 'oiSnmdfocnojsdnojvcnvsojdnvojnsdv', 'job', 23232.00, '323232,23223.232,2323', '2025-10-19 19:24:47'),
+(24, 19, 'House 2', 'ascascax', 'housing', 9000.00, 'Mirpur', '2025-10-19 19:48:19');
 
 -- --------------------------------------------------------
 
@@ -623,6 +658,14 @@ CREATE TABLE `transactions` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`transaction_id`, `user_id`, `transaction_type`, `reference_id`, `reference_type`, `amount`, `service_charge`, `processing_fee`, `total_amount`, `payment_method`, `payment_status`, `transaction_ref`, `card_last_four`, `mobile_number`, `billing_address`, `billing_city`, `billing_postal_code`, `payment_date`, `created_at`, `updated_at`) VALUES
+(1, 2, 'service_fee', NULL, NULL, 1000.00, 0.00, 15.00, 1015.00, 'bkash', 'completed', 'TXN20251019A2203556', NULL, '01999373432', 'Nasimbugh', 'Dhaka', '8340', '2025-10-19 21:56:18', '2025-10-19 15:56:18', '2025-10-19 15:56:18'),
+(2, 2, 'service_fee', NULL, NULL, 1000.00, 0.00, 15.00, 1015.00, 'nagad', 'completed', 'TXN20251019AE68143A', NULL, '01999373432', 'Nasimbugh', 'Dhaka', '8340', '2025-10-19 21:59:35', '2025-10-19 15:59:34', '2025-10-19 15:59:35');
+
 -- --------------------------------------------------------
 
 --
@@ -661,7 +704,13 @@ INSERT INTO `tuitions` (`tuition_id`, `service_id`, `subject`, `class_level`, `t
 (3, 25, 'biology', 'class-9-10', 'online', '1', '4', '', 7, 'asdfd', 546.00, 'active', '2025-10-15 16:25:02'),
 (4, 28, 'chemistry', 'class-6-8', 'home', '2-3', '4', '', 8, 'sfdg', 456.00, 'active', '2025-10-15 17:55:44'),
 (5, 29, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:01:46'),
-(6, 30, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:02:01');
+(6, 30, 'physics', 'class-9-10', 'online', '1', '4', '', 4, 'dvfbg', 354657.00, 'active', '2025-10-15 21:02:01'),
+(0, 14, 'biology', 'class-11-12', 'home', '1', '3 days', 'male', 3, 'cse', 2323.00, 'active', '2025-10-19 15:36:46'),
+(0, 18, 'bangla', 'class-1-5', 'online', '4-6', '2d', 'male', 3, 'cse', 2323.00, 'active', '2025-10-19 19:16:54'),
+(0, 19, 'bangla', 'class-1-5', 'online', '4-6', '2d', 'male', 3, 'cse', 2323.00, 'active', '2025-10-19 19:17:44'),
+(0, 20, 'bangla', 'class-1-5', 'online', '4-6', '2d', 'male', 3, 'cse', 2323.00, 'active', '2025-10-19 19:17:52'),
+(0, 21, 'bangla', 'class-1-5', 'online', '4-6', '2d', 'male', 3, 'cse', 2323.00, 'active', '2025-10-19 19:17:57'),
+(0, 22, 'mathematics', 'class-1-5', 'online', '2-3', '1day', '', 3, 'cse', 500.00, 'active', '2025-10-19 19:18:45');
 
 -- --------------------------------------------------------
 
@@ -823,7 +872,22 @@ INSERT INTO `user_activities` (`id`, `user_id`, `activity_type`, `activity_title
 (9, 2, 'profile_update', 'Updated profile', 'Updated contact information', NULL, '????', '2025-10-17 10:43:25'),
 (10, 2, 'login', 'Logged in', 'Logged into the system', NULL, '????', '2025-10-17 09:43:25'),
 (11, 2, 'housing_application', 'Applied for housing', 'Applied to: 2 BHK Apartment for Rent in Bashundhara R/A', 9, '????', '2025-10-17 14:49:23'),
-(12, 2, 'housing_application', 'Applied for housing', 'Applied to: Single Room for Bachelor in Mirpur 10', 10, '????', '2025-10-19 06:01:54');
+(12, 2, 'housing_application', 'Applied for housing', 'Applied to: Single Room for Bachelor in Mirpur 10', 10, '????', '2025-10-19 06:01:54'),
+(13, 2, 'tuition_post', 'Posted new tuition', 'Posted: ssdcsd', 14, '????', '2025-10-19 15:36:46'),
+(14, 2, 'job_post', 'Posted new job', 'Posted: asdasd', 16, '????', '2025-10-19 15:49:46'),
+(15, 2, '', 'Payment Successful', 'Paid ৳1,015.00 via BKASH', 1, '????', '2025-10-19 15:56:18'),
+(16, 2, '', 'Payment Successful', 'Paid ৳1,015.00 via NAGAD', 2, '????', '2025-10-19 15:59:35'),
+(17, 2, 'expense_added', 'Added new expense', 'Added: GYM - ৳500', 5, '????', '2025-10-19 17:51:20'),
+(18, 2, 'expense_added', 'Added new expense', 'Added: Semester fees - ৳15,000', 6, '????', '2025-10-19 17:53:59'),
+(19, 2, 'job_post', 'Posted new job', 'Posted: yyyyyyyyy', 17, '????', '2025-10-19 19:13:17'),
+(20, 2, 'tuition_post', 'Posted new tuition', 'Posted: qwdsd', 18, '????', '2025-10-19 19:16:54'),
+(21, 2, 'tuition_post', 'Posted new tuition', 'Posted: qwdsd', 19, '????', '2025-10-19 19:17:44'),
+(22, 2, 'tuition_post', 'Posted new tuition', 'Posted: qwdsd', 20, '????', '2025-10-19 19:17:52'),
+(23, 2, 'tuition_post', 'Posted new tuition', 'Posted: qwdsd', 21, '????', '2025-10-19 19:17:57'),
+(24, 2, 'tuition_post', 'Posted new tuition', 'Posted: zxc', 22, '????', '2025-10-19 19:18:45'),
+(25, 2, 'job_post', 'Posted new job', 'Posted: ajdskn aodnoj', 23, '????', '2025-10-19 19:24:47'),
+(26, 2, 'expense_added', 'Added new expense', 'Added: Other costs - ৳1,500', 7, '????', '2025-10-19 19:36:57'),
+(27, 19, 'housing_post', 'Posted new housing', 'Posted: House 2', 24, '????', '2025-10-19 19:48:19');
 
 -- --------------------------------------------------------
 
@@ -888,7 +952,6 @@ INSERT INTO `user_capabilities` (`user_id`, `capability_id`) VALUES
 (19, 5),
 (19, 6),
 (19, 7),
-(19, 8),
 (20, 4),
 (20, 5),
 (20, 6),
@@ -1261,7 +1324,7 @@ ALTER TABLE `capabilities`
 -- AUTO_INCREMENT for table `expenses`
 --
 ALTER TABLE `expenses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `food_services`
@@ -1273,7 +1336,7 @@ ALTER TABLE `food_services`
 -- AUTO_INCREMENT for table `housing`
 --
 ALTER TABLE `housing`
-  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `housing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `housing_applications`
@@ -1303,13 +1366,13 @@ ALTER TABLE `housing_terms`
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `job_applications`
 --
 ALTER TABLE `job_applications`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `job_benefits`
@@ -1393,13 +1456,13 @@ ALTER TABLE `saved_payment_methods`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `service_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `transaction_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `transaction_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tuition_payments`
@@ -1423,7 +1486,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `user_activities`
 --
 ALTER TABLE `user_activities`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `user_wallets`
